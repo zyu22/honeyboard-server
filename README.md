@@ -120,6 +120,14 @@ erDiagram
 - Docker (선택사항)
 ```
 
+
+### STS 실행 설정
+1. 프로젝트 우클릭 → Run As → Run Configurations
+2. Spring Boot App 선택
+3. Arguments 탭 클릭
+4. VM arguments에 다음 추가: -Dspring.profiles.active=dev
+
+
 ### 설치 및 실행
 
 1. 저장소 복제
