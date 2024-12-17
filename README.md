@@ -19,12 +19,12 @@ React 기반 프론트엔드와 연동되는 RESTful API 서버입니다.
   - Redux를 통한 상태 관리
 
 ## 👥 팀원 소개
-
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/zyu22"><img src="https://github.com/zyu22.png" width="100px;" alt=""/><br /><sub><b>zyu22</b></sub></a><br />👑 백엔드 팀장</td>
-    <td align="center"><a href="https://github.com/kkangssu"><img src="https://github.com/kkangssu.png" width="100px;" alt=""/><br /><sub><b>kkangssu</b></sub></a><br />🔨 백엔드 개발</td>
-    <td align="center"><a href="https://github.com/rpeowiqu"><img src="https://github.com/rpeowiqu.png" width="100px;" alt=""/><br /><sub><b>rpeowiqu</b></sub></a><br />🔨 백엔드 개발</td>
+    <td align="center"><a href="https://github.com/zyu22"><img src="https://github.com/zyu22.png" width="100px;" alt=""/><br /><sub><b>zyu22</b></sub></a><br />👑 백엔드 팀장<br/><a href="https://github.com/zyu22"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
+    <td align="center"><a href="https://github.com/kkangssu"><img src="https://github.com/kkangssu.png" width="100px;" alt=""/><br /><sub><b>kkangssu</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/kkangssu"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
+    <td align="center"><a href="https://github.com/rpeowiqu"><img src="https://github.com/rpeowiqu.png" width="100px;" alt=""/><br /><sub><b>rpeowiqu</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/rpeowiqu"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
+    <td align="center"><a href="https://github.com/yujeong789"><img src="https://github.com/yujeong789.png" width="100px;" alt=""/><br /><sub><b>yujeong789</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/yujeong789"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
   </tr>
 </table>
 
@@ -57,7 +57,7 @@ React 기반 프론트엔드와 연동되는 RESTful API 서버입니다.
   </tr>
 </table>
 
-## 📋 API 명세
+## 📋 API 명세(수정중-추후 노션주소도 포함될 예정)
 
 상세 API 문서는 Swagger UI를 통해 제공됩니다: [API문서](/swagger-ui/index.html)
 
