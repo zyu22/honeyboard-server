@@ -1,11 +1,15 @@
 package com.honeyboard.api.jwt.model.service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,9 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpire;
 
+    private final RedisTemplate<String, String> redisTemplate;
+    private static final String REFRESH_TOKEN_PREFIX = "RT:";
+    
     @Override
     public String extractUserEmail(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -43,7 +50,12 @@ public class JwtServiceImpl implements JwtService {
 
     public boolean isValidRefreshToken(String token, User user) {
         String userEmail = extractUserEmail(token);
-        return (userEmail.equals(user.getEmail())) && !isTokenExpired(token);
+        if (!userEmail.equals(user.getEmail()) || isTokenExpired(token)) {
+            return false;
+        }
+
+        String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + user.getEmail());
+        return token.equals(storedToken);
     }
 
 
@@ -63,12 +75,10 @@ public class JwtServiceImpl implements JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parser()
-//                .verifyWith(getSigninKey())
-                .setSigningKey(getSigninKey())
+                .verifyWith(getSigninKey())
                 .build()
                 .parseSignedClaims(token)
-//                .getPayload();
-                .getBody();
+                .getPayload();
     }
 
 
@@ -77,10 +87,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public String generateRefreshToken(User user) {
-        return generateToken(user, refreshTokenExpire );
+        String refreshToken = generateToken(user, refreshTokenExpire );
+        saveRefreshToken(user.getEmail(), refreshToken);
+        return refreshToken;
     }
 
-    //86400000 밀리세컨드-> 86400세컨드 -> 1440 분 -> 24시간
     private String generateToken(User user, long expireTime) {
         return Jwts
                 .builder()
@@ -92,10 +103,39 @@ public class JwtServiceImpl implements JwtService {
                 .signWith(getSigninKey())
                 .compact();
     }
+    
+    private void saveRefreshToken(String email, String refreshToken) {
+        redisTemplate.opsForValue().set(
+            REFRESH_TOKEN_PREFIX + email,
+            refreshToken,
+            refreshTokenExpire,
+            TimeUnit.MILLISECONDS
+        );
+    }
 
     private SecretKey getSigninKey() {
         byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public Map<String, String> rotateTokens(String oldRefreshToken, User user) {
+        if (!isValidRefreshToken(oldRefreshToken, user)) {
+            invalidateRefreshToken(user.getEmail());
+            return null;
+        }
+
+        // 새로운 토큰 쌍 생성
+        String newAccessToken = generateAccessToken(user);
+        String newRefreshToken = generateRefreshToken(user);
+        Map tokens = new HashMap<>();
+        tokens.put("accessToken", newAccessToken);
+        tokens.put("refreshToken", newRefreshToken);
+
+        return tokens;
+    }
+
+    public void invalidateRefreshToken(String email) {
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + email);
     }
 
     public int getUserIdFromToken(String token) {
