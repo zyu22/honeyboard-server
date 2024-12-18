@@ -33,6 +33,9 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpire;
+    
+    @Value("${jwt.temporary-token-expiration}")
+    private long temporaryTokenExpire;
 
     private final RedisTemplate<String, String> redisTemplate;
     private static final String REFRESH_TOKEN_PREFIX = "RT:";
@@ -91,6 +94,21 @@ public class JwtServiceImpl implements JwtService {
         saveRefreshToken(user.getEmail(), refreshToken);
         return refreshToken;
     }
+    
+    public String generateTemporaryToken(String email) {
+    	String temporaryToken = generateTempToken(email, temporaryTokenExpire);
+    	return temporaryToken;
+    }
+    
+    private String generateTempToken(String email, long expireTime) {
+    	return Jwts
+                .builder()
+                .subject(email)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expireTime))
+                .signWith(getSigninKey())
+                .compact();
+    }
 
     private String generateToken(User user, long expireTime) {
         return Jwts
@@ -144,6 +162,10 @@ public class JwtServiceImpl implements JwtService {
     
     public long getRefreshTokenExpire() {
         return refreshTokenExpire;
+    }
+    
+    public long getTemporaryTokenExpire() {
+    	return temporaryTokenExpire;
     }
 
     public int getUserIdFromToken(String token) {
