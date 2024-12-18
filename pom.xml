@@ -99,8 +99,15 @@
 		    <version>0.12.5</version>
 		    <scope>runtime</scope>
 		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>io.lettuce</groupId>
+		    <artifactId>lettuce-core</artifactId>
+		</dependency>
 	</dependencies>
-
 	<profiles>
 	    <profile>
 	        <id>dev</id>
