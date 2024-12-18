@@ -137,6 +137,14 @@ public class JwtServiceImpl implements JwtService {
     public void invalidateRefreshToken(String email) {
         redisTemplate.delete(REFRESH_TOKEN_PREFIX + email);
     }
+    
+    public long getAccessTokenExpire() {
+    	return accessTokenExpire;
+    }
+    
+    public long getRefreshTokenExpire() {
+        return refreshTokenExpire;
+    }
 
     public int getUserIdFromToken(String token) {
         return extractAllClaims(token).get("userId", Integer.class);

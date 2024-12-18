@@ -1,5 +1,7 @@
 package com.honeyboard.api.handler;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request,
                                       HttpServletResponse response,
                                       AuthenticationException exception) {
-        // 실패 처리 로직
+    	ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
