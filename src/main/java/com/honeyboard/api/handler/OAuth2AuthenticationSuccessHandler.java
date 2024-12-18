@@ -38,7 +38,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             String temporaryToken = jwtService.generateTemporaryToken(user.getEmail());
             cookieUtil.addCookie(response, "temporary_token", temporaryToken, 
                     (int) (jwtService.getTemporaryTokenExpire() / 1000));
-                response.setStatus(HttpStatus.FOUND.value());
+//            	response.sendRedirect("honeyboard-client-url/signup?token=" + temporaryToken); 회원가입 url 나오면 고치기
                 return;
             }
 
@@ -50,7 +50,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             cookieUtil.addCookie(response, "refresh_token", refreshToken, 
                 (int) (jwtService.getRefreshTokenExpire() / 1000));
                 
-            response.setStatus(HttpStatus.OK.value());
+//            response.sendRedirect("honeyboard-client-url");
         }
 
 }

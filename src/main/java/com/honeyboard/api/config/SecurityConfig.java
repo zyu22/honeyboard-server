@@ -52,17 +52,17 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(
-								"/api/**",
-								"/api/auth/**",
+								"/api/v1/**",
+								"/api/v1/auth/**",
 								"/swagger-ui/**"
 								).permitAll()
-						.requestMatchers("api/admin").hasRole("ADMIN")
-						.requestMatchers("api/user").hasRole("USER")
+						.requestMatchers("api/v1/admin").hasRole("ADMIN")
+						.requestMatchers("api/v1/user").hasRole("USER")
 						.anyRequest()
 						.authenticated()
 				)
 				.formLogin(form -> form  // 일반 로그인 설정 추가
-                        .loginProcessingUrl("/api/auth/login")
+                        .loginProcessingUrl("/api/v1/auth/login")
                         .successHandler(loginSuccessHandler)
                         .failureHandler(loginFailureHandler)
                 )
@@ -73,6 +73,9 @@ public class SecurityConfig {
                         )
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         .failureHandler(oAuth2AuthenticationFailureHandler)
+                        .authorizationEndpoint(authorization -> authorization
+                        .baseUri("/api/v1/auth/{domainName}/authorization")
+                        )
                 )
 				.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.sessionManagement(session -> session
@@ -84,7 +87,7 @@ public class SecurityConfig {
                                 )
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
 				.logout(l -> l
-                        .logoutUrl("/api/user/logout")
+                        .logoutUrl("/api/v1/user/logout")
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> {
                             SecurityContextHolder.clearContext();
