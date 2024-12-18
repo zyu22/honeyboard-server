@@ -173,7 +173,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     public String getEmailFromToken(String token) {
-        return extractAllClaims(token).getSubject(); // Subject 값
+        return extractAllClaims(token).getSubject();
     }
 
     public String getRoleFromToken(String token) {
