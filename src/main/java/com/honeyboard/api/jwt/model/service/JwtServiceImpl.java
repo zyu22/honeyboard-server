@@ -51,6 +51,7 @@ public class JwtServiceImpl implements JwtService {
         return (userEmail.equals(user.getUsername())) && !isTokenExpired(token);
     }
 
+    @Override
     public boolean isValidRefreshToken(String token, User user) { // 리프레시 토큰 유효성 검증
         String userEmail = extractUserEmail(token);
         if (!userEmail.equals(user.getEmail()) || isTokenExpired(token)) {
@@ -70,7 +71,7 @@ public class JwtServiceImpl implements JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> resolver) { // 토큰에서 특정 클레임 추출
+    private <T> T extractClaim(String token, Function<Claims, T> resolver) { // 토큰에서 특정 클레임 추출
         Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
     }
