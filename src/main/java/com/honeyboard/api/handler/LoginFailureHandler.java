@@ -15,6 +15,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request,
                                       HttpServletResponse response,
                                       AuthenticationException exception) {
-    	ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    	ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 로그인 실패 시 401 반환
     }
 }

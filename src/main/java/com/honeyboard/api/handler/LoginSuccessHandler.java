@@ -29,21 +29,21 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, 
                                       HttpServletResponse response,
                                       Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal(); // 정보 가져오기
         User user = userDetails.getUser();
         
-        String accessToken = jwtService.generateAccessToken(user);
+        String accessToken = jwtService.generateAccessToken(user); // 토큰 생성
         String refreshToken = jwtService.generateRefreshToken(user);
         
         cookieUtil.addCookie(response, "access_token", accessToken, 
-                (int) (jwtService.getAccessTokenExpire() / 1000));
+                (int) (jwtService.getAccessTokenExpire() / 1000)); // httponly cookies에 담기
         
         cookieUtil.addCookie(response, "refresh_token", refreshToken, 
-                (int) (jwtService.getRefreshTokenExpire() / 1000));
+                (int) (jwtService.getRefreshTokenExpire() / 1000)); // httponly cookies에 담기
         
         ResponseEntity.status(HttpStatus.OK)
         		.contentType(MediaType.APPLICATION_JSON)
-        		.body(null); // 여기에 유저 정보 담아야 함
+        		.body(null); // 여기에 유저 정보 담아야 함 유저 정보 뭐뭐 전달해야할지 아직 몰라서 안 넣음
         
     }
 }

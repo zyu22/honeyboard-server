@@ -51,62 +51,62 @@ public class SecurityConfig {
 		http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(
+						.requestMatchers( // 여기 있는 경로는 인증 안 해도 됩니다
 								"/api/v1/**",
 								"/api/v1/auth/**",
 								"/swagger-ui/**"
 								).permitAll()
-						.requestMatchers("api/v1/admin").hasRole("ADMIN")
-						.requestMatchers("api/v1/user").hasRole("USER")
-						.anyRequest()
-						.authenticated()
+						.requestMatchers("api/v1/admin").hasRole("ADMIN") // admin 권한 확인
+						.requestMatchers("api/v1/user").hasRole("USER") // user 권한 확인
+						.anyRequest() // 모든 요청에 대해
+						.authenticated() // 권한 확인 요청
 				)
+				.userDetailsService(userDetailsServiceImpl) // 로그인 로직 실행
 				.formLogin(form -> form  // 일반 로그인 설정 추가
-                        .loginProcessingUrl("/api/v1/auth/login")
-                        .successHandler(loginSuccessHandler)
-                        .failureHandler(loginFailureHandler)
+                        .loginProcessingUrl("/api/v1/auth/login") // 이 경로에 대한 요청은 login
+                        .successHandler(loginSuccessHandler) // 로그인 성공 시
+                        .failureHandler(loginFailureHandler) // 로그인 실패 시
                 )
-				.userDetailsService(userDetailsServiceImpl)
 				.oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
+                                .userService(customOAuth2UserService) // OAuth2 사용자 서비스 설정
                         )
-                        .successHandler(oAuth2AuthenticationSuccessHandler)
-                        .failureHandler(oAuth2AuthenticationFailureHandler)
+                        .successHandler(oAuth2AuthenticationSuccessHandler) // 성공 시
+                        .failureHandler(oAuth2AuthenticationFailureHandler) // 실패 시
                         .authorizationEndpoint(authorization -> authorization
-                        .baseUri("/api/v1/auth/{domainName}/authorization")
+                        .baseUri("/api/v1/auth/{domainName}/authorization") // // OAuth2 인증 기본 URI
                         )
                 )
-				.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
 				.sessionManagement(session -> session
-						.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+						.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 미사용
 				)
 				.exceptionHandling(
                         e -> e.accessDeniedHandler(
-                                        (request, response, accessDeniedException) -> response.setStatus(403)
+                                        (request, response, accessDeniedException) -> response.setStatus(403) // 접근 거부 시 403 응답
                                 )
-                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))) // 인증 실패 시 401 응답
 				.logout(l -> l
-                        .logoutUrl("/api/v1/user/logout")
-                        .addLogoutHandler(logoutHandler)
+                        .logoutUrl("/api/v1/user/logout") // 로그아웃 URL
+                        .addLogoutHandler(logoutHandler) // 로그아웃 핸들러(아직 미구현)
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            SecurityContextHolder.clearContext();
-                            cookieUtil.deleteCookie(response, "jwt");
+                            SecurityContextHolder.clearContext(); // 보안 컨텍스트 클리어
+                            cookieUtil.deleteCookie(response, "jwt"); // JWT 쿠키 삭제
                         })
                 )
-				.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+				.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() { // CORS 설정
 
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 
-                        CorsConfiguration configuration = new CorsConfiguration();
+                        CorsConfiguration configuration = new CorsConfiguration(); // CORS 허용 출처 설정
 
-                        configuration.setAllowedOrigins(Arrays.asList(allowOriginUrl));
+                        configuration.setAllowedOrigins(Arrays.asList(allowOriginUrl)); // HTTP 메서드 허용 설정
 
                         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                        configuration.setAllowCredentials(true);
-                        configuration.addAllowedHeader("*");
-                        configuration.setExposedHeaders(List.of("Authorization"));
+                        configuration.setAllowCredentials(true); // 인증 정보 허용
+                        configuration.addAllowedHeader("*"); // 모든 헤더 허용
+                        configuration.setExposedHeaders(List.of("Authorization")); // Authorization 헤더 노출
                         configuration.setMaxAge(3600L);
                         return configuration;
                     }

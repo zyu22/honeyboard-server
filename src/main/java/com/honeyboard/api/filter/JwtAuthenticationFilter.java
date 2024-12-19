@@ -4,6 +4,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	
-	
+	// 구현 예정
 
 }
