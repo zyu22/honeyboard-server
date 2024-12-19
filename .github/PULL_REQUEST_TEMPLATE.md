@@ -1,6 +1,7 @@
 ## #️⃣ Issue Number
-
-ex) #이슈번호, #이슈번호 
+- 해당 이슈번호를 입력하여 연결해주세요. <br>
+ex) resolves #1 (해당 이슈 연결, close x) <br>
+ex) close #1 (해당 PR이 머지 되면 이슈 자동 close)
 
 ## 📝 요약(Summary)
 
