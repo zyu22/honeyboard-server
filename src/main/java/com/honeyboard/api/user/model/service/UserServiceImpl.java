@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUser(long userId) {
+	public User getUser(int userId) {
 		return userMapper.selectUserById(userId);
 	}
 
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Integer updateUserCompletionStatus(long userId) {
+	public Integer updateUserCompletionStatus(int userId) {
 		return userMapper.updateUserCompletionStatus(userId);
 	}
 
