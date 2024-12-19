@@ -14,12 +14,12 @@ public class UserServiceImpl implements UserService {
 	private final UserMapper userMapper;
 
 	@Override
-	public Integer addUser(User user) {
+	public Integer saveUser(User user) {
 		return userMapper.insertUser(user);
 	}
 
 	@Override
-	public User getUserById(long userId) {
+	public User getUser(long userId) {
 		return userMapper.selectUserById(userId);
 	}
 
@@ -29,12 +29,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Integer changePassword(User user) {
+	public Integer updatePassword(User user) {
 		return userMapper.updatePassword(user);
 	}
 
 	@Override
-	public Integer updateUserInfo(User user) {
+	public Integer updateUser(User user) {
 		return userMapper.updateUser(user);
 	}
 
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Integer checkEmail(String email) {
+	public Integer existsByEmail(String email) {
 		return userMapper.selectExistedEmail(email);
 	}
 

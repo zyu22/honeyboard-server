@@ -18,8 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user = userService.getUserByEmail(email);
-		if (user == null) {
+		User user = userService.getUserByEmail(email); // email(유저의 아이디)로 정보 가져오기
+		if (user == null) { // 없는 사용자면
             throw new UsernameNotFoundException("User not found");
         }
         return new CustomUserDetails(user);

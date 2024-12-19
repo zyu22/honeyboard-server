@@ -12,13 +12,13 @@ import com.honeyboard.api.user.model.oauth2.OAuth2UserInfo;
 
 @Component
 public class OAuth2UserInfoFactory {
-    public static OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {
-        return switch (registrationId.toLowerCase()) {
+    public static OAuth2UserInfo getOAuth2UserInfo(String domainName, Map<String, Object> attributes) {
+        return switch (domainName.toLowerCase()) { // OAuth2 제공자에 따라 진행
             case "google" -> new GoogleOAuth2UserInfo(attributes);
             case "naver" -> new NaverOAuth2UserInfo(attributes);
             case "kakao" -> new KakaoOAuth2UserInfo(attributes);
             default -> throw new AuthenticationServiceException(
-                    "Unsupported login type: " + registrationId);
+                    "Unsupported login type: " + domainName);
         };
     }
 }

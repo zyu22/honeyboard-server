@@ -30,23 +30,24 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal(); // 정보 가져오기
         User user = customUserDetails.getUser();
         
         if (customUserDetails.getAttributes() != null && 
-                Boolean.TRUE.equals(customUserDetails.getAttributes().get("isNewUser"))) {
-            String temporaryToken = jwtService.generateTemporaryToken(user.getEmail());
+                Boolean.TRUE.equals(customUserDetails.getAttributes().get("isNewUser"))) { // 처음 로그인한 유저면
+            String temporaryToken = jwtService.generateTemporaryToken(user.getEmail()); // 임시토큰 발급
             cookieUtil.addCookie(response, "temporary_token", temporaryToken, 
-                    (int) (jwtService.getTemporaryTokenExpire() / 1000));
+                    (int) (jwtService.getTemporaryTokenExpire() / 1000)); // httponly cookies로 전달
 //            	response.sendRedirect("honeyboard-client-url/signup?token=" + temporaryToken); 회원가입 url 나오면 고치기
                 return;
             }
 
-            String accessToken = jwtService.generateAccessToken(user);
+        // 여기까지 오면 기존 유저
+            String accessToken = jwtService.generateAccessToken(user); // 토큰 발급
             String refreshToken = jwtService.generateRefreshToken(user);
             
             cookieUtil.addCookie(response, "access_token", accessToken, 
-                (int) (jwtService.getAccessTokenExpire() / 1000));
+                (int) (jwtService.getAccessTokenExpire() / 1000)); // httponly cookies에 담기
             cookieUtil.addCookie(response, "refresh_token", refreshToken, 
                 (int) (jwtService.getRefreshTokenExpire() / 1000));
                 

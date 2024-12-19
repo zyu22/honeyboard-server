@@ -27,23 +27,24 @@ public class AuthController {
     
     @PostMapping("/{domainName}/signup")
     public ResponseEntity<Void> completeOAuth2Signup(
-            @PathVariable String domainName,
-            @CookieValue("temporary_token") String temporaryToken,
-            @RequestBody User user) {
+            @PathVariable String domainName, // 구글 네이버 카카오
+            @CookieValue("temporary_token") String temporaryToken, // 임시토큰
+            @RequestBody User user) { // 클라이언트에서 받은 유저 이름 담아져있음
             
-        String email = jwtService.getEmailFromToken(temporaryToken);
+        String email = jwtService.getEmailFromToken(temporaryToken); // OAuth2로 로그인 인증 되어 임시토큰 가지고 컨트롤러로 도착하면 이메일 추출
         
-        if (userService.checkEmail(email) > 0) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        if (userService.existsByEmail(email) > 0) { // 이미 가입되어 있는 이메일이면(애초에 가입된 이메일이면 로그인 로직으로 돌긴 하지만 에러잡기용
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 반환
         }
         
+        // 각종 정보 저장
         user.setEmail(email);
         user.setRole("USER");
         user.setLoginType(domainName.toUpperCase());
         user.setSsafy(true);
         user.setCreatedAt(new Date(System.currentTimeMillis()));
         
-        userService.addUser(user);
+        userService.saveUser(user); // 회원가입
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
