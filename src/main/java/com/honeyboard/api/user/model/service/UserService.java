@@ -4,12 +4,12 @@ import com.honeyboard.api.user.model.User;
 
 public interface UserService {
 
-	Integer saveUser(User user);
-	User getUser(long userId);
+	Boolean saveUser(User user);
+	User getUser(int userId);
 	User getUserByEmail(String email);
-	Integer updatePassword(User user);
-	Integer updateUser(User user);
-	Integer updateUserCompletionStatus(long userId);
-	Integer existsByEmail(String email);
+	Boolean updatePassword(User user);
+	Boolean updateUser(User user);
+	Boolean updateUserCompletionStatus(int userId);
+	Boolean existsByEmail(String email);
 	
 }
