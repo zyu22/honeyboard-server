@@ -5,30 +5,31 @@
 <mapper namespace="com.honeyboard.api.user.model.mapper.UserMapper">
 
     <!-- 사용자 등록 -->
-    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO user (
-            email,
-            password,
-            name,
-            generation_id,
-            role,
-            login_type,
-            is_ssafy,
-            created_at
-        ) VALUES (
-            #{email},
-            #{password},
-            #{name},
-            #{generationId},
-            #{role},
-            #{loginType},
-            #{isSsafy},
-            NOW()
-        )
-    </insert>
+    <insert id="insertUser" parameterType="user" useGeneratedKeys="true" keyProperty="userId">
+	    INSERT INTO user (
+	        email,
+	        password,
+	        name,
+	        generation_id,
+	        <if test="role != null">role,</if>
+	        login_type,
+	        <if test="isSsafy != null">is_ssafy,</if>
+	        created_at
+	    ) VALUES (
+	        #{email},
+	        #{password},
+	        #{name},
+	        #{generationId},
+	        <if test="role != null">#{role},</if>
+	        #{loginType},
+	        <if test="isSsafy != null">#{isSsafy},</if>
+	        NOW()
+	    )
+	</insert>
+
 
     <!-- ID로 사용자 조회 -->
-    <select id="selectUserById" parameterType="int" resultType="User">
+    <select id="selectUserById" parameterType="int" resultType="user">
         SELECT 
             id AS userId,
             email,
@@ -44,7 +45,7 @@
     </select>
 
     <!-- 이메일로 사용자 조회 -->
-    <select id="selectUserByEmail" parameterType="String" resultType="User">
+    <select id="selectUserByEmail" parameterType="String" resultType="user">
         SELECT 
             id AS userId,
             email,
@@ -60,14 +61,14 @@
     </select>
 
     <!-- 비밀번호 업데이트 -->
-    <update id="updatePassword" parameterType="User">
+    <update id="updatePassword" parameterType="user">
         UPDATE user
         SET password = #{password}
         WHERE id = #{userId}
     </update>
 
     <!-- 사용자 정보 업데이트 -->
-    <update id="updateUser" parameterType="User">
+    <update id="updateUser" parameterType="user">
         UPDATE user
         SET
             name = #{name},

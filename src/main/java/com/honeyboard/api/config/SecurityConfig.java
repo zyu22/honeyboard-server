@@ -53,10 +53,11 @@ public class SecurityConfig {
 						.requestMatchers( // 여기 있는 경로는 인증 안 해도 됩니다
 								"/api/v1/**",
 								"/api/v1/auth/**",
+								"/oauth2/",
 								"/swagger-ui/**"
 								).permitAll()
-						.requestMatchers("api/v1/admin").hasRole("ADMIN") // admin 권한 확인
-						.requestMatchers("api/v1/user").hasRole("USER") // user 권한 확인
+						.requestMatchers("/api/v1/admin").hasRole("ADMIN") // admin 권한 확인
+						.requestMatchers("/api/v1/user").hasRole("USER") // user 권한 확인
 						.anyRequest() // 모든 요청에 대해
 						.authenticated() // 권한 확인 요청
 				)
@@ -73,7 +74,7 @@ public class SecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler) // 성공 시
                         .failureHandler(oAuth2AuthenticationFailureHandler) // 실패 시
                         .authorizationEndpoint(authorization -> authorization
-                        .baseUri("/api/v1/auth/{domainName}/authorization") // // OAuth2 인증 기본 URI
+                		.baseUri("/oauth2/authorization") // // OAuth2 인증 기본 URI
                         )
                 )
 				.addFilterBefore(jwtVerificationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가

@@ -14,8 +14,8 @@ public class UserServiceImpl implements UserService {
 	private final UserMapper userMapper;
 
 	@Override
-	public Integer saveUser(User user) {
-		return userMapper.insertUser(user);
+	public Boolean saveUser(User user) {
+		return userMapper.insertUser(user) > 0;
 	}
 
 	@Override
@@ -29,23 +29,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Integer updatePassword(User user) {
-		return userMapper.updatePassword(user);
+	public Boolean updatePassword(User user) {
+		return userMapper.updatePassword(user) > 0;
 	}
 
 	@Override
-	public Integer updateUser(User user) {
-		return userMapper.updateUser(user);
+	public Boolean updateUser(User user) {
+		return userMapper.updateUser(user) > 0;
 	}
 
 	@Override
-	public Integer updateUserCompletionStatus(int userId) {
-		return userMapper.updateUserCompletionStatus(userId);
+	public Boolean updateUserCompletionStatus(int userId) {
+		return userMapper.updateUserCompletionStatus(userId) > 0;
 	}
 
 	@Override
-	public Integer existsByEmail(String email) {
-		return userMapper.selectExistedEmail(email);
+	public Boolean existsByEmail(String email) {
+		return userMapper.selectExistedEmail(email) > 0;
 	}
 
 }
