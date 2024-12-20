@@ -17,11 +17,11 @@ import lombok.ToString;
 @Builder
 public class User {
 
-	private long userId;
+	private int userId;
 	private String email;
 	private String password;
 	private String name;
-	private long generationId;
+	private int generationId;
 	private String role;
 	private String loginType;
 	private boolean isSsafy;
