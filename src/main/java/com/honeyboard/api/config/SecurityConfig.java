@@ -18,12 +18,12 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.honeyboard.api.auth.model.service.CustomOAuth2UserService;
 import com.honeyboard.api.filter.JwtVerificationFilter;
 import com.honeyboard.api.handler.LoginFailureHandler;
 import com.honeyboard.api.handler.LoginSuccessHandler;
 import com.honeyboard.api.handler.OAuth2AuthenticationFailureHandler;
 import com.honeyboard.api.handler.OAuth2AuthenticationSuccessHandler;
-import com.honeyboard.api.user.model.service.CustomOAuth2UserService;
 import com.honeyboard.api.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
