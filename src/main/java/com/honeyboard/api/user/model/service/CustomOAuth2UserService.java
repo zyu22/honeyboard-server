@@ -16,15 +16,18 @@ import com.honeyboard.api.user.model.CustomUserDetails;
 import com.honeyboard.api.user.model.User;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
 	private final UserService userService;
 	
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    	log.debug("CustomOAuth2UserService/loadUser");
     	OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService(); // 기본 OAuth2 사용자 서비스 생성
         OAuth2User oAuth2User = delegate.loadUser(userRequest); // OAuth2 제공자로부터 사용자 정보 로드
 
@@ -38,6 +41,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         User existingUser = userService.getUserByEmail(email); // 기존 사용자 조회
         
         if (existingUser == null) { // 신규 사용자인 경우
+        	log.debug("This user is new user");
             Map<String, Object> customAttributes = new HashMap<>(attributes);
             customAttributes.put("isNewUser", true); // 신규 사용자 표시
             customAttributes.put("loginType", registrationId.toUpperCase()); // 로그인 제공자 정보
@@ -47,10 +51,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .role("USER")
                     .build();
                     
-                return new CustomUserDetails(tempUser, customAttributes); // 사용자 상세 정보 반환
-            }
-            
-            return new CustomUserDetails(existingUser, attributes); // 기존 사용자인 경우 해당 사용자 정보로 CustomUserDetails 생성하여 반환
+            return new CustomUserDetails(tempUser, customAttributes); // 사용자 상세 정보 반환
+        }
+        log.debug("This user is existing user");
+        return new CustomUserDetails(existingUser, attributes); // 기존 사용자인 경우 해당 사용자 정보로 CustomUserDetails 생성하여 반환
     }
 
 }

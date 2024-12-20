@@ -17,9 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.honeyboard.api.filter.JwtAuthenticationFilter;
+import com.honeyboard.api.filter.JwtVerificationFilter;
 import com.honeyboard.api.handler.LoginFailureHandler;
 import com.honeyboard.api.handler.LoginSuccessHandler;
 import com.honeyboard.api.handler.OAuth2AuthenticationFailureHandler;
@@ -36,10 +35,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 	
 	private final String[] allowOriginUrl;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtVerificationFilter jwtVerificationFilter;
 	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 	private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-	private final UserDetailsService userDetailsServiceImpl;
+	private final UserDetailsService userDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CookieUtil cookieUtil;
     private final LoginSuccessHandler loginSuccessHandler;
@@ -54,14 +53,15 @@ public class SecurityConfig {
 						.requestMatchers( // 여기 있는 경로는 인증 안 해도 됩니다
 								"/api/v1/**",
 								"/api/v1/auth/**",
+								"/oauth2/",
 								"/swagger-ui/**"
 								).permitAll()
-						.requestMatchers("api/v1/admin").hasRole("ADMIN") // admin 권한 확인
-						.requestMatchers("api/v1/user").hasRole("USER") // user 권한 확인
+						.requestMatchers("/api/v1/admin").hasRole("ADMIN") // admin 권한 확인
+						.requestMatchers("/api/v1/user").hasRole("USER") // user 권한 확인
 						.anyRequest() // 모든 요청에 대해
 						.authenticated() // 권한 확인 요청
 				)
-				.userDetailsService(userDetailsServiceImpl) // 로그인 로직 실행
+				.userDetailsService(userDetailsService) // 로그인 로직 실행
 				.formLogin(form -> form  // 일반 로그인 설정 추가
                         .loginProcessingUrl("/api/v1/auth/login") // 이 경로에 대한 요청은 login
                         .successHandler(loginSuccessHandler) // 로그인 성공 시
@@ -74,10 +74,10 @@ public class SecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler) // 성공 시
                         .failureHandler(oAuth2AuthenticationFailureHandler) // 실패 시
                         .authorizationEndpoint(authorization -> authorization
-                        .baseUri("/api/v1/auth/{domainName}/authorization") // // OAuth2 인증 기본 URI
+                		.baseUri("/oauth2/authorization") // // OAuth2 인증 기본 URI
                         )
                 )
-				.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
+				.addFilterBefore(jwtVerificationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
 				.sessionManagement(session -> session
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 미사용
 				)
@@ -89,10 +89,6 @@ public class SecurityConfig {
 				.logout(l -> l
                         .logoutUrl("/api/v1/user/logout") // 로그아웃 URL
                         .addLogoutHandler(logoutHandler) // 로그아웃 핸들러(아직 미구현)
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            SecurityContextHolder.clearContext(); // 보안 컨텍스트 클리어
-                            cookieUtil.deleteCookie(response, "jwt"); // JWT 쿠키 삭제
-                        })
                 )
 				.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() { // CORS 설정
 

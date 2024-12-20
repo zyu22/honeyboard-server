@@ -16,9 +16,11 @@ import com.honeyboard.api.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	
 	private final JwtService jwtService;
@@ -29,6 +31,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, 
                                       HttpServletResponse response,
                                       Authentication authentication) {
+    	log.debug("LoginSuccessHandler/onAuthenticationSuccess");
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal(); // 정보 가져오기
         User user = userDetails.getUser();
         
