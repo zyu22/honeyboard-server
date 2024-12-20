@@ -18,9 +18,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	
 	private final JwtService jwtService;
@@ -30,6 +32,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
+		log.debug("OAuth2AuthenticationSuccessHandler/onAuthenticationSuccess");
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal(); // 정보 가져오기
         User user = customUserDetails.getUser();
         
@@ -40,7 +43,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
                     (int) (jwtService.getTemporaryTokenExpire() / 1000)); // httponly cookies로 전달
 //            	response.sendRedirect("honeyboard-client-url/signup?token=" + temporaryToken); 회원가입 url 나오면 고치기
                 return;
-            }
+            } // http://localhost:8080/oauth2/authorization/google
 
         // 여기까지 오면 기존 유저
             String accessToken = jwtService.generateAccessToken(user); // 토큰 발급
