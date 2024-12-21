@@ -24,14 +24,23 @@ public class AlgorithmProblemController {
             @RequestParam(required = false) String keyword
     ) {
         try {
+            if (searchType != null && !searchType.isEmpty() && keyword == null) {
+                log.warn("검색 타입은 있으나 키워드가 없음");
+                return ResponseEntity.badRequest().body("검색어를 입력해주세요.");
+            }
+
+            log.info("알고리즘 문제 조회 요청 - 페이지: {}, 사이즈: {}, 검색타입: {}, 키워드: {}",
+                    page, size, searchType, keyword);
+
             PageResponse<AlgorithmProblem> list;
             if (searchType == null || searchType.isEmpty()) {
-                list = as.getAllProblem();
+                list = as.getAllProblem(page, size);
             } else {
-                list = as.searchProblem(searchType, keyword);
+                list = as.searchProblem(page, size, searchType, keyword);
             }
             return ResponseEntity.ok().body(list);
         } catch (Exception e) {
+            log.error("알고리즘 문제 조회 중 에러 발생", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -40,14 +49,16 @@ public class AlgorithmProblemController {
     public ResponseEntity<?> createAlgorithmProblem(@RequestBody AlgorithmProblem ap) {
         try {
             if (as.existsByUrl(ap.getUrl())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                log.warn("중복된 URL로 문제 생성 시도: {}", ap.getUrl());
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 문제입니다.");
             }
-            int res = as.addProblem(ap);
-            if (res == 1) {
-                return ResponseEntity.status(HttpStatus.CREATED).build();
-            }
-            throw new Exception();
+            log.info("알고리즘 문제 생성 시작 - 제목: {}", ap.getTitle());
+            AlgorithmProblem createdProblem = as.addProblem(ap);
+            log.info("알고리즘 문제 생성 완료 - ID: {}", createdProblem.getId());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(createdProblem);
         } catch (Exception e) {
+            log.error("알고리즘 문제 생성 중 에러 발생", e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -56,15 +67,17 @@ public class AlgorithmProblemController {
     public ResponseEntity<?> updateAlgorithmProblem(@PathVariable int problemId, @RequestBody AlgorithmProblem ap) {
         try {
             if (!as.existsById(problemId)) {
+                log.warn("존재하지 않는 문제 수정 시도 - ID: {}", problemId);
                 return ResponseEntity.notFound().build();
             }
 
-            int res = as.updateProblem(problemId, ap);
-            if (res == 1) {
-                return ResponseEntity.status(HttpStatus.OK).build();
-            }
-            throw new Exception();
+            log.info("알고리즘 문제 수정 시작 - ID: {}", problemId);
+            AlgorithmProblem updatedProblem = as.updateProblem(problemId, ap);
+            log.info("알고리즘 문제 수정 완료 - ID: {}", problemId);
+            return ResponseEntity.ok(updatedProblem);
+
         } catch (Exception e) {
+            log.error("알고리즘 문제 수정 중 에러 발생 - ID: {}", problemId, e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -73,27 +86,33 @@ public class AlgorithmProblemController {
     public ResponseEntity<?> deleteAlgorithmProblem(@PathVariable int problemId) {
         try {
             if (!as.existsById(problemId)) {
+                log.warn("존재하지 않는 문제 삭제 시도 - ID: {}", problemId);
                 return ResponseEntity.notFound().build();
             }
+            log.info("알고리즘 문제 삭제 시작 - ID: {}", problemId);
             int res = as.softDeleteProblem(problemId);
             if (res == 1) {
+                log.info("알고리즘 문제 삭제 완료 - ID: {}", problemId);
                 return ResponseEntity.status(HttpStatus.OK).build();
             }
-            throw new Exception();
+            throw new Exception("문제 삭제에 실패했습니다.");
         } catch (Exception e) {
+            log.error("알고리즘 문제 삭제 중 에러 발생 - ID: {}", problemId, e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @GetMapping("/check-url")
+    @PostMapping("/check-url")
     public ResponseEntity<?> checkAlgorithmProblemUrl(@RequestBody String url) {
         try {
+            log.info("URL 중복 체크 요청: {}", url);
             boolean res = as.existsByUrl(url);
             return ResponseEntity.ok().body(res);
-
         } catch (Exception e) {
+            log.error("URL 중복 체크 중 에러 발생: {}", url, e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 }
