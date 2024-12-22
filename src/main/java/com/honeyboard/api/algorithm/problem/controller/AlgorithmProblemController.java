@@ -24,19 +24,18 @@ public class AlgorithmProblemController {
             @RequestParam(required = false) String keyword
     ) {
         try {
-            if (searchType != null && !searchType.isEmpty() && keyword == null) {
-                log.warn("검색 타입은 있으나 키워드가 없음");
-                return ResponseEntity.badRequest().body("검색어를 입력해주세요.");
-            }
-
+            PageResponse<AlgorithmProblem> list;
             log.info("알고리즘 문제 조회 요청 - 페이지: {}, 사이즈: {}, 검색타입: {}, 키워드: {}",
                     page, size, searchType, keyword);
 
-            PageResponse<AlgorithmProblem> list;
-            if (searchType == null || searchType.isEmpty()) {
-                list = as.getAllProblem(page, size);
-            } else {
+            if (searchType != null && !searchType.isEmpty() && keyword != null && !keyword.trim().isEmpty()) {
                 list = as.searchProblem(page, size, searchType, keyword);
+            } else {
+                list = as.getAllProblem(page, size);
+            }
+            
+            if (list.getContent().isEmpty()) {
+                return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok().body(list);
         } catch (Exception e) {
