@@ -46,7 +46,7 @@
 				s.created_at DESC
 			</otherwise>
 		</choose>
-		LIMIT 9 OFFSET #{offset}
+		LIMIT 12 OFFSET #{offset}
 	</select>
 	
 	<!-- 알고리즘 풀이 상세 조회	 -->
