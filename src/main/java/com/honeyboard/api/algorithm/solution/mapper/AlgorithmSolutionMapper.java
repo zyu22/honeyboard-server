@@ -9,10 +9,13 @@ import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
 @Mapper
 public interface AlgorithmSolutionMapper {
 
-	Integer insertAlgorithmSolution(int problemId, AlgorithmSolution algorithmSolution);
-	List<AlgorithmSolution> selectAllAlgorithmSolution(int problemId, int generationId, List<String> languages, String sortType, int page);
+	int insertAlgorithmSolution(int problemId, AlgorithmSolution algorithmSolution);
+	List<AlgorithmSolution> selectAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages, String sortType, int offset);
 	AlgorithmSolution selectAlgorithmSolution(int solutionId);
-	Integer updateAlgorithmSolution(AlgorithmSolution algorithmSolution);
-	Integer deleteAlgorithmSolution(int solutionId);
+	int updateAlgorithmSolution(AlgorithmSolution algorithmSolution);
+	int deleteAlgorithmSolution(int solutionId);
+	
+	//페이지네이션
+	int countAlgorithmSolutions(int problemId, Integer generationId, List<String> languages);
 	
 }

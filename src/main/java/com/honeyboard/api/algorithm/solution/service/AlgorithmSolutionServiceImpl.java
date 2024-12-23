@@ -22,7 +22,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 	}
 
 	@Override
-	public List<AlgorithmSolution> getAllAlgorithmSolution(int problemId, int generationId, List<String> languages,
+	public PageResponse<AlgorithmSolution> getAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages,
 			String sortType, int page) {
 		return algorithmSolutionMapper.selectAllAlgorithmSolution(problemId, generationId, languages, sortType, page);
 	}
