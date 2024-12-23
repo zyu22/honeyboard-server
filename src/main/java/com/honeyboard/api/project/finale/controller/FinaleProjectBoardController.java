@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
+import com.honeyboard.api.project.finale.service.FinaleBoardService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/project/finale")
 @RequiredArgsConstructor
 public class FinaleProjectBoardController {
+
+	private final FinaleBoardService finaleBoardService;
 
 	@GetMapping("/{finaleId}/board")
 	public ResponseEntity<?> getAllFinaleBoards(@PathVariable int finaleId) {

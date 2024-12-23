@@ -6,7 +6,7 @@ import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.User;
 
-public interface FinaleProjectMapper {
+public interface FinaleProjectTeamMapper {
 
 	public List<FinaleTeam> selectSubmitStatusByDate(String targetDate);
 
