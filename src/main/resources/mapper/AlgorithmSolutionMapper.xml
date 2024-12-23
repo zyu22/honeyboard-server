@@ -46,7 +46,7 @@
 				s.created_at DESC
 			</otherwise>
 		</choose>
-		LIMIT #{size} OFFSET #{offset}
+		LIMIT 9 OFFSET #{offset}
 	</select>
 	
 	<!-- 알고리즘 풀이 상세 조회	 -->
@@ -131,6 +131,29 @@
     	WHERE id = #{solutionId}
         	AND user_id = #{userId}
         	AND is_deleted = false
-</update>
+	</update>
+	
+	
+	<!-- 페이지네이션 -->
+	<select id="countAlgorithmSolutions">
+	   SELECT COUNT(*)
+	   FROM algorithm_problem_solution s
+	   INNER JOIN user u ON s.user_id = u.id
+	   INNER JOIN programming_language p ON s.language_id = p.id
+	   LEFT JOIN bookmark b ON b.content_id = s.id 
+	       AND b.content_type = 'algo_solution'
+	       AND b.user_id = #{userId}
+	   WHERE s.is_deleted = false
+	   AND s.problem_id = #{problemId}
+	   <if test="generationId != null">
+	       AND u.generation_id = #{generationId}
+	   </if>
+	   <if test="languages != null and languages.size > 0">
+	       AND p.name IN
+	       <foreach collection="languages" item="language" open="(" separator="," close=")">
+	           #{language}
+	       </foreach>
+	   </if>
+	</select>
 
 </mapper>

@@ -54,23 +54,23 @@ public class AlgorithmSolutionController {
 	@GetMapping("/{problemId}/solution")
 	public ResponseEntity<?> getAllAlgorithmSolution(
 			@PathVariable int problemId, 
-			@RequestParam(value = "generationId") int generationId,
-			@RequestParam(value = "language") List<String> language,
+			@RequestParam(value = "generationId", required = false) int generationId,
+			@RequestParam(value = "language", required = false) List<String> language,
 			@RequestParam(value = "sortType", defaultValue = "latest") String sortType,
 			@RequestParam(value = "page", defaultValue = "1") int page) {
 		try {
-			List<AlgorithmSolution> solutions = algorithmSolutionService.getAllAlgorithmSolution(
+			PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
 	                problemId, generationId, language, sortType, page);
 			
-			if (solutions == null) {
+			if (pageResponse == null) {
 	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	        }
 	        
-	        if (solutions.isEmpty()) {
+	        if (pageResponse.isEmpty()) {
 	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	        }
 	        
-	        return new ResponseEntity<>(solutions, HttpStatus.OK);
+	        return new ResponseEntity<>(pageResponse, HttpStatus.OK);
 		} catch (Exception e) {
 			log.error("알고리즘 풀이 전체 조회 에러: ", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
