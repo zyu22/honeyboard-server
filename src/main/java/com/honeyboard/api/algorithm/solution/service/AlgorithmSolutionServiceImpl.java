@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper;
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
+import com.honeyboard.api.common.model.PageInfo;
+import com.honeyboard.api.common.response.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,9 +29,9 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 		// 전체 풀이 수
 	    int totalElements = algorithmSolutionMapper.countAlgorithmSolutions(problemId, generationId, languages);
 	    
-	    // PageInfo(pageSize = 12)
-	    PageInfo pageInfo = new PageInfo(page, 12, totalElements);
-	    int offset = (page - 1) * 12;
+	    // PageInfo(pageSize = 9)
+	    PageInfo pageInfo = new PageInfo(page, 9, totalElements);
+	    int offset = (page - 1) * 9;
 	    
 	    //전체 조회 -> List
 	    List<AlgorithmSolution> solutions = algorithmSolutionMapper.selectAllAlgorithmSolution(problemId, generationId, languages, sortType, offset);

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
 import com.honeyboard.api.algorithm.solution.service.AlgorithmSolutionService;
+import com.honeyboard.api.common.response.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,7 @@ public class AlgorithmSolutionController {
 			PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
 	                problemId, generationId, language, sortType, page);
 	        
-	        if (pageResponse.isEmpty()) {
+	        if (pageResponse.getContent().isEmpty()) {
 	        	return ResponseEntity.noContent().build();
 	        }
 	        

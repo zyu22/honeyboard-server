@@ -3,6 +3,7 @@ package com.honeyboard.api.algorithm.solution.service;
 import java.util.List;
 
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
+import com.honeyboard.api.common.response.PageResponse;
 
 public interface AlgorithmSolutionService {
 
