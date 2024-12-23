@@ -2,6 +2,8 @@ package com.honeyboard.api.project.finale.model;
 
 import java.time.LocalDate;
 
+import com.honeyboard.api.user.model.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,11 +15,16 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class FinaleProject {
+public class FinaleMember {
 
-	private int teamId;
-	private int generationId;
-	private LocalDate submittedAt;
+	private int finaleMemberId;
+	private int finaleTeamId;
+	private User user;
+
+	private enum role {
+		LEADER, MEMBER;
+	};
+
 	private LocalDate createdAt;
 
 }
