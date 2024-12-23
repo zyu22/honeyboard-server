@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.honeyboard.api.project.finale.mapper.FinaleProjectMapper;
+import com.honeyboard.api.project.finale.mapper.FinaleProjectTeamMapper;
 import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.User;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FinaleTeamServiceImpl implements FinaleTeamService {
 
-	private final FinaleProjectMapper finaleProjectMapper;
+	private final FinaleProjectTeamMapper finaleProjectMapper;
 
 	@Override
 	public List<FinaleTeam> findStatusByDate(String targetDate) {
