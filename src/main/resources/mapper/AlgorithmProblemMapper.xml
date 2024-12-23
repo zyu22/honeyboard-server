@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper">
+
+    <resultMap id="AlgorithmProblemWithTags" type="com.honeyboard.api.algorithm.problem.model.AlgorithmProblem">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="url" column="url"/>
+        <result property="userId" column="user_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <collection property="tags" ofType="com.honeyboard.api.algorithm.tag.model.Tag">
+            <id property="id" column="tag_id"/>
+            <result property="name" column="tag_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllAlgorithmProblem" resultMap="AlgorithmProblemWithTags">
+        SELECT ap.*, t.id as tag_id, t.name as tag_name
+        FROM algorithm_problem ap
+                 LEFT JOIN algorithm_problem_tag apt ON ap.id = apt.algorithm_problem_id
+                 LEFT JOIN tag t ON apt.tag_id = t.id
+        WHERE ap.is_deleted = false
+        ORDER BY ap.created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectSearchAlgorithmProblem" resultMap="AlgorithmProblemWithTags">
+        SELECT ap.*, t.id as tag_id, t.name as tag_name
+        FROM algorithm_problem ap
+                 LEFT JOIN algorithm_problem_tag apt ON ap.id = apt.algorithm_problem_id
+                 LEFT JOIN tag t ON apt.tag_id = t.id
+        WHERE ap.is_deleted = false
+          AND (
+            CASE #{searchType}
+                WHEN 'title' THEN ap.title LIKE CONCAT('%', #{keyword}, '%')
+                WHEN 'tag' THEN EXISTS (SELECT 1
+                                        FROM algorithm_problem_tag apt2
+                                                 JOIN tag t2 ON apt2.tag_id = t2.id
+                                        WHERE apt2.algorithm_problem_id = ap.id
+                                          AND t2.name LIKE CONCAT('%', #{keyword}, '%'))
+                END
+            )
+        ORDER BY ap.created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+
+    <insert id="insertAlgorithmProblem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO algorithm_problem (title, url, user_id)
+        VALUES (#{title}, #{url}, #{userId})
+    </insert>
+
+
+    <update id="updateAlgorithmProblem">
+        UPDATE algorithm_problem
+        SET title      = #{algorithmProblem.title},
+            url        = #{algorithmProblem.url},
+            updated_at = CURRENT_DATE
+        WHERE id = #{problemId}
+          AND is_deleted = false
+    </update>
+
+
+    <update id="deleteAlgorithmProblem">
+        UPDATE algorithm_problem
+        SET is_deleted = true,
+            updated_at = CURRENT_DATE
+        WHERE id = #{problemId}
+          AND is_deleted = false
+    </update>
+
+    <select id="existsByUrl" resultType="int">
+        SELECT EXISTS (SELECT 1
+                       FROM algorithm_problem
+                       WHERE url = #{url}
+                         AND is_deleted = false)
+    </select>
+
+    <select id="existsById" resultType="int">
+        SELECT EXISTS (SELECT 1
+                       FROM algorithm_problem
+                       WHERE id = #{id}
+                         AND is_deleted = false)
+    </select>
+
+    <select id="countAlgorithmProblem" resultType="int">
+        SELECT COUNT(*)
+        FROM algorithm_problem
+        WHERE is_deleted = false
+    </select>
+
+    <select id="countSearchAlgorithmProblem" resultType="int">
+        SELECT COUNT(DISTINCT ap.id)
+        FROM algorithm_problem ap
+                 LEFT JOIN algorithm_problem_tag apt ON ap.id = apt.algorithm_problem_id
+                 LEFT JOIN tag t ON apt.tag_id = t.id
+        WHERE ap.is_deleted = false
+          AND (
+            CASE #{searchType}
+                WHEN 'title' THEN ap.title LIKE CONCAT('%', #{keyword}, '%')
+                WHEN 'tag' THEN EXISTS (SELECT 1
+                                        FROM algorithm_problem_tag apt2
+                                                 JOIN tag t2 ON apt2.tag_id = t2.id
+                                        WHERE apt2.algorithm_problem_id = ap.id
+                                          AND t2.name LIKE CONCAT('%', #{keyword}, '%'))
+                END
+            )
+    </select>
+
+    <insert id="insertAlgorithmProblemTags">
+        INSERT INTO algorithm_problem_tag (algorithm_problem_id, tag_id)
+        VALUES
+        <foreach collection="tagIds" item="tagId" separator=",">
+            (#{problemId}, #{tagId})
+        </foreach>
+    </insert>
+
+
+    <select id="getTagIdsByProblemId" resultType="int">
+        SELECT tag_id
+        FROM algorithm_problem_tag
+        WHERE algorithm_problem_id = #{problemId}
+    </select>
+
+    <delete id="deleteSpecificAlgorithmProblemTags">
+        DELETE FROM algorithm_problem_tag
+        WHERE algorithm_problem_id = #{problemId}
+        AND tag_id IN
+        <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">
+            #{tagId}
+        </foreach>
+    </delete>
+
+</mapper>
