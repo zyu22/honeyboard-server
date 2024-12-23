@@ -72,8 +72,9 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
     }
 
     @Override
-    public int softDeleteProblem(int problemId) {
-        return apm.deleteAlgorithmProblem(problemId);
+    public boolean softDeleteProblem(int problemId) {
+        int res = apm.deleteAlgorithmProblem(problemId);
+        return res == 1;
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface AlgorithmProblemService {
 
     AlgorithmProblem updateProblem(int problemId, AlgorithmProblem algorithmProblem);
 
-    int softDeleteProblem(int problemId);
+    boolean softDeleteProblem(int problemId);
 
     boolean existsByUrl(String url);
 

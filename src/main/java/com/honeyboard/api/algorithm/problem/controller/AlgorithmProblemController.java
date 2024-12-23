@@ -33,7 +33,7 @@ public class AlgorithmProblemController {
             } else {
                 list = as.getAllProblem(page, size);
             }
-            
+
             if (list.getContent().isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
@@ -89,8 +89,8 @@ public class AlgorithmProblemController {
                 return ResponseEntity.notFound().build();
             }
             log.info("알고리즘 문제 삭제 시작 - ID: {}", problemId);
-            int res = as.softDeleteProblem(problemId);
-            if (res == 1) {
+            boolean res = as.softDeleteProblem(problemId);
+            if (res) {
                 log.info("알고리즘 문제 삭제 완료 - ID: {}", problemId);
                 return ResponseEntity.status(HttpStatus.OK).build();
             }
