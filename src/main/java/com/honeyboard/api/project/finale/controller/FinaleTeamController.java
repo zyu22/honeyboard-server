@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
+import com.honeyboard.api.project.finale.service.FinaleTeamService;
 import com.honeyboard.api.user.model.User;
 
 import lombok.RequiredArgsConstructor;
