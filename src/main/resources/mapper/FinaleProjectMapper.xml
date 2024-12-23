@@ -1,3 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.honeyboard.api.project.final.mapper.FinalProjectMapper">
+	
+	<select id="selectSubmitStatusByDate" parameterType="string" resultType="FinaleTeam">
+		SELECT 
+			ft.id,
+			ft.generation_id AS generationId,
+			ft.submitted_at AS submittedAt,
+			ft.created_at AS createdAt
+		FROM finale_team ft
+		WHERE DATE(ft.submitted_at) = #{targetDate}
+	</select>
+	
+	<select id="selectRemainedUsers" parameterType="int" resultType="User">
+		SELECT DISTINCT u.name
+		FROM user u
+		WHERE u.generation_id = #{generationId}
+		AND u.id NOT IN (
+			SELECT ftm.user_id
+			FROM finale_team_member ftm
+			JOIN finale_team ft ON ftm.finale_team_id = ft.id
+			WHERE ft.generation_id = #{generationId}
+		)
+	</select>
+	
+	<insert id="insertFinalProject" parameterType="FinaleProject">
+		INSERT INTO finale_project (
+			team_id,
+			url,
+			title,
+			content,
+			user_id,
+			created_at,
+			updated_at
+		) VALUES (
+			#{teamId},
+			#{url},
+			#{title},
+			#{content},
+			#{userId},
+			CURRENT_DATE,
+			CURRENT_DATE
+		)
+	</insert>
+	
+	<update id="updateFinaleProject" parameterType="FinaleProject">
+		UPDATE finale_project
+		SET 
+			url = #{url},
+			title = #{title},
+			content = #{content},
+			updated_at = CURRENT_DATE
+		WHERE team_id = #{teamId}
+		AND is_deleted = false
+	</update>
+	
+	<delete id="removeFinalProject" parameterType="int">
+		DELETE FROM finale_project
+		WHERE team_id = #{teamId}
+	</delete>
+	
+</mapper>
