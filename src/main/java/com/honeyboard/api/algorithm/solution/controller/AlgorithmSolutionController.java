@@ -39,14 +39,12 @@ public class AlgorithmSolutionController {
 			boolean result = algorithmSolutionService.addAlgorithmSolution(problemId, algorithmSolution);
 			
 			if(result) {
-				return new ResponseEntity<>(HttpStatus.CREATED);
+				return ResponseEntity.status(HttpStatus.CREATED).body("알고리즘 풀이가 등록되었습니다.");
 			}
-			else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
+			throw new Exception("풀이 등록에 실패했습니다.");
 		} catch (Exception e) {
 			log.error("알고리즘 풀이 작성 에러: ", e);
-	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
@@ -61,19 +59,15 @@ public class AlgorithmSolutionController {
 		try {
 			PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
 	                problemId, generationId, language, sortType, page);
-			
-			if (pageResponse == null) {
-	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
 	        
 	        if (pageResponse.isEmpty()) {
-	            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	        	return ResponseEntity.noContent().build();
 	        }
 	        
-	        return new ResponseEntity<>(pageResponse, HttpStatus.OK);
+	        return ResponseEntity.ok().body(pageResponse);
 		} catch (Exception e) {
 			log.error("알고리즘 풀이 전체 조회 에러: ", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	} 
 	
@@ -85,18 +79,14 @@ public class AlgorithmSolutionController {
 		try {
 			AlgorithmSolution solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
 			
-			if (solution == null) {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
-			
 			if (solution.isDeleted()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return ResponseEntity.noContent().build();
 			}
-			return new ResponseEntity<>(solution, HttpStatus.OK);
+			return ResponseEntity.ok().body(solution);
 			
 		} catch (Exception e) {
 			log.error("알고리즘 풀이 상세 조회 에러: ", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	//알고리즘 풀이 수정 PUT /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
@@ -109,14 +99,13 @@ public class AlgorithmSolutionController {
 			boolean result = algorithmSolutionService.updateAlgorithmSolution(algorithmSolution);
 			
 			if(result) {
-				return new ResponseEntity<>(HttpStatus.OK);
+				return ResponseEntity.ok().body("알고리즘 풀이가 수정되었습니다.");
 			}
-			else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
+			throw new Exception("풀이 수정에 실패했습니다.");
+			
 		} catch (Exception e) {
 			log.error("알고리즘 풀이 수정 에러: ", e);
-	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
@@ -129,14 +118,13 @@ public class AlgorithmSolutionController {
 			boolean result = algorithmSolutionService.softDeleteAlgorithmSolution(solutionId);
 			
 			if(result) {
-				return new ResponseEntity<>(HttpStatus.OK);
+				return ResponseEntity.ok().body("알고리즘 풀이가 삭제되었습니다.");
 			}
-			else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
+			throw new Exception("풀이 삭제에 실패했습니다.");
+			
 		} catch (Exception e) {
 			log.error("알고리즘 풀이 삭제 에러: ", e);
-	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 }
