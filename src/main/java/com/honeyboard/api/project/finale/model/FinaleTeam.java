@@ -1,6 +1,6 @@
 package com.honeyboard.api.project.finale.model;
 
-import java.time.LocalDate;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,11 +13,11 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class FinaleProject {
+public class FinaleTeam {
 
 	private int teamId;
-	private int generationId;
-	private LocalDate submittedAt;
-	private LocalDate createdAt;
+	private List<FinaleMember> members;
+	private List<FinaleMember> nonParticipants;
+	private boolean hasSubmitted;
 
 }
