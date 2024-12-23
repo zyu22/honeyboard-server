@@ -27,9 +27,9 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 		// 전체 풀이 수
 	    int totalElements = algorithmSolutionMapper.countAlgorithmSolutions(problemId, generationId, languages);
 	    
-	    // PageInfo(pageSize = 9)
-	    PageInfo pageInfo = new PageInfo(page, 9, totalElements);
-	    int offset = (page - 1) * 9;
+	    // PageInfo(pageSize = 12)
+	    PageInfo pageInfo = new PageInfo(page, 12, totalElements);
+	    int offset = (page - 1) * 12;
 	    
 	    //전체 조회 -> List
 	    List<AlgorithmSolution> solutions = algorithmSolutionMapper.selectAllAlgorithmSolution(problemId, generationId, languages, sortType, offset);
