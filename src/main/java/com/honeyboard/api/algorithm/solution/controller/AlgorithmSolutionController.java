@@ -30,7 +30,7 @@ public class AlgorithmSolutionController {
 
 	private final AlgorithmSolutionService algorithmSolutionService;
 	
-	//알고리즘 풀이 작성 POST /api/v1/algorithm/problem/{problemId}/solution
+	//알고리즘 풀이 작성 POST /api/v1/algorithm/problem/{problemId}/solution..
 	@PostMapping("/{problemId}/solution")
 	public ResponseEntity<?> createAlgorithmSolution(
 			@PathVariable int problemId, 
