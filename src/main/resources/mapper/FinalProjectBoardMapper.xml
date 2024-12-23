@@ -19,7 +19,7 @@
 	</resultMap>
 
 	
-	<select id="getAllFinaleBoards" parameterType="int" resultType="FinaleProjectBoard">
+	<select id="selectAllFinaleBoards" parameterType="int" resultType="FinaleProjectBoard">
         SELECT 
             fpb.id AS boardId,
             fpb.summary,
@@ -34,7 +34,7 @@
         ORDER BY fpb.created_at DESC
     </select>
     
-    <select id="getFinaleBoard" parameterType="int" resultMap="FinaleProjectBoardMap">
+    <select id="selectFinaleBoard" parameterType="int" resultMap="FinaleProjectBoardMap">
 	    SELECT 
 	        fpb.id AS boardId,
 	        fpb.summary,
@@ -53,7 +53,7 @@
 	    AND fpb.is_deleted = false
 	</select>
 	
-	<insert id="addFinaleBoard" parameterType="FinaleProjectBoard">
+	<insert id="insertFinaleBoard" parameterType="FinaleProjectBoard">
         INSERT INTO finale_project_board (
             project_id,
             team_id,
@@ -84,7 +84,7 @@
         AND is_deleted = false
     </update>
     
-    <update id="changeFinaleBoardCompletion" parameterType="int">
+    <update id="updateFinaleBoardSubmitStatus" parameterType="int">
         UPDATE finale_team
         SET submitted_at = CURRENT_DATE
         WHERE id = (
@@ -94,7 +94,7 @@
         )
     </update>
     
-    <update id="softDeleteFinaleBoard" parameterType="int">
+    <update id="deleteFinaleBoard" parameterType="int">
         UPDATE finale_project_board
         SET 
             is_deleted = true,

@@ -7,18 +7,18 @@ import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 
 public interface FinaleProjectBoardMapper {
 
-	List<FinaleProjectBoard> selectAllFinalBoards(int finaleId);
+	List<FinaleProjectBoard> selectAllFinaleBoards(int finaleId);
 
-	FinaleProjectBoard selectFinalBoard(int boardId);
+	FinaleProjectBoard selectFinaleBoard(int boardId);
 
 	List<FinaleMember> selectAllFinaleMembers(int boardId);
 
-	int insertFinalBoard(FinaleProjectBoard board);
+	int insertFinaleBoard(FinaleProjectBoard board);
 
-	int updateFinalBoard(int boardId, FinaleProjectBoard board);
+	int updateFinaleBoard(int boardId, FinaleProjectBoard board);
 
-	void updateFinalBoardSubmitStatus(int boardId);
+	void updateFinaleBoardSubmitStatus(int boardId);
 
-	int deleteFinalBoard(int boardId);
+	int deleteFinaleBoard(int boardId);
 
 }

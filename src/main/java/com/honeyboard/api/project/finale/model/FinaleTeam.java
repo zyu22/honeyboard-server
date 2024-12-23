@@ -17,7 +17,6 @@ public class FinaleTeam {
 
 	private int teamId;
 	private List<FinaleMember> members;
-	private List<FinaleMember> nonParticipants;
 	private boolean hasSubmitted;
 
 }
