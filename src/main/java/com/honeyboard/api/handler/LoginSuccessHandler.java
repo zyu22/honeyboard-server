@@ -22,31 +22,34 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-	
+
 	private final JwtService jwtService;
-    private final CookieUtil cookieUtil;
-    private final ObjectMapper objectMapper;
-	
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, 
-                                      HttpServletResponse response,
-                                      Authentication authentication) {
-    	log.debug("LoginSuccessHandler/onAuthenticationSuccess");
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal(); // 정보 가져오기
-        User user = userDetails.getUser();
-        
-        String accessToken = jwtService.generateAccessToken(user); // 토큰 생성
-        String refreshToken = jwtService.generateRefreshToken(user);
-        
-        cookieUtil.addCookie(response, "access_token", accessToken, 
-                (int) (jwtService.getAccessTokenExpire() / 1000)); // httponly cookies에 담기
-        
-        cookieUtil.addCookie(response, "refresh_token", refreshToken, 
-                (int) (jwtService.getRefreshTokenExpire() / 1000)); // httponly cookies에 담기
-        
-        ResponseEntity.status(HttpStatus.OK)
-        		.contentType(MediaType.APPLICATION_JSON)
-        		.body(null); // 여기에 유저 정보 담아야 함 유저 정보 뭐뭐 전달해야할지 아직 몰라서 안 넣음
-        
-    }
+	private final CookieUtil cookieUtil;
+	private final ObjectMapper objectMapper;
+
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) {
+		log.debug("LoginSuccessHandler/onAuthenticationSuccess");
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal(); // 정보 가져오기
+		User user = userDetails.getUser();
+
+		String accessToken = jwtService.generateAccessToken(user); // 토큰 생성
+		String refreshToken = jwtService.generateRefreshToken(user);
+
+		cookieUtil.addCookie(response, "access_token", accessToken, (int) (jwtService.getAccessTokenExpire() / 1000)); // httponly
+																														// cookies에
+																														// 담기
+
+		cookieUtil.addCookie(response, "refresh_token", refreshToken,
+				(int) (jwtService.getRefreshTokenExpire() / 1000)); // httponly cookies에 담기
+
+		User responseUser = new User();
+		responseUser.setGenerationId(user.getGenerationId());
+		responseUser.setUserId(user.getUserId());
+		responseUser.setName(user.getName());
+
+		ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(responseUser);
+
+	}
 }

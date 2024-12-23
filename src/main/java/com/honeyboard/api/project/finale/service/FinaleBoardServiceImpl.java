@@ -17,32 +17,32 @@ public class FinaleBoardServiceImpl implements FinaleBoardService {
 
 	@Override
 	public List<FinaleProjectBoard> getAllFinaleBoards(int finaleId) {
-		return finalBoardMapper.selectAllFinalBoards(finaleId);
+		return finalBoardMapper.selectAllFinaleBoards(finaleId);
 	}
 
 	@Override
 	public FinaleProjectBoard getFinaleBoard(int boardId) {
-		return finalBoardMapper.selectFinalBoard(boardId);
+		return finalBoardMapper.selectFinaleBoard(boardId);
 	}
 
 	@Override
 	public boolean addFinaleBoard(FinaleProjectBoard board) {
-		return finalBoardMapper.insertFinalBoard(board) > 0;
+		return finalBoardMapper.insertFinaleBoard(board) > 0;
 	}
 
 	@Override
 	public boolean updateFinaleBoard(int boardId, FinaleProjectBoard board) {
-		return finalBoardMapper.updateFinalBoard(boardId, board) > 0;
+		return finalBoardMapper.updateFinaleBoard(boardId, board) > 0;
 	}
 
 	@Override
 	public void changeFinaleBoardCompletion(int boardId) {
-		finalBoardMapper.updateFinalBoardSubmitStatus(boardId);
+		finalBoardMapper.updateFinaleBoardSubmitStatus(boardId);
 	}
 
 	@Override
 	public boolean softDeleteFinaleBoard(int boardId) {
-		return finalBoardMapper.deleteFinalBoard(boardId) > 0;
+		return finalBoardMapper.deleteFinaleBoard(boardId) > 0;
 	}
 
 }

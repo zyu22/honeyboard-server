@@ -63,20 +63,6 @@ public class FinaleProjectBoardController {
 		}
 	}
 
-	@PostMapping("/{finaleId}/board/{boardId}/submit")
-	public ResponseEntity<?> submitFinaleBoard(@PathVariable int boardId, @RequestBody FinaleProjectBoard board) {
-		try {
-			if (finaleBoardService.updateFinaleBoard(boardId, board)) {
-				finaleBoardService.changeFinaleBoardCompletion(board.getBoardId());
-				board.setBoardId(boardId);
-				return ResponseEntity.ok().body(board);
-			}
-			return ResponseEntity.badRequest().body("Submit failed");
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
-	}
-
 	@PutMapping("/{finaleId}/board/{boardId}")
 	public ResponseEntity<?> updateFinaleBoard(@PathVariable int boardId, @RequestBody FinaleProjectBoard board) {
 		try {

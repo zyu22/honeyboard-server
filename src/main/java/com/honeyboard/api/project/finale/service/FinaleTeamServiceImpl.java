@@ -19,7 +19,12 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
 
 	@Override
 	public List<FinaleTeam> findStatusByDate(String targetDate) {
-		return finaleProjectMapper.selectSubmitStatusByDate(targetDate);
+		List<FinaleTeam> teams = finaleProjectMapper.selectSubmitStatusByDate(targetDate);
+		for (FinaleTeam team : teams) {
+			team.setMembers(finaleProjectMapper.selectTeamMembers(team.getTeamId()));
+		}
+
+		return teams;
 	}
 
 	@Override
