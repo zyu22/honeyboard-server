@@ -54,6 +54,7 @@ public class AuthController {
 		// 각종 정보 저장
 		user.setEmail(email);
 		user.setRole("USER");
+		user.setGenerationId(userService.getActiveGenerationId());
 		user.setLoginType(domainName.toUpperCase());
 
 		try {
@@ -94,6 +95,7 @@ public class AuthController {
 		}
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setGenerationId(userService.getActiveGenerationId());
 		user.setLoginType("FORM");
 		try {
 			if (userService.saveUser(user)) { // 회원가입
