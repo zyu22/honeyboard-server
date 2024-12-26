@@ -27,14 +27,12 @@ public class TrackProjectController {
             List<TrackProject> projects = trackProjectService.getAllTrackProjects(generation);
             
             if (projects.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(projects);
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
             log.error("관통 프로젝트 조회 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -46,7 +44,7 @@ public class TrackProjectController {
             return ResponseEntity.ok(project);
         } catch (Exception e) {
             log.error("관통 프로젝트 상세 조회 중 에러 발생 - ID: {}", trackId, e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -59,16 +57,14 @@ public class TrackProjectController {
             List<User> members = trackProjectService.getTrackProjectMembers(generation);
             
             if (members.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(members);
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
             log.error("관통 프로젝트 멤버 조회 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -83,13 +79,11 @@ public class TrackProjectController {
                 trackProject.getExcludedMemberIds()
             );
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception e) {
             log.error("관통 프로젝트 생성 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -102,13 +96,11 @@ public class TrackProjectController {
             log.info("관통 프로젝트 수정 요청 - ID: {}", trackId);
             trackProjectService.updateTrackProject(trackId, trackProject);
             return ResponseEntity.ok().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception e) {
             log.error("관통 프로젝트 수정 중 에러 발생 - ID: {}", trackId, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -118,11 +110,9 @@ public class TrackProjectController {
             log.info("관통 프로젝트 삭제 요청 - ID: {}", trackId);
             trackProjectService.deleteTrackProject(trackId);
             return ResponseEntity.ok().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
             log.error("관통 프로젝트 삭제 중 에러 발생 - ID: {}", trackId, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
