@@ -34,7 +34,7 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
 
 	@Override
 	public boolean saveFinaleProject(FinaleProject finaleProject) {
-		return finaleProjectMapper.insertFinalProject(finaleProject) > 0;
+		return finaleProjectMapper.insertFinaleProject(finaleProject) > 0;
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
 	}
 
 	@Override
-	public boolean removeFinalProject(int teamId) {
-		return finaleProjectMapper.removeFinalProject(teamId);
+	public boolean removeFinaleProject(int teamId) {
+		return finaleProjectMapper.removeFinaleProject(teamId);
 	}
 
 }

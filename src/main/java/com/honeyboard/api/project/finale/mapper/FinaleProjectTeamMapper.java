@@ -13,11 +13,11 @@ public interface FinaleProjectTeamMapper {
 
 	public List<User> selectRemainedUsers(int generationId);
 
-	public int insertFinalProject(FinaleProject finaleProject);
+	public int insertFinaleProject(FinaleProject finaleProject);
 
 	public int updateFinaleProject(FinaleProject finaleProject);
 
-	public boolean removeFinalProject(int teamId);
+	public boolean removeFinaleProject(int teamId);
 
 	public List<FinaleMember> selectTeamMembers(int teamId);
 
