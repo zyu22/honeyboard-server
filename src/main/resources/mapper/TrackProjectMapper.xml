@@ -43,6 +43,7 @@
         SELECT DISTINCT u.*
         FROM user u
         WHERE u.generation_id = #{generationId}
+        AND u.is_ssafy = true
     </select>
     
     <!-- 프로젝트 생성 -->
