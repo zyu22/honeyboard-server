@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	
+
 	private final UserMapper userMapper;
 
 	@Override
@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Boolean existsByEmail(String email) {
 		return userMapper.selectExistedEmail(email) > 0;
+	}
+
+	@Override
+	public Integer getActiveGenerationId() {
+		return userMapper.selectActiveGenerationId();
 	}
 
 }
