@@ -41,7 +41,6 @@ public class AuthController {
 			@CookieValue("temporary_token") String temporaryToken, // 임시토큰
 			@RequestBody User user, HttpServletResponse response) { // 클라이언트에서 받은 유저 이름 담아져있음
 		log.debug("AuthController/completeOAuth2Signup");
-
 		String email = jwtService.getEmailFromToken(temporaryToken); // OAuth2로 로그인 인증 되어 임시토큰 가지고 컨트롤러로 도착하면 이메일 추출
 
 		try {
@@ -54,7 +53,6 @@ public class AuthController {
 
 		// 각종 정보 저장
 		user.setEmail(email);
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user.setRole("USER");
 		user.setLoginType(domainName.toUpperCase());
 

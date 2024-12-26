@@ -49,9 +49,3 @@
 //				.build();
 //	}
 //
-//	public void setAdditionalInfo(String teamName, List<String> teamMembers, String authorName) {
-//		this.teamName = teamName;
-//		this.teamMembers = teamMembers;
-//		this.userName = authorName;
-//	}
-//}

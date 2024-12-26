@@ -42,7 +42,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 			String temporaryToken = jwtService.generateTemporaryToken(user.getEmail()); // 임시토큰 발급
 			cookieUtil.addCookie(response, "temporary_token", temporaryToken,
 					(int) (jwtService.getTemporaryTokenExpire() / 1000)); // httponly cookies로 전달
-//            	response.sendRedirect("honeyboard-client-url/signup?token=" + temporaryToken); 회원가입 url 나오면 고치기
+			response.sendRedirect("http://localhost:5173/oauth/google/additional");
 			return;
 		} // http://localhost:8080/oauth2/authorization/google
 
