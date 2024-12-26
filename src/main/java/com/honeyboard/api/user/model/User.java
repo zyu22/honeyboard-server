@@ -1,13 +1,8 @@
 package com.honeyboard.api.user.model;
 
-import java.sql.Date;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -17,14 +12,17 @@ import lombok.ToString;
 @Builder
 public class User {
 
-	private int userId;
-	private String email;
-	private String password;
-	private String name;
-	private int generationId;
-	private String role;
-	private String loginType;
-	private boolean isSsafy;
-	private Date createdAt;
-	
+    private int userId;
+    private String email;
+    private String password;
+    private String name;
+    private int generationId;
+    private String role;
+    private String loginType;
+    private boolean isSsafy;
+    private Date createdAt;
+
+    public User(String name) {
+        this.name = name;
+    }
 }
