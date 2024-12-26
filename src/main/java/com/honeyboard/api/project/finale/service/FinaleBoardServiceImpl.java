@@ -13,36 +13,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FinaleBoardServiceImpl implements FinaleBoardService {
 
-	private final FinaleProjectBoardMapper finalBoardMapper;
+	private final FinaleProjectBoardMapper finalProjectBoardMapper;
 
 	@Override
 	public List<FinaleProjectBoard> getAllFinaleBoards(int finaleId) {
-		return finalBoardMapper.selectAllFinaleBoards(finaleId);
+		return finalProjectBoardMapper.selectAllFinaleBoards(finaleId);
 	}
 
 	@Override
 	public FinaleProjectBoard getFinaleBoard(int boardId) {
-		return finalBoardMapper.selectFinaleBoard(boardId);
+		return finalProjectBoardMapper.selectFinaleBoard(boardId);
 	}
 
 	@Override
 	public boolean addFinaleBoard(FinaleProjectBoard board) {
-		return finalBoardMapper.insertFinaleBoard(board) > 0;
+		return finalProjectBoardMapper.insertFinaleBoard(board) > 0;
 	}
 
 	@Override
 	public boolean updateFinaleBoard(int boardId, FinaleProjectBoard board) {
-		return finalBoardMapper.updateFinaleBoard(boardId, board) > 0;
+		return finalProjectBoardMapper.updateFinaleBoard(boardId, board) > 0;
 	}
 
 	@Override
 	public void changeFinaleBoardCompletion(int boardId) {
-		finalBoardMapper.updateFinaleBoardSubmitStatus(boardId);
+		finalProjectBoardMapper.updateFinaleBoardSubmitStatus(boardId);
 	}
 
 	@Override
 	public boolean softDeleteFinaleBoard(int boardId) {
-		return finalBoardMapper.deleteFinaleBoard(boardId) > 0;
+		return finalProjectBoardMapper.deleteFinaleBoard(boardId) > 0;
 	}
 
 }
