@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-=======
-
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
->>>>>>> 18058092aa4a618bcabeb251b8d1e17901dff923
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.honeyboard.api.algorithm.guide.mapper.AlgorithmGuideMapper">
@@ -77,7 +72,3 @@
     </delete>
 
 </mapper>
-<<<<<<< HEAD
-=======
-
->>>>>>> 18058092aa4a618bcabeb251b8d1e17901dff923
