@@ -25,9 +25,9 @@ React 기반 프론트엔드와 연동되는 RESTful API 서버입니다.
     <td align="center"><a href="https://github.com/kkangssu"><img src="https://github.com/kkangssu.png" width="100px;" alt=""/><br /><sub><b>kkangssu</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/kkangssu"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
     <td align="center"><a href="https://github.com/rpeowiqu"><img src="https://github.com/rpeowiqu.png" width="100px;" alt=""/><br /><sub><b>rpeowiqu</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/rpeowiqu"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
     <td align="center"><a href="https://github.com/yujeong789"><img src="https://github.com/yujeong789.png" width="100px;" alt=""/><br /><sub><b>yujeong789</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/yujeong789"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
+     <td align="center"><a href="https://github.com/SungMoonPark"><img src="https://github.com/SungMoonPark.png" width="100px;" alt=""/><br /><sub><b>SungMoonPark</b></sub></a><br />🔨 백엔드 개발<br/><a href="https://github.com/SungMoonPark"><img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white"/></a></td>
   </tr>
 </table>
-
 ## 🛠 기술 스택
 
 <table>
