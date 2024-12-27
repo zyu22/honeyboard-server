@@ -88,7 +88,7 @@ public class FinaleTeamController {
 	@DeleteMapping("/team/{teamId}")
 	public ResponseEntity<?> removeFinaleProject(@PathVariable int teamId) {
 		try {
-			if (finaleTeamService.removeFinalProject(teamId)) {
+			if (finaleTeamService.removeFinaleProject(teamId)) {
 				return ResponseEntity.ok().body("FinaleProject removed successfully");
 			}
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("The Project does not exist");
