@@ -16,6 +16,6 @@ public interface FinaleTeamService {
 
 	boolean updateFinaleProject(FinaleProject finaleProject);
 
-	boolean removeFinalProject(int teamId);
+	boolean removeFinaleProject(int teamId);
 
 }

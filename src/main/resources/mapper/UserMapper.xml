@@ -90,5 +90,11 @@
         FROM user
         WHERE email = #{email}
     </select>
+    
+    <select id="selectActiveGenerationId" resultType="Integer">
+    	SELECT generation_id
+    	FROM generation
+    	WHERE is_active = true
+    </select>
 
 </mapper>
