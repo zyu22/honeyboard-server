@@ -51,7 +51,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         cookieUtil.addCookie(response, "refresh_token", refreshToken,
                 (int) (jwtService.getRefreshTokenExpire() / 1000));
 
-//            response.sendRedirect("honeyboard-client-url");
+        response.sendRedirect("http://localhost:5173/");
     }
 
 }
