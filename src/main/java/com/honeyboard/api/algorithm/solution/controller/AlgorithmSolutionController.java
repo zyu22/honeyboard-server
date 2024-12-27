@@ -64,7 +64,6 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 상세 조회 GET /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@GetMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> getAlgorithmSolution(
-			@PathVariable int problemId, 
 			@PathVariable int solutionId) {
 		try {
 			AlgorithmSolution solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
@@ -82,10 +81,11 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 수정 PUT /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@PutMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> updateAlgorithmSolution(
-			@PathVariable int problemId, 
 			@PathVariable int solutionId,
 			@RequestBody AlgorithmSolution algorithmSolution) {
 		try {
+
+			algorithmSolution.setSolutionId(solutionId);
 			boolean result = algorithmSolutionService.updateAlgorithmSolution(algorithmSolution);
 			
 			if(result) {
@@ -102,7 +102,6 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 삭제 DELETE /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@DeleteMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> deleteAlgorithmSolution(
-			@PathVariable int problemId, 
 			@PathVariable int solutionId) {
 		try {
 			boolean result = algorithmSolutionService.softDeleteAlgorithmSolution(solutionId);
