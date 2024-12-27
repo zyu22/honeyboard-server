@@ -1,10 +1,6 @@
 package com.honeyboard.api.auth.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,8 +8,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmailVerification {
+    String email;
+    String code;
 
-	String email;
-	String code;
-	
+    public EmailVerification(String email) {
+        this.email = email;
+    }
 }

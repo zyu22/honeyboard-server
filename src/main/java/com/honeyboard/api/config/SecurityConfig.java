@@ -6,9 +6,10 @@ import com.honeyboard.api.handler.LoginFailureHandler;
 import com.honeyboard.api.handler.LoginSuccessHandler;
 import com.honeyboard.api.handler.OAuth2AuthenticationFailureHandler;
 import com.honeyboard.api.handler.OAuth2AuthenticationSuccessHandler;
-import com.honeyboard.api.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
     private final JwtVerificationFilter jwtVerificationFilter;
@@ -37,76 +39,119 @@ public class SecurityConfig {
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final UserDetailsService userDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final CookieUtil cookieUtil;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
     private final LogoutHandler logoutHandler;
-    @Value("${cors.allowed-origins}")
-    private String[] allowOriginUrl;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.info("보안 필터 체인 구성 시작");
+
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers( // 여기 있는 경로는 인증 안 해도 됩니다
-                                "/api/v1/**",
-                                "/api/v1/auth/**",
-                                "/oauth2/",
-                                "/swagger-ui/**"
-                        ).permitAll()
-                        .requestMatchers("/api/v1/admin").hasRole("ADMIN") // admin 권한 확인
-                        .requestMatchers("/api/v1/user").hasRole("USER") // user 권한 확인
-                        .anyRequest() // 모든 요청에 대해
-                        .authenticated() // 권한 확인 요청
-                )
-                .userDetailsService(userDetailsService) // 로그인 로직 실행
-                .formLogin(form -> form  // 일반 로그인 설정 추가
-                        .loginProcessingUrl("/api/v1/auth/login") // 이 경로에 대한 요청은 login
-                        .successHandler(loginSuccessHandler) // 로그인 성공 시
-                        .failureHandler(loginFailureHandler) // 로그인 실패 시
-                )
-
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService) // OAuth2 사용자 서비스 설정
-                        )
-                        .successHandler(oAuth2AuthenticationSuccessHandler) // 성공 시
-                        .failureHandler(oAuth2AuthenticationFailureHandler) // 실패 시
-                        .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/oauth2/authorization") // // OAuth2 인증 기본 URI
-                        )
-                )
-                .addFilterBefore(jwtVerificationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 미사용
-                )
-                .exceptionHandling(
-                        e -> e.accessDeniedHandler(
-                                        (request, response, accessDeniedException) -> response.setStatus(403) // 접근 거부 시 403 응답
-                                )
-                                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))) // 인증 실패 시 401 응답
+                .csrf(csrf -> {
+                    log.debug("CSRF 보호 비활성화");
+                    csrf.disable();
+                })
+                .authorizeHttpRequests(auth -> {
+                    log.debug("URL 기반 보안 설정 구성");
+                    auth.requestMatchers(
+                                    "/api/v1/**",
+                                    "/api/v1/auth/**",
+                                    "/oauth2/**",
+                                    "/login/oauth2/**",
+                                    "/swagger-ui/**",
+                                    "/api/v1/auth/logout"
+                            ).permitAll()
+                            .requestMatchers("/api/v1/admin").hasRole("ADMIN")
+                            .requestMatchers("/api/v1/user").hasRole("USER")
+                            .anyRequest()
+                            .authenticated();
+                    log.debug("URL 보안 설정 완료");
+                })
+                .userDetailsService(userDetailsService)
+                .formLogin(form -> {
+                    log.debug("폼 로그인 설정 구성");
+                    form.loginProcessingUrl("/api/v1/auth/login")
+                            .successHandler(loginSuccessHandler)
+                            .failureHandler(loginFailureHandler);
+                    log.debug("폼 로그인 설정 완료");
+                })
+                .oauth2Login(oauth2 -> {
+                    log.debug("OAuth2 로그인 설정 구성");
+                    oauth2.userInfoEndpoint(userInfo -> {
+                                log.debug("OAuth2 사용자 서비스 설정");
+                                userInfo.userService(customOAuth2UserService);
+                            })
+                            .successHandler(oAuth2AuthenticationSuccessHandler)
+                            .failureHandler(oAuth2AuthenticationFailureHandler)
+                            .authorizationEndpoint(authorization -> {
+                                log.debug("OAuth2 인증 기본 URI 설정: /oauth2/authorization");
+                                authorization.baseUri("/oauth2/authorization");
+                            });
+                    log.debug("OAuth2 로그인 설정 완료");
+                })
+                .addFilterBefore(jwtVerificationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> {
+                    log.debug("세션 관리 정책 설정: STATELESS");
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
+                .exceptionHandling(e -> {
+                    log.debug("보안 예외 처리 구성");
+                    e.accessDeniedHandler((request, response, accessDeniedException) -> {
+                                log.warn("접근 거부 처리: {}", accessDeniedException.getMessage());
+                                response.setStatus(403);
+                            })
+                            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                })
                 .logout(l -> l
-                        .logoutUrl("/api/v1/auth/logout") // 로그아웃 URL
-                        .addLogoutHandler(logoutHandler) // 로그아웃 핸들러(아직 미구현)
+                        .logoutUrl("/api/v1/auth/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        })  // 리다이렉트 방지
+                        .permitAll()
                 )
-                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() { // CORS 설정
+                .cors(corsCustomizer -> {
+                    log.debug("CORS 설정 구성");
+                    corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                        @Override
+                        public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                            log.debug("CORS 설정 생성 - 요청 URI: {}", request.getRequestURI());
 
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                            CorsConfiguration configuration = new CorsConfiguration();
+                            configuration.setAllowedOrigins(List.of(frontendUrl));
+                            configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                            configuration.setAllowCredentials(true);
+                            configuration.addAllowedHeader("*");
+                            configuration.setExposedHeaders(Arrays.asList(
+                                    "Authorization",
+                                    "Set-Cookie",
+                                    "Access-Control-Allow-Credentials",
+                                    "Access-Control-Allow-Origin"
+                            ));
+                            configuration.setAllowedHeaders(Arrays.asList(
+                                    "Authorization",
+                                    "Content-Type",
+                                    "Cookie",
+                                    "Access-Control-Allow-Credentials",
+                                    "Access-Control-Allow-Origin"
+                            ));
+                            configuration.setMaxAge(3600L);
 
-                        CorsConfiguration configuration = new CorsConfiguration(); // CORS 허용 출처 설정
+                            log.debug("CORS 허용 출처: {}", frontendUrl);
+                            log.debug("CORS 허용 메서드: {}", configuration.getAllowedMethods());
+                            log.debug("CORS 노출 헤더: {}", configuration.getExposedHeaders());
 
-                        configuration.setAllowedOrigins(Arrays.asList(allowOriginUrl)); // HTTP 메서드 허용 설정
+                            return configuration;
+                        }
+                    });
+                    log.debug("CORS 설정 완료");
+                });
 
-                        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-                        configuration.setAllowCredentials(true); // 인증 정보 허용
-                        configuration.addAllowedHeader("*"); // 모든 헤더 허용
-                        configuration.setExposedHeaders(List.of("Authorization")); // Authorization 헤더 노출
-                        configuration.setMaxAge(3600L);
-                        return configuration;
-                    }
-                })));
+        log.info("보안 필터 체인 구성 완료");
         return http.build();
     }
 }
