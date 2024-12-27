@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectTeamMapper">
+	
+	<select id="selectSubmitStatusByDate" parameterType="string" resultType="FinaleTeam">
+	    SELECT 
+	        fp.team_id AS teamId,
+	        CASE 
+	            WHEN fpb.id IS NOT NULL THEN true 
+	            ELSE false 
+	        END AS hasSubmitted
+	    FROM finale_project fp
+	    LEFT JOIN finale_project_board fpb 
+	        ON fp.team_id = fpb.team_id 
+	        AND DATE(fpb.created_at) = #{targetDate}
+	        AND fpb.is_deleted = false
+	</select>
+	
+	<select id="selectRemainedUsers" parameterType="int" resultType="User">
+		SELECT DISTINCT u.name
+		FROM user u
+		WHERE u.generation_id = #{generationId}
+		AND u.id NOT IN (
+			SELECT ftm.user_id
+			FROM finale_team_member ftm
+			JOIN finale_team ft ON ftm.finale_team_id = ft.id
+			WHERE ft.generation_id = #{generationId}
+		)
+	</select>
+	
+	<select id="selectTeamMembers" parameterType="int" resultType="FinaleMember">
+	    SELECT 
+	        ftm.user_id AS userId,
+	        u.name AS userName,
+	        ftm.role AS memberRole
+	    FROM finale_team_member ftm
+	    JOIN user u ON ftm.user_id = u.id
+	    JOIN finale_project fp ON ftm.finale_team_id = fp.team_id
+	    WHERE ftm.finale_team_id = #{teamId}
+	    AND fp.is_deleted = false
+	    ORDER BY 
+	        CASE ftm.role 
+	            WHEN 'leader' THEN 1 
+	            WHEN 'member' THEN 2 
+	        END
+	</select>
+
+	
+	<insert id="insertFinaleProject" parameterType="FinaleProject">
+		INSERT INTO finale_project (
+			team_id,
+			url,
+			title,
+			content,
+			user_id,
+			created_at,
+			updated_at
+		) VALUES (
+			#{teamId},
+			#{url},
+			#{title},
+			#{content},
+			#{userId},
+			CURRENT_DATE,
+			CURRENT_DATE
+		)
+	</insert>
+	
+	<update id="updateFinaleProject" parameterType="FinaleProject">
+		UPDATE finale_project
+		SET 
+			url = #{url},
+			title = #{title},
+			content = #{content},
+			updated_at = CURRENT_DATE
+		WHERE team_id = #{teamId}
+		AND is_deleted = false
+	</update>
+	
+	<delete id="removeFinaleProject" parameterType="int">
+		DELETE FROM finale_project
+		WHERE team_id = #{teamId}
+	</delete>
+	
+</mapper>
