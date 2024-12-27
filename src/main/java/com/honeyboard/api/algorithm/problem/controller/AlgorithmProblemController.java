@@ -19,7 +19,7 @@ public class AlgorithmProblemController {
     @GetMapping
     public ResponseEntity<?> getAllAlgorithmProblem(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "16") int size,
             @RequestParam(required = false) String searchType,
             @RequestParam(required = false) String keyword
     ) {
