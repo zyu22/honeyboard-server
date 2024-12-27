@@ -87,7 +87,7 @@ public class SecurityConfig {
                                 )
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))) // 인증 실패 시 401 응답
                 .logout(l -> l
-                        .logoutUrl("/api/v1/user/logout") // 로그아웃 URL
+                        .logoutUrl("/api/v1/auth/logout") // 로그아웃 URL
                         .addLogoutHandler(logoutHandler) // 로그아웃 핸들러(아직 미구현)
                 )
                 .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() { // CORS 설정
