@@ -41,6 +41,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 				java.util.Date utilDate = formatter.parse(project.getCreatedAt());
 				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+				schedule.setStartDate(sqlDate);
+				schedule.setEndDate(sqlDate);
 
 				schedule.setScheduleType("TRACK");
 				schedule.setPublicAccess(true);
