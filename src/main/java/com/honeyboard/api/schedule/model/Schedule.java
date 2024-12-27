@@ -17,10 +17,10 @@ public class Schedule {
 	private Date startDate;
 	private Date endDate;
 	private String scheduleType;
-	private boolean is_public;
+	private boolean publicAccess;
 	private int userId;
 	private int generationId;
 	private Date createdAt;
 	private Date updatedAt;
-	
+
 }

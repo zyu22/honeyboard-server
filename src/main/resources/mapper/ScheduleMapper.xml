@@ -13,7 +13,7 @@
 	        start_date,
 	        end_date,
 	        schedule_type,
-	        is_public,
+	        is_public AS publicAccess,
 	        generation_id,
 	        user_id
 	    FROM schedule
@@ -27,6 +27,20 @@
 	       </when>
 	   </choose>
 	   ORDER BY start_date DESC
+	</select>
+	
+	<!-- 관통 프로젝트에서 일정 조회-->
+	<select id="selectTrackProjectByMonth" resultType="TrackProject">
+		SELECT id AS trackProjrctId,
+		       title,
+		       created_at AS createdAt,
+			   generation_id,
+			   user_id
+		FROM track_project
+		WHERE YEAR(created_at) = #{year}
+		  AND MONTH(created_at) = #{month}
+		  AND generation_id = #{generationId}
+		  AND is_deleted = false
 	</select>
 	
 	<!-- 일정 등록 -->
