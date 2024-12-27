@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.honeyboard.api.schedule.mapper.ScheduleMapper">
+	<!-- 일정 조회 + role로 필터링 + 연도/월로 조회-->
+	<!-- 인덱스 처리하면 좋음-->
+	<select id="selectScheduleByMonth" resultType="Schedule">
+		SELECT 
+	        id as scheduleId,
+	        title,
+	        start_date,
+	        end_date,
+	        schedule_type,
+	        is_public,
+	        generation_id,
+	        user_id
+	    FROM schedule
+	    WHERE 1=1
+	    AND YEAR(start_date) = #{year}
+		AND MONTH(start_date) = #{month}
+	   <choose>
+	       <when test="role != 'ADMIN'">
+	           AND generation_id = #{generationId}
+	           AND is_public = true
+	       </when>
+	   </choose>
+	   ORDER BY start_date DESC
+	</select>
+	
+	<!-- 일정 등록 -->
+	<insert id="insertSchedule" parameterType="Schedule">
+		INSERT INTO schedule (
+	        title,
+	        start_date,
+	        end_date,
+			schedule_type,
+		    is_public,
+	        user_id,
+	        generation_id,
+	        created_at,
+	        updated_at
+    	)
+    	VALUES (#{title},
+                #{startDate},
+                #{endDate},
+                #{scheduleType},
+    	        #{isPublic},
+                #{userId},
+                #{generationId},
+                NOW(),
+                NOW()
+		)
+	</insert>
+	
+	<!-- 일정 수정 -->
+	<update id="updateSchedule" parameterType="Schedule">
+		UPDATE schedule
+		SET
+			title = #{title},
+			start_date = #{startDate},
+			end_date = #{endDate},
+			schedule_type = #{scheduleType},
+			is_public = #{isPublic},
+			updated_at = NOW()
+		WHERE id = #{scheduleId}
+	</update>
+	
+	<!-- 일정 삭제 -->
+	<delete id="deleteSchedule">
+    	DELETE FROM schedule
+    	WHERE id = #{scheduleId}
+	</delete>
+</mapper>
