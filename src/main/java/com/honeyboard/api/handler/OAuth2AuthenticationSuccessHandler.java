@@ -66,7 +66,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		objectMapper.writeValue(response.getWriter(), responseUser);
 
-//            response.sendRedirect("honeyboard-client-url");
-	}
+        response.sendRedirect("http://localhost:5173/");
+    }
 
 }
