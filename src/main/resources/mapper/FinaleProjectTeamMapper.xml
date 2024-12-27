@@ -3,7 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
-<mapper namespace="com.honeyboard.api.project.final.mapper.FinalProjectTeamMapper">
+<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectTeamMapper">
 	
 	<select id="selectSubmitStatusByDate" parameterType="string" resultType="FinaleTeam">
 	    SELECT 
@@ -49,7 +49,7 @@
 	</select>
 
 	
-	<insert id="insertFinalProject" parameterType="FinaleProject">
+	<insert id="insertFinaleProject" parameterType="FinaleProject">
 		INSERT INTO finale_project (
 			team_id,
 			url,
@@ -80,7 +80,7 @@
 		AND is_deleted = false
 	</update>
 	
-	<delete id="removeFinalProject" parameterType="int">
+	<delete id="removeFinaleProject" parameterType="int">
 		DELETE FROM finale_project
 		WHERE team_id = #{teamId}
 	</delete>
