@@ -26,11 +26,8 @@ public class ChatController {
             log.debug("채팅 목록 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}",
                     generationId, page, size);
 
-            // 페이징 처리를 위해 offset 계산 (MyBatis용)
-            int offset = (page - 1) * size;
-
             return ResponseEntity.ok(
-                    chatService.getChatListByGenerationId(offset, size, generationId)
+                    chatService.getChatListByGenerationId(page, size, generationId)
             );
 
         } catch (Exception e) {
