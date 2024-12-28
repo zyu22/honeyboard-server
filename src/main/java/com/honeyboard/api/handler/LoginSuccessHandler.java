@@ -1,6 +1,5 @@
 package com.honeyboard.api.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.CustomUserDetails;
 import com.honeyboard.api.user.model.User;
@@ -9,8 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -24,7 +22,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final CookieUtil cookieUtil;
-    private final ObjectMapper objectMapper;
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -45,14 +44,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         cookieUtil.addCookie(response, "refresh_token", refreshToken,
                 (int) (jwtService.getRefreshTokenExpire() / 1000));
         log.debug("쿠키 설정 완료");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
 
-        User responseUser = new User();
-        responseUser.setGenerationId(user.getGenerationId());
-        responseUser.setUserId(user.getUserId());
-        responseUser.setName(user.getName());
-
-        response.setStatus(HttpStatus.OK.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getWriter(), responseUser);
     }
 }

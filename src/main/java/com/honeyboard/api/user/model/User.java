@@ -2,7 +2,7 @@ package com.honeyboard.api.user.model;
 
 import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -12,17 +12,34 @@ import java.sql.Date;
 @Builder
 public class User {
 
-    private int userId;
+    private Integer userId;
     private String email;
     private String password;
     private String name;
-    private int generationId;
+    private Integer generationId;
+    private Integer generationName;
     private String role;
     private String loginType;
-    private boolean isSsafy;
-    private Date createdAt;
+    private Boolean isSsafy;
+    private Integer teamId;
+    private LocalDate createdAt;
 
     public User(String name) {
         this.name = name;
+    }
+
+    public User(int userId, String name, int generationId, int teamId) {
+        this.userId = userId;
+        this.name = name;
+        this.generationId = generationId;
+        this.teamId = teamId;
+    }
+
+    public User(int userId, String name, int generationId, int generationName, String role) {
+        this.userId = userId;
+        this.name = name;
+        this.generationId = generationId;
+        this.generationName = generationName;
+        this.role = role;
     }
 }
