@@ -102,7 +102,7 @@
     </update>
 
     <!-- 웹 개념 전체 개수 조회 -->
-    <select id="countWebGuide">
+    <select id="countWebGuide" resultType="int">
         SELECT COUNT(*)
         FROM web_guide
         WHERE generation_id = #{generationId}
@@ -110,7 +110,7 @@
     </select>
 
     <!-- 웹 개념 검색 개수 조회 -->
-    <select id="countSearchWebGuide">
+    <select id="countSearchWebGuide" resultType="int">
         SELECT COUNT(*)
         FROM web_guide
         WHERE generation_id = #{generationId}
