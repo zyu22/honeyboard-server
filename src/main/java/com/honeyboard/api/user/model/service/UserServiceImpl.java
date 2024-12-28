@@ -7,6 +7,8 @@ import com.honeyboard.api.user.model.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -52,5 +54,12 @@ public class UserServiceImpl implements UserService {
 	public Integer getActiveGenerationId() {
 		return userMapper.selectActiveGenerationId();
 	}
+
+	@Override
+	public
+	List<User> getAllUsersWithTeamInfo(int generationId) {
+		return userMapper.selectUsersWithTeamInfo(generationId);
+	}
+
 
 }
