@@ -13,13 +13,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class VerificationServiceImpl implements VerificationService {
-	
+
 	private final RedisTemplate<String, String> redisTemplate;
 	private final JwtService jwtService;
 
 	@Override
 	public String generateVerificationCode() {
-		return String.format("%06d", new Random().nextInt(999999));
+		return String.format("%04d", new Random().nextInt(10000));
 	}
 
 	@Override
@@ -30,11 +30,11 @@ public class VerificationServiceImpl implements VerificationService {
 	@Override
 	public boolean verifyCode(String email, String verificationCode) {
 		String savedCode = redisTemplate.opsForValue().get(email);
-        if (verificationCode.equals(savedCode)) {
-            redisTemplate.delete(email);
-            return true;
-        }
-        return false;
+		if (verificationCode.equals(savedCode)) {
+			redisTemplate.delete(email);
+			return true;
+		}
+		return false;
 	}
 
 }
