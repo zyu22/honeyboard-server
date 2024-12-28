@@ -3,9 +3,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
-<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectTeamMapper">
+<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectMapper">
 	
-	<select id="selectSubmitStatusByDate" parameterType="string" resultType="FinaleTeam">
+	<select id="selectSubmitStatusByDate" parameterType="java.time.LocalDate" resultType="FinaleTeam">
 	    SELECT 
 	        fp.team_id AS teamId,
 	        CASE 
@@ -47,42 +47,5 @@
 	            WHEN 'member' THEN 2 
 	        END
 	</select>
-
-	
-	<insert id="insertFinaleProject" parameterType="FinaleProject">
-		INSERT INTO finale_project (
-			team_id,
-			url,
-			title,
-			content,
-			user_id,
-			created_at,
-			updated_at
-		) VALUES (
-			#{teamId},
-			#{url},
-			#{title},
-			#{content},
-			#{userId},
-			CURRENT_DATE,
-			CURRENT_DATE
-		)
-	</insert>
-	
-	<update id="updateFinaleProject" parameterType="FinaleProject">
-		UPDATE finale_project
-		SET 
-			url = #{url},
-			title = #{title},
-			content = #{content},
-			updated_at = CURRENT_DATE
-		WHERE team_id = #{teamId}
-		AND is_deleted = false
-	</update>
-	
-	<delete id="removeFinaleProject" parameterType="int">
-		DELETE FROM finale_project
-		WHERE team_id = #{teamId}
-	</delete>
 	
 </mapper>
