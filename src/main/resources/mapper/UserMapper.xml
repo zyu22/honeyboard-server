@@ -94,4 +94,16 @@
         WHERE is_active = 1
     </select>
 
+    <select id="selectUsersWithTeamInfo" parameterType="int" resultType="User">
+        SELECT
+            u.id as userId,
+            u.name,
+            u.generation_id as generationId,
+            fm.finale_team_id as teamId
+        FROM user u
+                 LEFT JOIN finale_member fm ON u.id = fm.user_id
+        WHERE u.generation_id = #{generationId}
+        AND is_ssafy = true
+    </select>
+
 </mapper>

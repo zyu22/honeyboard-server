@@ -20,9 +20,17 @@ public class User {
     private String role;
     private String loginType;
     private boolean isSsafy;
+    private int teamId;
     private Date createdAt;
 
     public User(String name) {
         this.name = name;
+    }
+
+    public User(int userId, String name, int generationId, int teamId) {
+        this.userId = userId;
+        this.name = name;
+        this.generationId = generationId;
+        this.teamId = teamId;
     }
 }
