@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -24,7 +25,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
     private final CookieUtil cookieUtil;
-    private final ObjectMapper objectMapper;
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -46,13 +48,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                 (int) (jwtService.getRefreshTokenExpire() / 1000));
         log.debug("쿠키 설정 완료");
 
-        User responseUser = new User();
-        responseUser.setGenerationId(user.getGenerationId());
-        responseUser.setUserId(user.getUserId());
-        responseUser.setName(user.getName());
-
-        response.setStatus(HttpStatus.OK.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getWriter(), responseUser);
+        log.info("메인 페이지로 리다이렉트: {}", user.getEmail());
+        response.sendRedirect(frontendUrl + "/login/callback");
     }
 }

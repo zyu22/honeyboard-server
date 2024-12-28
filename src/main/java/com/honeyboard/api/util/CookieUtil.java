@@ -1,5 +1,7 @@
 package com.honeyboard.api.util;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,5 +44,20 @@ public class CookieUtil {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         log.debug("쿠키 삭제 완료 - 이름: {}", name);
+    }
+
+    public
+    Cookie getCookie(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(name)) {
+                    return cookie;
+                }
+            }
+        }
+
+        return null;
     }
 }
