@@ -8,8 +8,8 @@ public interface WebGuideMapper {
     List<WebGuide> selectAllWebGuide(Integer generationId, int offset);
     List<WebGuide> searchWebGuideByTitle(String title, Integer generationId, int offset);
     WebGuide selectWebGuideById(int guideId);
-    int insertWebGuide(WebGuide webGuide);
-    int updateWebGuide(int guideId, WebGuide webGuide);
+    int insertWebGuide(WebGuide webRecommend);
+    int updateWebGuide(int guideId, WebGuide webRecommend);
     int deleteWebGuide(int guideId);
     int countWebGuide(Integer generationId);
     int countSearchWebGuide(String title, Integer generationId);
