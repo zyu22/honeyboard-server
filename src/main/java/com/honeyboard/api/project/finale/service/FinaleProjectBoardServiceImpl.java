@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class FinaleBoardServiceImpl implements FinaleBoardService {
+public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService {
 
 	private final FinaleProjectBoardMapper finaleProjectBoardMapper;
 
