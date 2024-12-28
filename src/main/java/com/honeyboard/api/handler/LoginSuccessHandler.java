@@ -1,6 +1,5 @@
 package com.honeyboard.api.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.CustomUserDetails;
 import com.honeyboard.api.user.model.User;
@@ -10,8 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -47,8 +44,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         cookieUtil.addCookie(response, "refresh_token", refreshToken,
                 (int) (jwtService.getRefreshTokenExpire() / 1000));
         log.debug("쿠키 설정 완료");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
 
-        log.info("메인 페이지로 리다이렉트: {}", user.getEmail());
-        response.sendRedirect(frontendUrl + "/login/callback");
     }
 }
