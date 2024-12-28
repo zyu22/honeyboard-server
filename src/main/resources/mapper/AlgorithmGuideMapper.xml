@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.honeyboard.api.guide.model.mapper.AlgorithmGuideMapper">
-    <!-- 여기에 매퍼 쿼리를 추가하세요 -->
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.honeyboard.api.algorithm.guide.mapper.AlgorithmGuideMapper">
+
+    <select id="getAlgorithmGuides" parameterType="int" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
+        SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
+        FROM algorithm_guide
+        WHERE generation_id = #{generationId}
+          AND is_deleted = false
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 알고리즘 가이드 상세 조회 -->
+    <select id="getAlgorithmGuideDetail">
+        SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
+        FROM algorithm_guide
+        WHERE id = #{id}
+        AND is_deleted = false
+        <!-- bookmark 관련 로직 추가 필요시 작성 -->
+    </select>
+
+    <!-- 알고리즘 가이드 검색 -->
+    <select id="searchAlgorithmGuide">
+        SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
+        FROM algorithm_guide
+        WHERE generation_id = #{generationId}
+          AND title LIKE CONCAT('%', #{title}, '%')
+          AND is_deleted = false
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 알고리즘 가이드 작성 -->
+    <insert id="addAlgorithmGuide">
+        INSERT INTO algorithm_guide (
+            title,
+            content,
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
+        )
+        VALUES (
+                   #{algorithmGuide.title},
+                   #{algorithmGuide.content},
+                   #{algorithmGuide.userId},
+                   #{generationId},
+                   NOW(),
+                   NOW(),
+                   false
+               )
+    </insert>
+
+    <!-- 알고리즘 가이드 수정 -->
+    <update id="updateAlgorithmGuide">
+        UPDATE algorithm_guide
+        SET
+            title = #{algorithmGuide.title},
+            content = #{algorithmGuide.content},
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND is_deleted = false
+    </update>
+
+    <!-- 알고리즘 가이드 삭제 (soft delete) -->
+    <delete id="deleteAlgorithmGuide">
+        UPDATE algorithm_guide
+        SET is_deleted = true
+        WHERE id = #{id}
+    </delete>
+
 </mapper>
