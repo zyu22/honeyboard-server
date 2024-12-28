@@ -24,7 +24,7 @@ public class ChatServiceImp implements ChatService {
     }
 
     @Override
-    public Chat saveChat(Chat chat) {
-        return chatMapper.insertChat(chat);
+    public boolean saveChat(Chat chat) {
+        return chatMapper.insertChat(chat) == 1;
     }
 }
