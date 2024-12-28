@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.honeyboard.api.project.finale.mapper.FinaleProjectMapper;
+import com.honeyboard.api.project.finale.mapper.FinaleProjectTeamMapper;
 import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.User;
@@ -15,11 +15,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FinaleTeamServiceImpl implements FinaleTeamService {
 
-	private final FinaleProjectMapper finaleProjectMapper;
+	private final FinaleProjectTeamMapper finaleProjectMapper;
 
 	@Override
 	public List<FinaleTeam> findStatusByDate(String targetDate) {
-		return finaleProjectMapper.selectSubmitStatusByDate(targetDate);
+		List<FinaleTeam> teams = finaleProjectMapper.selectSubmitStatusByDate(targetDate);
+		for (FinaleTeam team : teams) {
+			team.setMembers(finaleProjectMapper.selectTeamMembers(team.getTeamId()));
+		}
+
+		return teams;
 	}
 
 	@Override
@@ -29,7 +34,7 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
 
 	@Override
 	public boolean saveFinaleProject(FinaleProject finaleProject) {
-		return finaleProjectMapper.insertFinalProject(finaleProject) > 0;
+		return finaleProjectMapper.insertFinaleProject(finaleProject) > 0;
 	}
 
 	@Override
@@ -38,8 +43,8 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
 	}
 
 	@Override
-	public boolean removeFinalProject(int teamId) {
-		return finaleProjectMapper.removeFinalProject(teamId);
+	public boolean removeFinaleProject(int teamId) {
+		return finaleProjectMapper.removeFinaleProject(teamId);
 	}
 
 }

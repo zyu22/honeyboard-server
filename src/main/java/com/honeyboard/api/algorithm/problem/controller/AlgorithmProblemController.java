@@ -39,7 +39,8 @@ public class AlgorithmProblemController {
             }
             return ResponseEntity.ok().body(list);
         } catch (Exception e) {
-            log.error("알고리즘 문제 조회 중 에러 발생", e);
+            log.error("알고리즘 문제 조회 중 에러 발생", e
+            );
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

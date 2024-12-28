@@ -2,5 +2,107 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.project.model.mapper.TrackProjectMapper">
-    <!-- 여기에 매퍼 쿼리를 추가하세요 -->
+    <!-- 전체 조회 -->
+    <select id="selectAllTrackProjects" parameterType="Integer" resultType="TrackProject">
+        SELECT 
+            id,
+            title,
+            objective,
+            content,
+            user_id AS userId,
+            generation_id AS generationId,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM track_project
+        WHERE is_deleted = false
+        <if test="generationId != null">
+            AND generation_id = #{generationId}
+        </if>
+    </select>
+    
+    <!-- 상세 조회 -->
+    <select id="selectTrackProjectById" parameterType="int" resultType="TrackProject">
+        SELECT 
+            id,
+            title,
+            objective,
+            content,
+            user_id AS userId,
+            generation_id AS generationId,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM track_project
+        WHERE id = #{trackId}
+        AND is_deleted = false
+    </select>
+    
+    <!-- 프로젝트 멤버 조회 -->
+    <select id="selectTrackProjectMembers" parameterType="Integer" resultType="User">
+        SELECT DISTINCT u.*
+        FROM user u
+        WHERE u.generation_id = #{generationId}
+        AND u.is_ssafy = true
+    </select>
+    
+    <!-- 프로젝트 생성 -->
+    <insert id="insertTrackProject" parameterType="TrackProject" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO track_project (
+            title,
+            objective,
+            content,
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
+        ) VALUES (
+            #{title},
+            #{objective},
+            #{content},
+            #{userId},
+            #{generationId},
+            CURRENT_DATE,
+            CURRENT_DATE,
+            false
+        )
+    </insert>
+    
+    <!-- 프로젝트 수정 -->
+    <update id="updateTrackProject">
+        UPDATE track_project
+        SET 
+            title = #{trackProject.title},
+            objective = #{trackProject.objective},
+            content = #{trackProject.content},
+            generation_id = #{trackProject.generationId},
+            updated_at = CURRENT_DATE
+        WHERE id = #{trackId}
+        AND is_deleted = false
+    </update>
+    
+    <!-- 프로젝트 삭제 (논리적 삭제) -->
+    <update id="deleteTrackProject" parameterType="int">
+        UPDATE track_project
+        SET is_deleted = true
+        WHERE id = #{trackId}
+    </update>
+    
+    <!-- 존재 여부 확인 -->
+    <select id="existsById" parameterType="int" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 
+            FROM track_project 
+            WHERE id = #{trackId} 
+            AND is_deleted = false
+        )
+    </select>
+    
+    <!-- 제외 멤버 조회 -->
+    <select id="selectExcludedMembers" parameterType="int" resultType="Integer">
+        SELECT user_id
+        FROM track_excluded_member
+        WHERE project_id = #{projectId}
+    </select>
 </mapper>
