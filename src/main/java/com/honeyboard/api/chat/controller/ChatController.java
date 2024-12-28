@@ -1,6 +1,8 @@
 package com.honeyboard.api.chat.controller;
 
 import com.honeyboard.api.chat.service.ChatService;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
     private final ChatService chatService;
 
-    @GetMapping("/generation/{generationId}")
+    @GetMapping
     public ResponseEntity<?> getChatListByGenerationId(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "50") int size,
-            @PathVariable int generationId
+            @CurrentUser User loginUser
     ) {
-
+        int generationId = loginUser.getGenerationId();
         try {
             log.debug("채팅 목록 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}",
                     generationId, page, size);
