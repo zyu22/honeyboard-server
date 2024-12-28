@@ -1,5 +1,6 @@
 package com.honeyboard.api.user.controller;
 
+import com.honeyboard.api.user.model.CurrentUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,17 +38,11 @@ public class UserController {
 
 	@GetMapping("/info")
 	public ResponseEntity<?> getUserInfo(
-			@CookieValue(name = "accessToken", required = true) String accessToken) {
+			@CurrentUser User user) {
 		try {
-			User loginUser = new User();
-			loginUser.setUserId(jwtService.getUserIdFromToken(accessToken));
-			loginUser.setRole(jwtService.getRoleFromToken(accessToken));
-			loginUser.setGenerationId();
-			loginUser.setGenerationName();
-			return ResponseEntity.ok(loginUser);
+			return ResponseEntity.ok(user);
 		}catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
-
 		}
 
 	}
