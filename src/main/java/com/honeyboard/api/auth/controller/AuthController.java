@@ -49,7 +49,7 @@ public class AuthController {
         user.setRole("USER");
         user.setGenerationId(userService.getActiveGenerationId());
         user.setLoginType(domainName.toUpperCase());
-        user.setSsafy(true);
+        user.setIsSsafy(true);
 
         try {
             if (userService.saveUser(user)) { // 회원가입
