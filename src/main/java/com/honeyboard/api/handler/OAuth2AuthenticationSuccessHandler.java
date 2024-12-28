@@ -65,7 +65,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
 
         // 메인 페이지로 리다이렉트
         log.info("메인 페이지로 리다이렉트: {}", user.getEmail());
-        response.sendRedirect(frontendUrl);
+        response.sendRedirect(frontendUrl + "/login/callback");
     }
 
 }
