@@ -6,7 +6,7 @@
     <!-- 웹 개념 전체/기수별 조회 -->
     <select id="selectAllWebGuide" parameterType="int" resultType="WebGuide">
         SELECT
-            id,
+            id AS guideId,
             title,
             content,
             user_id AS userId,
@@ -67,7 +67,7 @@
             is_deleted
             )
         VALUES (
-            #{id},
+            #{guideId},
             #{title},
             #{content},
             #{userId},
