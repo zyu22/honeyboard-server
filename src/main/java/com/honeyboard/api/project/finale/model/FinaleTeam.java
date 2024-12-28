@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.finale.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +17,8 @@ import lombok.ToString;
 public class FinaleTeam {
 
 	private int teamId;
-	private List<FinaleMember> members;
-	private boolean hasSubmitted;
+	private int generationId;
+	private LocalDate submittedAt;
+	private LocalDate createdAt;
 
 }

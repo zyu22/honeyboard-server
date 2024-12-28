@@ -2,6 +2,8 @@ package com.honeyboard.api.user.model.mapper;
 
 import com.honeyboard.api.user.model.User;
 
+import java.util.List;
+
 public interface UserMapper {
 
 	Integer insertUser(User user);
@@ -19,5 +21,7 @@ public interface UserMapper {
 	Integer selectExistedEmail(String email);
 
 	Integer selectActiveGenerationId();
+
+	List<User> selectUsersWithTeamInfo(int generationId);
 
 }

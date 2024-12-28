@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 
-public interface FinaleBoardService {
+public interface FinaleProjectBoardService {
 
 	List<FinaleProjectBoard> getAllFinaleBoards(int finaleId);
 

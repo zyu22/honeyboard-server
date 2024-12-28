@@ -15,9 +15,14 @@ import lombok.ToString;
 @AllArgsConstructor
 public class FinaleProject {
 
+	private int finaleProjectId;
 	private int teamId;
-	private int generationId;
-	private LocalDate submittedAt;
+	private String url;
+	private String title;
+	private String content;
+	private int userId;
+	private String name;
 	private LocalDate createdAt;
+	private LocalDate updatedAt;
 
 }
