@@ -12,16 +12,16 @@ import java.time.LocalDate;
 @Builder
 public class User {
 
-    private int userId;
+    private Integer userId;
     private String email;
     private String password;
     private String name;
-    private int generationId;
-    private int generationName;
+    private Integer generationId;
+    private Integer generationName;
     private String role;
     private String loginType;
-    private boolean isSsafy;
-    private int teamId;
+    private Boolean isSsafy;
+    private Integer teamId;
     private LocalDate createdAt;
 
     public User(String name) {
