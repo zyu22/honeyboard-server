@@ -3,23 +3,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectBoardMapper">
 
-<!--    <resultMap id="TrackProjectBoardResultMap" type="com.honeyboard.api.project.track.model.TrackProjectBoard">-->
-<!--        <id property="id" column="id"/>-->
-<!--        <result property="trackProjectId" column="track_project_id"/>-->
-<!--        <result property="trackTeamId" column="track_team_id"/>-->
-<!--        <result property="title" column="title" />-->
-<!--        <result property="url" column="url"/>-->
-<!--        <result property="content" column="content"/>-->
-<!--        <result property="createdAt" column="created_at"/>-->
-<!--        <result property="updatedAt" column="updated_at"/>-->
-<!--        <result property="isDeleted" column="is_deleted"/>-->
-<!--    </resultMap>-->
+    <resultMap id="TrackProjectBoardResultMap" type="com.honeyboard.api.project.track.model.TrackProjectBoard">
+        <id property="id" column="id"/>
+        <result property="trackProjectId" column="track_project_id"/>
+        <result property="trackTeamId" column="track_team_id"/>
+        <result property="title" column="title" />
+        <result property="url" column="url"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="teamMembers" column="team_members"/>
+    </resultMap>
 
     <select id="selectAllTrackProjectsBoards" parameterType="int" resultType="TrackProjectBoard" >
         SELECT
             tpb.title AS project_title,       -- 게시글 제목
             tpb.created_at AS post_date,      -- 게시글 생성 날짜
-            GROUP_CONCAT(u.name ORDER BY u.name) AS team_members -- 팀원들 이름을 알파벳 순서로 묶어서 출력
+            GROUP_CONCAT(u.name ORDER BY u.name) AS team_members -- 팀원들 이름을 ,으로 묶어서 출력 (예: "홍길동, 김철수")
         FROM
             track_project_board tpb
                 JOIN
@@ -59,16 +60,16 @@
 
     <insert id="insertTrackProjectBoard" parameterType="TrackProjectBoard" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO track_project_board(
-            track_project_id,track_team_id,url,title,content,user_id, created_at
-        )     VALUES (
-        #{trackProjectId},
-        #{trackTeamId},
-        #{url},
-        #{title},
-        #{content},
-        #{userId},
-        CURRENT_TIME
-        )
+            track_project_id, track_team_id, url, title, content, user_id, created_at
+        ) VALUES (
+                     #{trackProjectId},
+                     #{trackTeamId},
+                     #{url},
+                     #{title},
+                     #{content},
+                     #{userId},
+                     CURRENT_TIME
+                 )
     </insert>
 
     <update id="updateTrackProjectBoard" >
