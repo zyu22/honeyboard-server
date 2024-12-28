@@ -13,7 +13,7 @@
             generation_id AS generationId,
             created_at AS createdAt,
             updated_at AS updatedAt,
-            is_deleted AS isDeleted,
+            is_deleted AS isDeleted
         FROM web_guide
         WHERE generation_id = #{generationId}
         AND is_deleted = false
@@ -30,8 +30,8 @@
             generation_id AS generationId,
             created_at AS createdAt,
             updated_at AS updatedAt,
-            is_deleted AS isDeleted,
-            FROM web_guide
+            is_deleted AS isDeleted
+        FROM web_guide
         WHERE id = #{guideId}
         AND is_deleted = false
     </select>
@@ -46,7 +46,7 @@
             generation_id AS generationId,
             created_at AS createdAt,
             updated_at AS updatedAt,
-            is_deleted AS isDeleted,
+            is_deleted AS isDeleted
         FROM web_guide
         WHERE generation_id = #{generationId}
         AND title LIKE CONCAT('%', #{title}, '%')
@@ -61,7 +61,7 @@
             title,
             content,
             user_id,
-            generation_id AS generationId,
+            generation_id,
             created_at,
             updated_at,
             is_deleted
@@ -70,12 +70,12 @@
             #{id},
             #{title},
             #{content},
-            #{user_id},
-            #{generation_id},
+            #{userId},
+            #{generationId},
             NOW(),
             NOW(),
             false
-            }
+            )
     </insert>
 
     <!-- 웹 개념 수정 -->
