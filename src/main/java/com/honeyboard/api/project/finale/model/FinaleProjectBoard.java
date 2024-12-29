@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinaleProjectBoard {
-    private int boardId;
+    private Integer boardId;
     private List<FinaleMember> finaleTeam;
     private String summary;
     private String title;

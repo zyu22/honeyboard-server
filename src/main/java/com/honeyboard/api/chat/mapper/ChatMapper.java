@@ -9,5 +9,5 @@ public interface ChatMapper {
 
     int countChatListByGenerationId(int generationId);
 
-    Chat insertChat(Chat chat);
+    int insertChat(Chat chat);
 }

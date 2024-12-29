@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     log.debug("URL 기반 보안 설정 구성");
                     auth.requestMatchers(
+                                    "/ws/**",
                                     "/api/v1/**",
                                     "/api/v1/auth/**",
                                     "/oauth2/**",
@@ -137,7 +138,9 @@ public class SecurityConfig {
                                     "Content-Type",
                                     "Cookie",
                                     "Access-Control-Allow-Credentials",
-                                    "Access-Control-Allow-Origin"
+                                    "Access-Control-Allow-Origin",
+                                    "X-Requested-With",  // WebSocket 관련 헤더 추가
+                                    "x-socket-transport"
                             ));
                             configuration.setMaxAge(3600L);
 
