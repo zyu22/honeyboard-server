@@ -64,6 +64,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
         int result = trackProjectBoardMapper.updateTrackProjectBoard(boardId, board);
         if(result != 1) {
             log.error("게시글 수정 실패 - ID: {}", boardId);
+            throw new RuntimeException("게시글 수정 실패");
         }
         log.info("게시글 수정 완료: {}", boardId);
         return board;
@@ -72,10 +73,11 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
     @Override
     public boolean softDeleteBoard(int boardId) {
         int result = trackProjectBoardMapper.deleteTrackProjectBoard(boardId);
-        if(result != 0){
+        if(result != 1){
             log.error("게시글 삭제 실패 - ID: {}", boardId);
+        } else{
+            log.info("게시글 삭제 완료: {}", boardId);
         }
-        log.info("게시글 삭제 완료: {}", boardId);
         return result==1;
     }
 }
