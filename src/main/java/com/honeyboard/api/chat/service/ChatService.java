@@ -6,5 +6,5 @@ import com.honeyboard.api.common.response.PageResponse;
 public interface ChatService {
     PageResponse<Chat> getChatListByGenerationId(int currentPage, int pageSize, int generationId);
 
-    Chat saveChat(Chat chat);
+    boolean saveChat(Chat chat);
 }
