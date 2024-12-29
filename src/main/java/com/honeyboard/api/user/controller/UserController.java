@@ -40,7 +40,13 @@ public class UserController {
 	public ResponseEntity<?> getUserInfo(
 			@CurrentUser User user) {
 		try {
-			return ResponseEntity.ok(user);
+			User loginUser = new User(
+					user.getUserId(),
+					user.getName(),
+					user.getGenerationId(),
+					user.getGenerationName(),
+					user.getRole());
+			return ResponseEntity.ok(loginUser);
 		}catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}

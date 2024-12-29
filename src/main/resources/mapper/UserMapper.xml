@@ -45,18 +45,21 @@
 
     <!-- 이메일로 사용자 조회 -->
     <select id="selectUserByEmail" parameterType="String" resultType="user">
-        SELECT id            AS userId,
-               email,
-               password,
-               name,
-               generation_id AS generationId,
-               role,
-               login_type    AS loginType,
-               is_ssafy      AS isSsafy,
-               created_at    AS createdAt
-        FROM user
-        WHERE email = #{email}
+        SELECT u.id            AS userId,
+               u.email,
+               u.password,
+               u.name,
+               u.generation_id AS generationId,
+               g.name         AS generationName,
+               u.role,
+               u.login_type   AS loginType,
+               u.is_ssafy     AS isSsafy,
+               u.created_at   AS createdAt
+        FROM user u
+                 LEFT JOIN generation g ON u.generation_id = g.id
+        WHERE u.email = #{email}
     </select>
+
 
     <!-- 비밀번호 업데이트 -->
     <update id="updatePassword" parameterType="user">
