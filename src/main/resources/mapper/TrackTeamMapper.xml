@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honeyboard.api.project.track.mapper.TrackTeamMapper">
+    <resultMap id="teamMemberInfoMap" type="com.honeyboard.api.project.track.model.TeamMemberInfo">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="name" jdbcType="NVARCHAR"/>
+        <result property="role" column="role" jdbcType="NVARCHAR"/>
+    </resultMap>
+
+    <resultMap id="teamStatusMap" type="com.honeyboard.api.project.track.model.TeamStatus">
+        <result property="teamId" column="team_id"/>
+        <result property="isCompleted" column="is_completed"/>
+        <collection property="members" resultMap="teamMemberInfoMap"/>
+    </resultMap>
+
+    <resultMap id="trackProjectStatusMap" type="com.honeyboard.api.project.track.model.TrackProjectStatus">
+        <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name" jdbcType="NVARCHAR"/>
+        <result property="totalTeams" column="total_teams"/>
+        <result property="completedTeams" column="completed_teams"/>
+        <result property="noTeamMembersCount" column="no_team_members_count"/>
+        <collection property="teams" resultMap="teamStatusMap"/>
+        <collection property="noTeamMembers" resultMap="teamMemberInfoMap"/>
+    </resultMap>
+    <select id="selectTrackProjectStatus" resultMap="trackProjectStatusMap">
+        WITH project_stats AS (
+            SELECT
+                COUNT(DISTINCT tt.id) as total_teams,
+                COUNT(DISTINCT CASE WHEN tt.is_completed = true THEN tt.id END) as completed_teams,
+                COUNT(DISTINCT CASE WHEN ttm.track_team_id IS NULL THEN u.id END) as no_team_members_count
+            FROM track_project p
+                     /* 해당 기수의 유저 중 제외되지 않은 유저만 */
+                     JOIN user u ON u.generation_id = #{generationId}
+                     LEFT JOIN track_excluded_member tem
+                               ON tem.project_id = p.id
+                                   AND tem.user_id = u.id
+                     LEFT JOIN track_team tt
+                               ON tt.track_project_id = p.id
+                                   AND tt.generation_id = #{generationId}
+                     LEFT JOIN track_team_member ttm
+                               ON ttm.track_team_id = tt.id
+                                   AND ttm.user_id = u.id
+            WHERE p.id = #{projectId}
+              AND tem.id IS NULL  /* 제외 인원 제외 */
+        )
+        SELECT
+            p.id as project_id,
+            p.title as project_name,
+            tt.id as team_id,
+            tt.is_completed,
+            u.id as user_id,
+            u.name as name,
+            ttm.role,
+            ps.total_teams,
+            ps.completed_teams,
+            ps.no_team_members_count
+        FROM track_project p
+                 /* 해당 기수의 모든 유저 */
+                 JOIN user u ON u.generation_id = #{generationId}
+            /* 제외 인원 필터링 */
+                 LEFT JOIN track_excluded_member tem
+                           ON tem.project_id = #{projectId}
+                               AND tem.user_id = u.id
+            /* 해당 프로젝트의 팀 정보 */
+                 LEFT JOIN track_team tt
+                           ON tt.track_project_id = #{projectId}
+                               AND tt.generation_id = #{generationId}
+            /* 팀 멤버 정보 */
+                 LEFT JOIN track_team_member ttm
+                           ON ttm.track_team_id = tt.id
+                               AND ttm.user_id = u.id
+                 CROSS JOIN project_stats ps
+        WHERE p.id = #{projectId}
+          AND tem.id IS NULL  /* 제외 인원 제외 */
+          AND (tt.id IS NOT NULL OR NOT EXISTS (
+            SELECT 1
+            FROM track_team_member ttm2
+                     JOIN track_team tt2
+                          ON ttm2.track_team_id = tt2.id
+                              AND tt2.track_project_id = #{projectId}
+            WHERE ttm2.user_id = u.id
+        ))
+        ORDER BY
+            tt.id IS NULL,  /* 팀이 없는 사람들을 마지막에 */
+            tt.is_completed DESC,  /* 제출한 팀 먼저 */
+            tt.id,
+            CASE WHEN ttm.role = 'leader' THEN 0 ELSE 1 END,  /* 팀장 먼저 */
+            u.id;
+    </select>
+
+    <insert id="insertTrackTeam" parameterType="TrackTeam" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO track_team (
+            generation_id,
+            track_project_id
+        ) VALUES(
+            #{generationId},
+            #{trackProjectId}
+       )
+    </insert>
+
+
+    <insert id="insertTrackTeamMember" parameterType="map">
+        INSERT INTO track_team_member (track_team_id, user_id, role, created_at)
+        VALUES
+        <foreach collection="teamMembers" item="members" separator=",">
+            (#{teamId}, #{members.user.userId}, #{members.role}, CURRENT_DATE)  <!-- user.userId로 수정 -->
+        </foreach>
+    </insert>
+
+
+    <!-- 팀 삭제 -->
+    <delete id="deleteTrackTeam" parameterType="int">
+        DELETE FROM track_team
+        WHERE id = #{teamId}
+    </delete>
+
+    <!-- 팀 멤버 수정 -->
+    <update id="updateTrackTeamMembers" parameterType="list">
+        UPDATE track_team_member
+        SET
+        role = CASE
+        <foreach collection="list" item="member">
+            WHEN track_team_id = #{member.trackTeamId} AND id = #{member.trackMemberId}
+            THEN #{member.role}
+        </foreach>
+        ELSE role
+        END,
+        user_id = CASE
+        <foreach collection="list" item="member">
+            WHEN track_team_id = #{member.trackTeamId} AND id = #{member.trackMemberId}
+            THEN #{member.user.userId}
+        </foreach>
+        ELSE user_id
+        END
+        WHERE track_team_id IN
+        <foreach collection="list" item="member" open="(" separator="," close=")">
+            #{member.trackTeamId}
+        </foreach>
+        AND id IN
+        <foreach collection="list" item="member" open="(" separator="," close=")">
+            #{member.trackMemberId}
+        </foreach>
+    </update>
+</mapper>
