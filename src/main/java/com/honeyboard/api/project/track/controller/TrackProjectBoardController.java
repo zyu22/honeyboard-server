@@ -37,7 +37,6 @@ public class TrackProjectBoardController {
             }
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -47,10 +46,7 @@ public class TrackProjectBoardController {
             @PathVariable int trackId, @RequestBody TrackProjectBoard board){
         try{
             TrackProjectBoard createdBoard = ts.addBoard(trackId,board);
-            if(createdBoard != null) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(createdBoard);
-            }
-            return ResponseEntity.badRequest().body("게시글 작성 실패");
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdBoard);
         }catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -60,10 +56,7 @@ public class TrackProjectBoardController {
     public ResponseEntity<?> updateTrackProjectBoard(@PathVariable int boardId, @RequestBody TrackProjectBoard board){
         try{
             TrackProjectBoard updatedBoard = ts.updateBoard(boardId,board);
-            if(updatedBoard != null) {
-                return ResponseEntity.ok().body(updatedBoard);
-            }
-            return ResponseEntity.badRequest().body("게시글 업데이트 실패");
+            ResponseEntity.ok().body(updatedBoard);
         } catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
