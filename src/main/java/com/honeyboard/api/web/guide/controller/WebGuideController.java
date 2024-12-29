@@ -60,11 +60,6 @@ public class WebGuideController {
     public ResponseEntity<?> getWebGuide(@PathVariable int guideId) {
         try {
             WebGuide webGuide = webGuideService.getWebGuide(guideId);
-
-            if (webGuide.isDeleted()) {
-                return ResponseEntity.noContent().build();
-            }
-
             return ResponseEntity.ok().body(webGuide);
         } catch (Exception e) {
             log.error("웹 개념 상세 조회 에러: ", e);
