@@ -3,6 +3,7 @@ package com.honeyboard.api.algorithm.solution.controller;
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
 import com.honeyboard.api.algorithm.solution.service.AlgorithmSolutionService;
 import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.jwt.model.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,23 +20,17 @@ import java.util.List;
 public class AlgorithmSolutionController {
 
 	private final AlgorithmSolutionService algorithmSolutionService;
-	
+	private final JwtService jwtService;
+
 	//알고리즘 풀이 작성 POST /api/v1/algorithm/problem/{problemId}/solution..
 	@PostMapping("/{problemId}/solution")
 	public ResponseEntity<?> createAlgorithmSolution(
-			@PathVariable int problemId, 
+			@PathVariable int problemId,
 			@RequestBody AlgorithmSolution algorithmSolution) {
-		try {
-			boolean result = algorithmSolutionService.addAlgorithmSolution(problemId, algorithmSolution);
-			
-			if(result) {
-				return ResponseEntity.status(HttpStatus.CREATED).body("알고리즘 풀이가 등록되었습니다.");
-			}
-			throw new Exception("풀이 등록에 실패했습니다.");
-		} catch (Exception e) {
-			log.error("알고리즘 풀이 작성 에러: ", e);
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		log.info("알고리즘 풀이 작성 요청 - 문제 ID: {}", problemId);
+		algorithmSolutionService.addAlgorithmSolution(algorithmSolution);
+		log.info("알고리즘 풀이 작성 완료 - 문제 ID: {}", problemId);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	//알고리즘 풀이 전체 조회 GET /api/v1/algorithm/problem/{problemId}/solution
@@ -45,75 +40,68 @@ public class AlgorithmSolutionController {
 			@RequestParam(value = "generationId", required = false) int generationId,
 			@RequestParam(value = "language", required = false) List<String> language,
 			@RequestParam(value = "sortType", defaultValue = "latest") String sortType,
-			@RequestParam(value = "page", defaultValue = "1") int page) {
-		try {
-			PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
-	                problemId, generationId, language, sortType, page);
-	        
-	        if (pageResponse.getContent().isEmpty()) {
-	        	return ResponseEntity.noContent().build();
-	        }
-	        
-	        return ResponseEntity.ok().body(pageResponse);
-		} catch (Exception e) {
-			log.error("알고리즘 풀이 전체 조회 에러: ", e);
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+			@RequestParam(value = "page", defaultValue = "1") int page,
+	/*		@RequestParam(value = "userId") int userId) {*/
+			@RequestHeader("Authorization") String token) {
+		log.info("알고리즘 풀이 전체 조회 요청 - 문제 ID: {}, 페이지: {}", problemId, page);
+
+		String jwtToken = token.substring(7);
+		int userId = jwtService.getUserIdFromToken(jwtToken);
+
+		PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
+				problemId, generationId, language, sortType, page, userId);
+
+		log.info("알고리즘 풀이 전체 조회 완료 - 총 솔루션 수: {}", pageResponse.getContent().size());
+		return ResponseEntity.ok(pageResponse);
 	} 
 	
 	//알고리즘 풀이 상세 조회 GET /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@GetMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> getAlgorithmSolution(
 			@PathVariable int solutionId) {
-		try {
-			AlgorithmSolution solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
-			
-			if (solution.isDeleted()) {
-				return ResponseEntity.noContent().build();
-			}
-			return ResponseEntity.ok().body(solution);
-			
-		} catch (Exception e) {
-			log.error("알고리즘 풀이 상세 조회 에러: ", e);
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}", solutionId);
+
+		AlgorithmSolution solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
+
+		log.info("알고리즘 풀이 상세 조회 완료");
+		return ResponseEntity.ok(solution);
 	}
+
 	//알고리즘 풀이 수정 PUT /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@PutMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> updateAlgorithmSolution(
 			@PathVariable int solutionId,
+	/*		@RequestParam int userId,*/
+			@RequestHeader("Authorization") String token,
 			@RequestBody AlgorithmSolution algorithmSolution) {
-		try {
+		log.info("알고리즘 풀이 수정 요청 - 솔루션 ID: {}", solutionId);
 
-			algorithmSolution.setSolutionId(solutionId);
-			boolean result = algorithmSolutionService.updateAlgorithmSolution(algorithmSolution);
-			
-			if(result) {
-				return ResponseEntity.ok().body("알고리즘 풀이가 수정되었습니다.");
-			}
-			throw new Exception("풀이 수정에 실패했습니다.");
-			
-		} catch (Exception e) {
-			log.error("알고리즘 풀이 수정 에러: ", e);
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		String jwtToken = token.substring(7);
+		int userId = jwtService.getUserIdFromToken(jwtToken);
+
+		algorithmSolution.setSolutionId(solutionId);
+		algorithmSolution.setUserId(userId);
+
+		algorithmSolutionService.updateAlgorithmSolution(algorithmSolution);
+
+		log.info("알고리즘 풀이 수정 완료");
+		return ResponseEntity.ok().build();
 	}
 	
 	//알고리즘 풀이 삭제 DELETE /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@DeleteMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> deleteAlgorithmSolution(
-			@PathVariable int solutionId) {
-		try {
-			boolean result = algorithmSolutionService.softDeleteAlgorithmSolution(solutionId);
-			
-			if(result) {
-				return ResponseEntity.ok().body("알고리즘 풀이가 삭제되었습니다.");
-			}
-			throw new Exception("풀이 삭제에 실패했습니다.");
-			
-		} catch (Exception e) {
-			log.error("알고리즘 풀이 삭제 에러: ", e);
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+			@PathVariable int solutionId,
+	/*		@RequestParam int userId) {*/
+			@RequestHeader("Authorization") String token) {
+		log.info("알고리즘 풀이 삭제 요청 - 솔루션 ID: {}", solutionId);
+
+		String jwtToken = token.substring(7);
+		int userId = jwtService.getUserIdFromToken(jwtToken);
+
+		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId, userId);
+
+		log.info("알고리즘 풀이 삭제 완료");
+		return ResponseEntity.ok().build();
 	}
 }
