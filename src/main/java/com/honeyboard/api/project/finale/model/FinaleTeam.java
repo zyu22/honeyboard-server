@@ -16,8 +16,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class FinaleTeam {
 
-	private int teamId;
-	private int generationId;
+	private Integer teamId;
+	private Integer generationId;
 	private LocalDate submittedAt;
 	private LocalDate createdAt;
 
