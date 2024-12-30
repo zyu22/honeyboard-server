@@ -9,7 +9,7 @@
 	<select id="selectScheduleByMonth" resultType="Schedule">
 		SELECT 
 	        id as scheduleId,
-	        title,
+			content,
 	        start_date,
 	        end_date,
 	        schedule_type,
@@ -28,7 +28,7 @@
 	   </choose>
 	   ORDER BY start_date DESC
 	</select>
-	
+
 	<!-- 관통 프로젝트에서 일정 조회-->
 	<select id="selectTrackProjectByMonth" resultType="TrackProject">
 		SELECT id AS trackProjrctId,
@@ -42,42 +42,37 @@
 		  AND generation_id = #{generationId}
 		  AND is_deleted = false
 	</select>
-	
+
 	<!-- 일정 등록 -->
 	<insert id="insertSchedule" parameterType="Schedule">
 		INSERT INTO schedule (
-	        title,
+			content,
 	        start_date,
 	        end_date,
 			schedule_type,
 		    is_public,
 	        user_id,
-	        generation_id,
-	        created_at,
-	        updated_at
+	        generation_id
     	)
-    	VALUES (#{title},
+    	VALUES (#{content},
                 #{startDate},
                 #{endDate},
                 #{scheduleType},
     	        #{isPublic},
                 #{userId},
-                #{generationId},
-                NOW(),
-                NOW()
+                #{generationId}
 		)
 	</insert>
-	
+
 	<!-- 일정 수정 -->
 	<update id="updateSchedule" parameterType="Schedule">
 		UPDATE schedule
 		SET
-			title = #{title},
+			content = #{content},
 			start_date = #{startDate},
 			end_date = #{endDate},
 			schedule_type = #{scheduleType},
-			is_public = #{isPublic},
-			updated_at = NOW()
+			is_public = #{isPublic}
 		WHERE id = #{scheduleId}
 	</update>
 	
