@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface ScheduleService {
 
-	boolean addSchedule(Schedule schedule);
+	void addSchedule(Schedule schedule);
 	List<Schedule> getScheduleByMonth(int year, int month, Integer generationId, String role);
-	boolean updateSchedule(Schedule schedule);
-	boolean deleteSchedule(int scheduleId);
+	void updateSchedule(Schedule schedule);
+	void deleteSchedule(int scheduleId);
 }
