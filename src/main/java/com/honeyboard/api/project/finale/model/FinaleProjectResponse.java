@@ -1,7 +1,5 @@
-package com.honeyboard.api.common.response;
+package com.honeyboard.api.project.finale.model;
 
-import com.honeyboard.api.project.finale.model.FinaleProject;
-import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.User;
 import lombok.*;
 

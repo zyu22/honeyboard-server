@@ -1,6 +1,7 @@
 package com.honeyboard.api.user.controller;
 
 import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.LogInUserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,13 +40,16 @@ public class UserController {
 	@GetMapping("/info")
 	public ResponseEntity<?> getUserInfo(
 			@CurrentUser User user) {
+		log.debug("유저컨트롤러");
 		try {
-			User loginUser = new User(
-					user.getUserId(),
-					user.getName(),
-					user.getGenerationId(),
-					user.getGenerationName(),
-					user.getRole());
+			User temp = userService.getUser(user.getUserId());
+			log.debug("유저 정보 가져옴");
+			LogInUserResponse loginUser = new LogInUserResponse(
+					temp.getUserId(),
+					temp.getName(),
+					temp.getGenerationId(),
+					temp.getGenerationName(),
+					temp.getRole());
 			return ResponseEntity.ok(loginUser);
 		}catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
