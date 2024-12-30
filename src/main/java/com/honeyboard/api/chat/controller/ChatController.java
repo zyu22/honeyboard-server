@@ -6,7 +6,10 @@ import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -26,11 +29,8 @@ public class ChatController {
             log.debug("채팅 목록 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}",
                     generationId, page, size);
 
-            // 페이징 처리를 위해 offset 계산 (MyBatis용)
-            int offset = (page - 1) * size;
-
             return ResponseEntity.ok(
-                    chatService.getChatListByGenerationId(offset, size, generationId)
+                    chatService.getChatListByGenerationId(page, size, generationId)
             );
 
         } catch (Exception e) {

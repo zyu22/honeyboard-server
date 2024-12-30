@@ -41,18 +41,21 @@ public class ChatWebSocketController {
                     DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN))
             );
 
-            Chat savedChat = chatService.saveChat(chat);
+            boolean res = chatService.saveChat(chat);
+            if (!res) {
+                throw new RuntimeException("메시지 저장에 실패했습니다.");
+            }
 
             // 로깅 추가
             log.debug("채팅 메시지 전송 완료 - 메시지 ID: {}, 발신자: {}, 기수: {}",
-                    savedChat.getId(),
-                    savedChat.getSender(),
-                    savedChat.getGenerationId()
+                    chat.getId(),
+                    chat.getSender(),
+                    chat.getGenerationId()
             );
 
             messagingTemplate.convertAndSend(
                     TOPIC_PREFIX + user.getGenerationId(),
-                    savedChat
+                    chat
             );
 
         } catch (Exception e) {
