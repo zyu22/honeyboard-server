@@ -2,12 +2,12 @@ package com.honeyboard.api.schedule.controller;
 
 import com.honeyboard.api.schedule.model.Schedule;
 import com.honeyboard.api.schedule.service.ScheduleService;
-import com.honeyboard.api.user.model.CustomUserDetails;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,11 +34,11 @@ public class ScheduleController {
     @GetMapping("/{year}/{month}")
     public ResponseEntity<?> getSchedule(@PathVariable int year,
                                          @PathVariable int month,
-                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                         @CurrentUser User user) {
         log.info("월별 일정 조회 요청 - year: {}, month: {}", year, month);
 
-        String role = userDetails.getUser().getRole();
-        Integer generationId = userDetails.getUser().getGenerationId();
+        String role = user.getRole();
+        Integer generationId = user.getGenerationId();
 
         List<Schedule> schedules = scheduleService.getScheduleByMonth(year, month, generationId, role);
 
