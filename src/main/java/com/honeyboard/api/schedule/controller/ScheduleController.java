@@ -22,16 +22,12 @@ public class ScheduleController {
     //일정 등록
     @PostMapping
     public ResponseEntity<?> createSchedule(@RequestBody Schedule schedule) {
-        try {
-            boolean result = scheduleService.addSchedule(schedule);
+        log.info("일정 등록 요청 - 내용: {}", schedule.getContent());
 
-            if(result) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("일정이 등록되었습니다.");
-            }
-            throw new Exception("일정 등록에 실패했습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        scheduleService.addSchedule(schedule);
+
+        log.info("일정 등록 완료 - 일정 ID: {}", schedule.getScheduleId());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     //일정 조회 year, month
@@ -39,50 +35,43 @@ public class ScheduleController {
     public ResponseEntity<?> getSchedule(@PathVariable int year,
                                          @PathVariable int month,
                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
-        try {
-            String role = userDetails.getUser().getRole();
-            Integer generationId = userDetails.getUser().getGenerationId();
+        log.info("월별 일정 조회 요청 - year: {}, month: {}", year, month);
 
-            List<Schedule> schedules = scheduleService.getScheduleByMonth(year, month, generationId, role);
+        String role = userDetails.getUser().getRole();
+        Integer generationId = userDetails.getUser().getGenerationId();
 
-            if (schedules == null || schedules.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
+        List<Schedule> schedules = scheduleService.getScheduleByMonth(year, month, generationId, role);
 
-            return ResponseEntity.ok().body(schedules);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        if (schedules == null || schedules.isEmpty()) {
+            log.info("조회된 일정 없음 - year: {}, month: {}", year, month);
+            return ResponseEntity.noContent().build();
         }
+
+        log.info("월별 일정 조회 완료 - 조회된 일정 수: {}", schedules.size());
+        return ResponseEntity.ok(schedules);
     }
 
     //일정 수정
     @PutMapping("/{scheduleId}")
     public ResponseEntity<?> updateSchedule (@PathVariable int scheduleId,
                                              @RequestBody Schedule schedule){
-        try {
-            schedule.setScheduleId(scheduleId);
-            boolean result = scheduleService.updateSchedule(schedule);
-            if (result) {
-                return ResponseEntity.ok().body("일정이 수정되었습니다.");
-            }
-            throw new Exception("일정 수정에 실패했습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("일정 수정 요청 - 일정 ID: {}", scheduleId);
+
+        schedule.setScheduleId(scheduleId);
+        scheduleService.updateSchedule(schedule);
+
+        log.info("일정 수정 완료 - 일정 ID: {}", scheduleId);
+        return ResponseEntity.ok().build();
     }
 
     //일정 삭제
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<?> deleteSchedule(@PathVariable int scheduleId) {
-        try {
-            boolean result = scheduleService.deleteSchedule(scheduleId);
-            if (result) {
-                return ResponseEntity.ok().body("일정을 삭제했습니다.");
-            }
-            throw new Exception("일정 삭제에 실패했습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("일정 삭제 요청 - 일정 ID: {}", scheduleId);
+
+        scheduleService.deleteSchedule(scheduleId);
+
+        log.info("일정 삭제 완료 - 일정 ID: {}", scheduleId);
+        return ResponseEntity.ok().build();
     }
 }
