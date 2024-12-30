@@ -115,6 +115,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/email/validation")
+    public ResponseEntity<?> validateEmail(@RequestBody EmailVerification req) {
+        String email = req.getEmail();
+        log.debug("이메일 중복확인 요청 시작 - 이메일: {}", email);
+        try {
+            if(userService.existsByEmail(email)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+            return ResponseEntity.ok().build();
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/email/send")
     public ResponseEntity<?> sendVerificationEmail(@RequestBody EmailVerification req) {
         String email = req.getEmail();

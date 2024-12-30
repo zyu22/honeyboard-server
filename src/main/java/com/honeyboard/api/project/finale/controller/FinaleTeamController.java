@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.honeyboard.api.common.response.FinaleProjectResponse;
+import com.honeyboard.api.project.finale.model.FinaleProjectResponse;
 import com.honeyboard.api.project.finale.service.FinaleTeamService;
 import com.honeyboard.api.user.model.mapper.UserMapper;
 import com.honeyboard.api.user.model.service.UserService;
