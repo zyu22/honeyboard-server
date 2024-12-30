@@ -13,14 +13,12 @@ import java.sql.Date;
 public class Schedule {
 
 	private int scheduleId;
-	private String title;
+	private String content;
 	private Date startDate;
 	private Date endDate;
 	private String scheduleType;
 	private boolean publicAccess;
 	private int userId;
 	private int generationId;
-	private Date createdAt;
-	private Date updatedAt;
 
 }
