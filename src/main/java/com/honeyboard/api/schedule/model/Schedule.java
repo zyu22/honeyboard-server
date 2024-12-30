@@ -1,8 +1,7 @@
 package com.honeyboard.api.schedule.model;
 
 import lombok.*;
-
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -14,8 +13,8 @@ public class Schedule {
 
 	private int scheduleId;
 	private String content;
-	private Date startDate;
-	private Date endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private String scheduleType;
 	private boolean publicAccess;
 	private int userId;
