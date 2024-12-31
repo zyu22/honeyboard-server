@@ -1,19 +1,15 @@
 package com.honeyboard.api.algorithm.solution.model;
 
-import java.sql.Date;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.sql.Date;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 public class AlgorithmSolution {
 	
 	private int solutionId;
@@ -29,5 +25,6 @@ public class AlgorithmSolution {
 	private Date createdAt;
 	private Date updatedAt;
 	private boolean isDeleted;
+	private boolean isBookmarked;
 
 }
