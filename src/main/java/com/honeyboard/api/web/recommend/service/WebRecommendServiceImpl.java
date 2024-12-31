@@ -75,17 +75,17 @@ public class WebRecommendServiceImpl implements WebRecommendService {
     }
 
     @Override
-    public void updateWebRecommend(WebRecommend webRecommend) {
-        log.info("웹 추천 수정 시작 - ID: {}", webRecommend.getId());
+    public void updateWebRecommend(int recommendId, WebRecommend webRecommend) {
+        log.info("웹 추천 수정 시작 - ID: {}", recommendId);
 
-        int result = webRecommendMapper.updateWebRecommend(webRecommend);
+        int result = webRecommendMapper.updateWebRecommend(recommendId, webRecommend);
 
         if (result <= 0) {
-            log.error("웹 추천 수정 실패 - ID: {}", webRecommend.getId());
+            log.error("웹 추천 수정 실패 - ID: {}", recommendId);
             throw new IllegalArgumentException("웹 추천 수정에 실패했습니다.");
         }
 
-        log.info("웹 추천 수정 완료 - ID: {}", webRecommend.getId());
+        log.info("웹 추천 수정 완료 - ID: {}", recommendId);
     }
 
     @Override

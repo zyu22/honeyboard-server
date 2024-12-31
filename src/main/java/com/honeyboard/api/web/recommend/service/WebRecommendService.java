@@ -8,6 +8,6 @@ public interface WebRecommendService {
     PageResponse<WebRecommend> searchWebRecommend(String title, Integer generationId, int currentPage, int pageSize);
     WebRecommend getWebRecommend(int recommendId);
     void addWebRecommend(WebRecommend webRecommend);
-    void updateWebRecommend(WebRecommend webRecommend);
+    void updateWebRecommend(int recommendId, WebRecommend webRecommend);
     void deleteWebRecommend(int recommendId);
 }
