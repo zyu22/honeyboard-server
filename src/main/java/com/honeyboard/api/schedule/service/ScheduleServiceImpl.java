@@ -53,9 +53,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 		for (TrackProject project : trackProjects) {
 			try {
 				Schedule schedule = new Schedule();
-				schedule.setScheduleId(project.getTrackProjectId());
+				schedule.setScheduleId(project.getId());
 				schedule.setContent(project.getTitle());
-
+				log.info("트랙프로젝트 id: {}", project.getId());
 				LocalDate date = LocalDate.parse(project.getCreatedAt(), formatter);
 				schedule.setStartDate(date);
 				schedule.setEndDate(date);
