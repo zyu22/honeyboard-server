@@ -36,13 +36,7 @@ public class AuthController {
         log.debug("AuthController/completeOAuth2Signup");
         String email = jwtService.getEmailFromToken(temporaryToken); // OAuth2로 로그인 인증 되어 임시토큰 가지고 컨트롤러로 도착하면 이메일 추출
 
-        try {
-            if (userService.existsByEmail(email)) { // 이미 가입되어 있는 이메일이면(애초에 가입된 이메일이면 로그인 로직으로 돌긴 하지만 에러잡기용
-                return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 반환
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        userService.existsByEmail(email);
 
         // 각종 정보 저장
         user.setEmail(email);
@@ -51,29 +45,21 @@ public class AuthController {
         user.setLoginType(domainName.toUpperCase());
         user.setIsSsafy(true);
 
-        try {
-            if (userService.saveUser(user)) { // 회원가입
-                String accessToken = jwtService.generateAccessToken(user);
-                String refreshToken = jwtService.generateRefreshToken(user);
+        userService.saveUser(user);
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
-                cookieUtil.addCookie(response, "access_token", accessToken,
-                        (int) (jwtService.getAccessTokenExpire() / 1000));
-                cookieUtil.addCookie(response, "refresh_token", refreshToken,
-                        (int) (jwtService.getRefreshTokenExpire() / 1000));
+        cookieUtil.addCookie(response, "access_token", accessToken,
+                (int) (jwtService.getAccessTokenExpire() / 1000));
+        cookieUtil.addCookie(response, "refresh_token", refreshToken,
+                (int) (jwtService.getRefreshTokenExpire() / 1000));
 
-                User responseUser = new User();
-                responseUser.setUserId(user.getUserId());
-                responseUser.setName(user.getName());
-                responseUser.setGenerationId(user.getGenerationId());
+        User responseUser = new User();
+        responseUser.setUserId(user.getUserId());
+        responseUser.setName(user.getName());
+        responseUser.setGenerationId(user.getGenerationId());
 
-                return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
-            }
-
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
     @PostMapping("/signup")
@@ -91,69 +77,48 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setGenerationId(userService.getActiveGenerationId());
         user.setLoginType("FORM");
-        try {
-            if (userService.saveUser(user)) { // 회원가입
-                String accessToken = jwtService.generateAccessToken(user);
-                String refreshToken = jwtService.generateRefreshToken(user);
 
-                cookieUtil.addCookie(response, "access_token", accessToken,
-                        (int) (jwtService.getAccessTokenExpire() / 1000));
-                cookieUtil.addCookie(response, "refresh_token", refreshToken,
-                        (int) (jwtService.getRefreshTokenExpire() / 1000));
+        userService.saveUser(user);
 
-                User responseUser = new User();
-                responseUser.setUserId(user.getUserId());
-                responseUser.setName(user.getName());
-                responseUser.setGenerationId(user.getGenerationId());
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
-                return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
-            }
+        cookieUtil.addCookie(response, "access_token", accessToken,
+                (int) (jwtService.getAccessTokenExpire() / 1000));
+        cookieUtil.addCookie(response, "refresh_token", refreshToken,
+                (int) (jwtService.getRefreshTokenExpire() / 1000));
 
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        User responseUser = new User();
+        responseUser.setUserId(user.getUserId());
+        responseUser.setName(user.getName());
+        responseUser.setGenerationId(user.getGenerationId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
     @PostMapping("/email/validation")
     public ResponseEntity<?> validateEmail(@RequestBody EmailVerification req) {
         String email = req.getEmail();
         log.debug("이메일 중복확인 요청 시작 - 이메일: {}", email);
-        try {
-            if(userService.existsByEmail(email)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }
-            return ResponseEntity.ok().build();
-        } catch(Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        boolean exists = userService.existsByEmail(req.getEmail());
+        return exists ? ResponseEntity.status(HttpStatus.CONFLICT).build()
+                : ResponseEntity.ok().build();
     }
 
     @PostMapping("/email/send")
     public ResponseEntity<?> sendVerificationEmail(@RequestBody EmailVerification req) {
         String email = req.getEmail();
         log.debug("이메일 인증 코드 발송 요청 시작 - 수신자: {}", email);
-        try {
-            String code = verificationService.generateVerificationCode();
-            log.debug("인증 코드 생성 완료: {}", code);
+        String code = verificationService.generateVerificationCode();
+        log.debug("인증 코드 생성 완료: {}", code);
 
-            verificationService.saveVerificationCode(email, code);
-            log.debug("인증 코드 저장 완료 - 이메일: {}, 코드: {}", email, code);
+        verificationService.saveVerificationCode(email, code);
+        log.debug("인증 코드 저장 완료 - 이메일: {}, 코드: {}", email, code);
 
-            emailService.sendVerificationEmail(email, code);
-            log.info("이메일 인증 코드 발송 성공 - 수신자: {}", email);
+        emailService.sendVerificationEmail(email, code);
+        log.info("이메일 인증 코드 발송 성공 - 수신자: {}", email);
 
-            return ResponseEntity.ok().build();
-
-        } catch (MailSendException me) {
-            log.error("이메일 발송 실패 - 수신자: {}, 오류: {}", email, me.getMessage());
-            return ResponseEntity.badRequest().build();
-
-        } catch (Exception e) {
-            log.error("이메일 인증 처리 중 예상치 못한 오류 발생 - 수신자: {}, 오류: {}",
-                    email, e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/email/verify")
@@ -163,37 +128,29 @@ public class AuthController {
                 emailVerification.getEmail(),
                 emailVerification.getCode());
 
-        try {
-            boolean isValid = verificationService.verifyCode(
-                    emailVerification.getEmail(),
-                    emailVerification.getCode()
-            );
+        boolean isValid = verificationService.verifyCode(
+                emailVerification.getEmail(),
+                emailVerification.getCode()
+        );
 
-            if (isValid) {
-                log.debug("인증 코드 검증 성공 - 이메일: {}", emailVerification.getEmail());
-
-                String tempToken = jwtService.generateTemporaryToken(emailVerification.getEmail());
-                log.debug("임시 토큰 생성 완료 - 이메일: {}", emailVerification.getEmail());
-
-                int expireSeconds = (int) (jwtService.getTemporaryTokenExpire() / 1000);
-                cookieUtil.addCookie(response, "temporary_token", tempToken, expireSeconds);
-                log.info("임시 토큰 쿠키 설정 완료 - 이메일: {}, 만료시간: {}초",
-                        emailVerification.getEmail(), expireSeconds);
-
-                return ResponseEntity.ok().build();
-            }
-
+        if (!isValid) {
             log.warn("잘못된 인증 코드 - 이메일: {}, 입력된 코드: {}",
                     emailVerification.getEmail(),
                     emailVerification.getCode());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
-        } catch (Exception e) {
-            log.error("이메일 인증 처리 중 오류 발생 - 이메일: {}, 오류: {}",
-                    emailVerification.getEmail(),
-                    e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
         }
+
+        log.debug("인증 코드 검증 성공 - 이메일: {}", emailVerification.getEmail());
+
+        String tempToken = jwtService.generateTemporaryToken(emailVerification.getEmail());
+        log.debug("임시 토큰 생성 완료 - 이메일: {}", emailVerification.getEmail());
+
+        int expireSeconds = (int) (jwtService.getTemporaryTokenExpire() / 1000);
+        cookieUtil.addCookie(response, "temporary_token", tempToken, expireSeconds);
+        log.info("임시 토큰 쿠키 설정 완료 - 이메일: {}, 만료시간: {}초",
+                emailVerification.getEmail(), expireSeconds);
+
+        return ResponseEntity.ok().build();
     }
 
 }
