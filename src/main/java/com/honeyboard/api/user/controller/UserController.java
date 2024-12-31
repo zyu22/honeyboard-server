@@ -25,36 +25,32 @@ public class UserController {
 	public ResponseEntity<Void> updatePassword(
 			@CookieValue(name = "temporary_token", required = true) String temporaryToken,
 			@RequestBody User requestUser) {
-		log.debug("UserController/updatePassword");
-		try {
-			requestUser.setUserId(jwtService.getUserIdFromToken(temporaryToken));
-			if (userService.updatePassword(requestUser)) {
-				return ResponseEntity.ok().build();
-			}
-			return ResponseEntity.badRequest().build();
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().build();
-		}
+		log.debug("비밀번호 재설정 요청");
+
+		requestUser.setUserId(jwtService.getUserIdFromToken(temporaryToken));
+		userService.updatePassword(requestUser);
+
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/info")
-	public ResponseEntity<?> getUserInfo(
-			@CurrentUser User user) {
-		log.debug("유저컨트롤러");
-		try {
-			User temp = userService.getUser(user.getUserId());
-			log.debug("유저 정보 가져옴");
-			LogInUserResponse loginUser = new LogInUserResponse(
-					temp.getUserId(),
-					temp.getName(),
-					temp.getGenerationId(),
-					temp.getGenerationName(),
-					temp.getRole());
-			return ResponseEntity.ok(loginUser);
-		}catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+	public ResponseEntity<LogInUserResponse> getUserInfo(@CurrentUser User user) {
+		log.debug("사용자 정보 조회 요청 - ID: {}", user.getUserId());
+
+		User userInfo = userService.getUser(user.getUserId());
+		if (userInfo == null) {
+			return ResponseEntity.noContent().build();
 		}
 
+		LogInUserResponse response = new LogInUserResponse(
+				userInfo.getUserId(),
+				userInfo.getName(),
+				userInfo.getGenerationId(),
+				userInfo.getGenerationName(),
+				userInfo.getRole()
+		);
+
+		return ResponseEntity.ok(response);
 	}
 
 }
