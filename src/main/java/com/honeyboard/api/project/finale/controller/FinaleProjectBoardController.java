@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
-import com.honeyboard.api.project.finale.service.FinaleBoardService;
+import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,69 +23,41 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FinaleProjectBoardController {
 
-	private final FinaleBoardService finaleBoardService;
+	private final FinaleProjectBoardService finaleProjectBoardService;
 
 	@GetMapping("/{finaleId}/board")
-	public ResponseEntity<?> getAllFinaleBoards(@PathVariable int finaleId) {
-		try {
-			List<FinaleProjectBoard> boards = finaleBoardService.getAllFinaleBoards(finaleId);
-			if (boards.size() > 0) {
-				return ResponseEntity.ok().body(boards);
-			}
-			return ResponseEntity.noContent().build();
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<List<FinaleProjectBoard>> getAllFinaleBoards(@PathVariable int finaleId) {
+		List<FinaleProjectBoard> boards = finaleProjectBoardService.getAllFinaleBoards(finaleId);
+		return boards.isEmpty() ? ResponseEntity.noContent().build()
+				: ResponseEntity.ok(boards);
 	}
 
 	@GetMapping("/{finaleId}/board/{boardId}")
-	public ResponseEntity<?> getFinaleBoard(@PathVariable int boardId) {
-		try {
-			FinaleProjectBoard board = finaleBoardService.getFinaleBoard(boardId);
-			if (board != null) {
-				return ResponseEntity.ok().body(board);
-			}
-			return ResponseEntity.noContent().build();
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<FinaleProjectBoard> getFinaleBoard(@PathVariable int boardId) {
+		FinaleProjectBoard board = finaleProjectBoardService.getFinaleBoard(boardId);
+		return board == null ? ResponseEntity.noContent().build()
+				: ResponseEntity.ok(board);
 	}
 
 	@PostMapping("/{finaleId}/board")
-	public ResponseEntity<?> createFinaleBoard(@RequestBody FinaleProjectBoard board) {
-		try {
-			if (finaleBoardService.addFinaleBoard(board)) {
-				return ResponseEntity.ok().body(board);
-			}
-			return ResponseEntity.badRequest().body("Create failed");
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<FinaleProjectBoard> createFinaleBoard(@RequestBody FinaleProjectBoard board) {
+		finaleProjectBoardService.addFinaleBoard(board);
+		return ResponseEntity.status(HttpStatus.CREATED).body(board);
 	}
 
 	@PutMapping("/{finaleId}/board/{boardId}")
-	public ResponseEntity<?> updateFinaleBoard(@PathVariable int boardId, @RequestBody FinaleProjectBoard board) {
-		try {
-			if (finaleBoardService.updateFinaleBoard(boardId, board)) {
-				board.setBoardId(boardId);
-				return ResponseEntity.ok().body(board);
-			}
-			return ResponseEntity.badRequest().body("Update failed");
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<FinaleProjectBoard> updateFinaleBoard(
+			@PathVariable int boardId,
+			@RequestBody FinaleProjectBoard board) {
+		finaleProjectBoardService.updateFinaleBoard(boardId, board);
+		board.setBoardId(boardId);
+		return ResponseEntity.ok(board);
 	}
 
 	@DeleteMapping("/{finaleId}/board/{boardId}")
-	public ResponseEntity<?> deleteFinaleBoard(@PathVariable int boardId) {
-		try {
-			if (finaleBoardService.softDeleteFinaleBoard(boardId)) {
-				return ResponseEntity.ok().body("FinaleBoard deleted successfully");
-			}
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("The board does not exist");
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+	public ResponseEntity<Void> deleteFinaleBoard(@PathVariable int boardId) {
+		finaleProjectBoardService.softDeleteFinaleBoard(boardId);
+		return ResponseEntity.ok().build();
 	}
 
 }
