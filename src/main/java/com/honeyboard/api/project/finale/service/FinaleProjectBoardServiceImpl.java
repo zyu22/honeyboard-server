@@ -16,8 +16,8 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
 	private final FinaleProjectBoardMapper finaleProjectBoardMapper;
 
 	@Override
-	public List<FinaleProjectBoard> getAllFinaleBoards(int finaleId) {
-		return finaleProjectBoardMapper.selectAllFinaleBoards(finaleId);
+	public List<FinaleProjectBoard> getAllFinaleBoards(int finaleId, int generationId) {
+		return finaleProjectBoardMapper.selectAllFinaleBoards(finaleId, generationId);
 	}
 
 	@Override
