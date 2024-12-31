@@ -85,12 +85,12 @@
     <update id="updateWebRecommend" parameterType="WebRecommend">
         UPDATE web_recommend
         SET
-            title = #{title},
-            content = #{content},
-            url = #{url},
+            title = #{webRecommend.title},
+            content = #{webRecommend.content},
+            url = #{webRecommend.url},
             updated_at = NOW()
-        WHERE id = #{id}
-        AND user_id = #{userId}
+        WHERE id = #{recommendId}
+        AND user_id = #{webRecommend.userId}
         AND is_deleted = false
     </update>
 
