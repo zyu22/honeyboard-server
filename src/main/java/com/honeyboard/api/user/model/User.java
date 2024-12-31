@@ -42,4 +42,10 @@ public class User {
         this.generationName = generationName;
         this.role = role;
     }
+
+    public User(int userId, String name, String role) {
+        this.userId = userId;
+        this.name = name;
+        this.role = role;
+    }
 }

@@ -71,25 +71,29 @@ public class TrackControllerTest {
     @Test
     @WithMockUser
     void createTeam_Success() throws Exception {
+        int projectId = 2;
+
         // given
         TrackTeam request = new TrackTeam();
         request.setGenerationId(13);
-        request.setTrackProjectId(2);
+
 
         List<TrackTeamMember> members = new ArrayList<>();
+
+        // 리더 정보
         TrackTeamMember leader = new TrackTeamMember();
-        User leaderUser = new User();
-        leaderUser.setUserId(8);
-        leader.setTrackTeamId(request.getId());
-        leader.setUser(leaderUser);
+        User user1 = new User();
+        user1.setUserId(9);
+        leader.setUser(user1);
+        leader.setTrackMemberId(9);
         leader.setRole(TeamRole.LEADER);
 
+        // 멤버 정보
         TrackTeamMember member = new TrackTeamMember();
-        User memberUser = new User();
-        memberUser.setUserId(9);
-        member.setTrackTeamId(request.getId());
-        member.setTrackMemberId(9);
-        member.setUser(memberUser);
+        User user2 = new User();
+        user2.setUserId(17);
+        member.setUser(user2);
+        member.setTrackMemberId(17);
         member.setRole(TeamRole.MEMBER);
 
         members.add(leader);
@@ -97,7 +101,7 @@ public class TrackControllerTest {
         request.setMembers(members);
 
         // when & then
-        mockMvc.perform(post("/api/v1/project/track/2/team")
+        mockMvc.perform(post("/api/v1/project/track/{projectId}/team", projectId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())

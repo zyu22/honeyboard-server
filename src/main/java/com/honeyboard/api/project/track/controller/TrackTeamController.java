@@ -26,11 +26,12 @@ public class TrackTeamController {
     }
 
     @PostMapping("/{projectId}/team")
-    public ResponseEntity<?> createTrackTeam(@RequestBody TrackTeam trackTeam) {
-            log.info("관통 팀 생성 요청 - 기수 : {}", trackTeam.getGenerationId());
-            trackTeamService.addTrackTeam(trackTeam);
-            log.info("관통 팀 생성 완료 - ID: {}", trackTeam.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<?> createTrackTeam(@RequestBody TrackTeam trackTeam, @PathVariable("projectId") int projectId) {
+        log.info("관통 팀 생성 요청 - 기수 : {}", trackTeam.getGenerationId());
+        trackTeam.setTrackProjectId(projectId);
+        trackTeamService.addTrackTeam(trackTeam);
+        log.info("관통 팀 생성 완료 - ID: {}", trackTeam.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{projectId}/team/update")
@@ -44,7 +45,7 @@ public class TrackTeamController {
 
 
     @DeleteMapping("/{projectId}/team/{teamId}")
-    public ResponseEntity<?> deleteTrackTeam(@PathVariable int teamId) {
+    public ResponseEntity<?> deleteTrackTeam(@PathVariable("teamId") int teamId, @PathVariable("projectId") int projectId) {
         log.info("관통 팀 삭제 요청 - ID : {}", teamId);
         trackTeamService.removeTrackTeam(teamId);
         log.info("관통 팀 삭제 완료 - ID : {}", teamId);

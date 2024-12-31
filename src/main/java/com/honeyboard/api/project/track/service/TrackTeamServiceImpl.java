@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -50,10 +48,11 @@ public class TrackTeamServiceImpl implements TrackTeamService {
             throw new IllegalArgumentException("팀 멤버가 없습니다.");
         }
 
-        Map<String, Object> members = new HashMap<>();
-        members.put("teamId", teamId);
-        members.put("teamMembers", trackTeam.getMembers());
-        trackTeamMapper.insertTrackTeamMember(members);
+        List<TrackTeamMember> teamMembers = trackTeam.getMembers();
+        for(TrackTeamMember teamMember : teamMembers) {
+            teamMember.setTrackTeamId(teamId);
+        }
+        trackTeamMapper.insertTrackTeamMember(trackTeam);
 
         log.info("팀 생성 완료 - 팀 인원 수: {}", trackTeam.getMembers().size());
     }
