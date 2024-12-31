@@ -16,7 +16,7 @@ public class Schedule {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private String scheduleType;
-	private boolean publicAccess;
+	private boolean isPublic;
 	private int userId;
 	private int generationId;
 
