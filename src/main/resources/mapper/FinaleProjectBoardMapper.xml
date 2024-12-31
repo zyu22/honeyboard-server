@@ -30,6 +30,7 @@
         FROM finale_project_board fpb
         JOIN user u ON fpb.user_id = u.id
         WHERE fpb.project_id = #{finaleId}
+        AND u.generation_id = #{generationId}
         AND fpb.is_deleted = false
         ORDER BY fpb.created_at DESC
     </select>

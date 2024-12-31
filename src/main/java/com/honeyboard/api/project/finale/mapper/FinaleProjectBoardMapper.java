@@ -4,10 +4,14 @@ import java.util.List;
 
 import com.honeyboard.api.project.finale.model.FinaleMember;
 import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
+import org.apache.ibatis.annotations.Param;
 
 public interface FinaleProjectBoardMapper {
 
-	List<FinaleProjectBoard> selectAllFinaleBoards(int finaleId);
+	List<FinaleProjectBoard> selectAllFinaleBoards(
+			@Param("finaleId") int finaleId,
+			@Param("generationId") int generationId
+	);
 
 	FinaleProjectBoard selectFinaleBoard(int boardId);
 
@@ -15,10 +19,12 @@ public interface FinaleProjectBoardMapper {
 
 	int insertFinaleBoard(FinaleProjectBoard board);
 
-	int updateFinaleBoard(int boardId, FinaleProjectBoard board);
+	int updateFinaleBoard(
+			@Param("boardId") int boardId,
+			@Param("board") FinaleProjectBoard board
+	);
 
 	void updateFinaleBoardSubmitStatus(int boardId);
 
 	int deleteFinaleBoard(int boardId);
-
 }

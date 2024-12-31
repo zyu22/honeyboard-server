@@ -6,7 +6,7 @@ import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 
 public interface FinaleProjectBoardService {
 
-	List<FinaleProjectBoard> getAllFinaleBoards(int finaleId);
+	List<FinaleProjectBoard> getAllFinaleBoards(int finaleId, int generationId);
 
 	FinaleProjectBoard getFinaleBoard(int boardId);
 
