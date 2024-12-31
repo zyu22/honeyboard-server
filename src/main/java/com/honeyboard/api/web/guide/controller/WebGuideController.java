@@ -8,115 +8,79 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/v1/web/guide")
 @RequiredArgsConstructor
 @Slf4j
 public class WebGuideController {
-    private  final WebGuideService webGuideService;
+    private final WebGuideService webGuideService;
 
-    // 웹 개념 전체 조회 GET /api/v1/web/guide?generation={generationId}
     @GetMapping
     public ResponseEntity<?> getAllWebGuide(
             @RequestParam Integer generationId,
-            @RequestParam(defaultValue = "1") int page) {
-        try {
-            PageResponse<WebGuide> pageResponse = webGuideService.getAllWebGuide(generationId, page);
+            @RequestParam(defaultValue = "1") int currentPage,
+            @RequestParam(defaultValue = "8") int pageSize) {
+        log.info("웹 개념 전체 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}", generationId, currentPage, pageSize);
+        PageResponse<WebGuide> pageResponse = webGuideService.getAllWebGuide(generationId, currentPage, pageSize);
 
-            if (pageResponse.getContent().isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-
-            return ResponseEntity.ok().body(pageResponse);
-        } catch (Exception e) {
-            log.error("웹 개념 전체 조회 에러: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
+        if (pageResponse.getContent().isEmpty()) {
+            log.info("웹 개념 전체 조회 완료 - 데이터 없음");
+            return ResponseEntity.noContent().build();
         }
+
+        log.info("웹 개념 전체 조회 완료 - 조회된 개수: {}", pageResponse.getContent().size());
+        return ResponseEntity.ok(pageResponse);
     }
 
-    // 웹 개념 검색 GET /api/v1/web/guide?generation={generationId}&title={title}
     @GetMapping("/search")
     public ResponseEntity<?> searchWebGuide(
             @RequestParam Integer generationId,
             @RequestParam String title,
-            @RequestParam(defaultValue = "1") int page) {
-        try {
-            PageResponse<WebGuide> pageResponse = webGuideService.searchWebGuide(title, generationId, page);
+            @RequestParam(defaultValue = "1") int currentPage,
+            @RequestParam(defaultValue = "8") int pageSize) {
+        log.info("웹 개념 검색 요청 - 기수: {}, 검색어: {}", generationId, title);
+        PageResponse<WebGuide> pageResponse = webGuideService.searchWebGuide(title, generationId, currentPage, pageSize);
 
-            if (pageResponse.getContent().isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-
-            return ResponseEntity.ok().body(pageResponse);
-        } catch (Exception e) {
-            log.error("웹 개념 검색 조회 에러: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
+        if (pageResponse.getContent().isEmpty()) {
+            log.info("웹 개념 검색 완료 - 검색 결과 없음");
+            return ResponseEntity.noContent().build();
         }
+
+        log.info("웹 개념 검색 완료 - 검색된 개수: {}", pageResponse.getContent().size());
+        return ResponseEntity.ok(pageResponse);
     }
 
-    // 웹 개념 상세 조회 GET /api/v1/web/guide/{guideId}
     @GetMapping("/{guideId}")
     public ResponseEntity<?> getWebGuide(@PathVariable int guideId) {
-        try {
-            WebGuide webGuide = webGuideService.getWebGuide(guideId);
-            return ResponseEntity.ok().body(webGuide);
-        } catch (Exception e) {
-            log.error("웹 개념 상세 조회 에러: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("웹 개념 상세 조회 요청 - ID: {}", guideId);
+        WebGuide webGuide = webGuideService.getWebGuide(guideId);
+        log.info("웹 개념 상세 조회 완료 - ID: {}", guideId);
+        return ResponseEntity.ok(webGuide);
     }
 
-    // 웹 개념 작성 POST /api/v1/web/guide
     @PostMapping
     public ResponseEntity<?> addWebGuide(@RequestBody WebGuide webGuide) {
-        try {
-            boolean result = webGuideService.addWebGuide(webGuide);
-
-            if (result) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("웹 개념이 작성되었습니다.");
-            }
-
-            throw new Exception("웹 개념 작성에 실패했습니다.");
-        } catch (Exception e) {
-            log.error("웹 개념 작성 에러: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("웹 개념 작성 요청");
+        webGuideService.addWebGuide(webGuide);
+        log.info("웹 개념 작성 완료 - ID: {}", webGuide.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    // 웹 개념 수정 PUT /api/v1/web/guide/{guideId}}
     @PutMapping("/{guideId}")
     public ResponseEntity<?> updateWebGuide(
             @PathVariable int guideId,
             @RequestBody WebGuide webGuide) {
-        try {
-            boolean result = webGuideService.updateWebGuide(guideId, webGuide);
-
-            if (result) {
-                return ResponseEntity.ok().body("웹 개념이 수정되었습니다.");
-            }
-
-            throw new Exception("웹 개념 수정에 실패했습니다.");
-        } catch (Exception e) {
-            log.error("웹 개념 수정 에러: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("웹 개념 수정 요청 - ID: {}", guideId);
+        webGuideService.updateWebGuide(guideId, webGuide);
+        log.info("웹 개념 수정 완료 - ID: {}", guideId);
+        return ResponseEntity.ok().build();
     }
 
-    // 웹 개념 삭제 DELETE /api/v1/web/guide/{guideId}
     @DeleteMapping("/{guideId}")
     public ResponseEntity<?> deleteWebGuide(@PathVariable int guideId) {
-        try {
-            boolean result = webGuideService.deleteWebGuide(guideId);
-
-            if (result) {
-                return ResponseEntity.ok().body("웹 개념이 삭제되었습니다.");
-            }
-
-            throw new Exception("웹 개념 삭제에 실패했습니다.");
-        } catch (Exception e) {
-            log.error("웹 개념 삭제 에러: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        log.info("웹 개념 삭제 요청 - ID: {}", guideId);
+        webGuideService.deleteWebGuide(guideId);
+        log.info("웹 개념 삭제 완료 - ID: {}", guideId);
+        return ResponseEntity.ok().build();
     }
 }
