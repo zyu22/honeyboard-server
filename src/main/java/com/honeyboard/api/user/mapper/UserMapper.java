@@ -1,4 +1,4 @@
-package com.honeyboard.api.user.model.mapper;
+package com.honeyboard.api.user.mapper;
 
 import com.honeyboard.api.user.model.User;
 

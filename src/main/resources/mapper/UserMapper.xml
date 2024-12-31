@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.honeyboard.api.user.model.mapper.UserMapper">
+<mapper namespace="com.honeyboard.api.user.mapper.UserMapper">
 
     <!-- 사용자 등록 -->
     <insert id="insertUser" parameterType="user" useGeneratedKeys="true" keyProperty="userId">

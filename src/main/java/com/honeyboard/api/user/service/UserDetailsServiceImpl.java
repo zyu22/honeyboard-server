@@ -1,4 +1,4 @@
-package com.honeyboard.api.user.model.service;
+package com.honeyboard.api.user.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
