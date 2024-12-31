@@ -13,7 +13,7 @@
 	        start_date,
 	        end_date,
 	        schedule_type,
-	        is_public AS publicAccess,
+	        is_public AS isPublic,
 	        generation_id,
 	        user_id
 	    FROM schedule
