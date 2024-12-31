@@ -17,8 +17,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class FinaleMember {
 
-	private int finaleMemberId;
-	private int finaleTeamId;
+	private Integer finaleMemberId;
+	private Integer finaleTeamId;
 	private User user;
 
 	private enum role {
