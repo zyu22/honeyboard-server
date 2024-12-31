@@ -16,61 +16,44 @@ public class TrackProjectBoardController {
     private final TrackProjectBoardService ts;
 
     @GetMapping("/{trackId}/board")
-    public ResponseEntity<?> getAllTrackBoard(@PathVariable int trackId){
-        try{
-            List<TrackProjectBoard> boards = ts.getAllBoard(trackId);
-            if(boards.size() > 0) {
-                return ResponseEntity.status(HttpStatus.OK).body(boards);
-            }
-            return ResponseEntity.noContent().build();
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<List<TrackProjectBoard>> getAllTrackBoard(@PathVariable int trackId) {
+        List<TrackProjectBoard> boards = ts.getAllBoard(trackId);
+        return boards.isEmpty() ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(boards);
     }
 
     @GetMapping("{trackId}/board/{boardId}")
-    public ResponseEntity<?> getTrackBoard(@PathVariable int trackId, @PathVariable int boardId) {
-        try {
-            TrackProjectBoard board = ts.getBoard(boardId);
-            if (board != null) {
-                return ResponseEntity.ok().body(board);
-            }
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<TrackProjectBoard> getTrackBoard(
+            @PathVariable int trackId,
+            @PathVariable int boardId) {
+        TrackProjectBoard board = ts.getBoard(boardId);
+        return board == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(board);
     }
 
     @PostMapping("/{trackId}/board")
-    public ResponseEntity<?> createTrackProjectBoard(
-            @PathVariable int trackId, @RequestBody TrackProjectBoard board){
-        try{
-            TrackProjectBoard createdBoard = ts.addBoard(trackId,board);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdBoard);
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<TrackProjectBoard> createTrackProjectBoard(
+            @PathVariable int trackId,
+            @RequestBody TrackProjectBoard board) {
+        TrackProjectBoard createdBoard = ts.addBoard(trackId, board);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBoard);
     }
 
     @PutMapping("/{trackId}/board/{boardId}")
-    public ResponseEntity<?> updateTrackProjectBoard(@PathVariable int trackId, @PathVariable int boardId, @RequestBody TrackProjectBoard board){
-        try{
-            TrackProjectBoard updatedBoard = ts.updateBoard(boardId,board);
-            return ResponseEntity.ok().body(updatedBoard);
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<TrackProjectBoard> updateTrackProjectBoard(
+            @PathVariable int trackId,
+            @PathVariable int boardId,
+            @RequestBody TrackProjectBoard board) {
+        TrackProjectBoard updatedBoard = ts.updateBoard(boardId, board);
+        return ResponseEntity.ok(updatedBoard);
     }
 
     @DeleteMapping("/{trackId}/board/{boardId}")
-    public ResponseEntity<?> deleteTrackProjectBoard(@PathVariable int trackId, @PathVariable int boardId){
-        try{
-            if(ts.softDeleteBoard(boardId)){
-                return ResponseEntity.ok().body("게시글 삭제 성공");
-            }
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("존재하지 않는 게시글입니다");
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Void> deleteTrackProjectBoard(
+            @PathVariable int trackId,
+            @PathVariable int boardId) {
+        ts.softDeleteBoard(boardId);
+        return ResponseEntity.ok().build();
     }
+
 }
