@@ -2,6 +2,8 @@ package com.honeyboard.api.user.service;
 
 import com.honeyboard.api.user.model.User;
 
+import java.util.List;
+
 public interface UserService {
 
 	Boolean saveUser(User user);
@@ -19,5 +21,7 @@ public interface UserService {
 	Boolean existsByEmail(String email);
 
 	Integer getActiveGenerationId();
+
+	List<User> getAllUsersWithTeamInfo(int generationId);
 
 }

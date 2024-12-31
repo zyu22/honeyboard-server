@@ -22,5 +22,6 @@ public interface JwtService {
 	int getUserIdFromToken(String token);
 	String getEmailFromToken(String token);
 	String getRoleFromToken(String token);
+	User getUserInfoFromToken(String token);
 
 }
