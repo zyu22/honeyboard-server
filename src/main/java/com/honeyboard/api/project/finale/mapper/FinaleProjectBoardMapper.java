@@ -9,8 +9,7 @@ import org.apache.ibatis.annotations.Param;
 public interface FinaleProjectBoardMapper {
 
 	List<FinaleProjectBoard> selectAllFinaleBoards(
-			@Param("finaleId") int finaleId,
-			@Param("generationId") int generationId
+			@Param("finaleId") int finaleId
 	);
 
 	FinaleProjectBoard selectFinaleBoard(int boardId);
