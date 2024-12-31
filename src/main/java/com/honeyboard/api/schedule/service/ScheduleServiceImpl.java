@@ -53,15 +53,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 		for (TrackProject project : trackProjects) {
 			try {
 				Schedule schedule = new Schedule();
-				schedule.setScheduleId(project.getTrackProjectId());
+				schedule.setScheduleId(project.getId());
 				schedule.setContent(project.getTitle());
-
+				log.info("트랙프로젝트 id: {}", project.getId());
 				LocalDate date = LocalDate.parse(project.getCreatedAt(), formatter);
 				schedule.setStartDate(date);
 				schedule.setEndDate(date);
 
 				schedule.setScheduleType("TRACK");
-				schedule.setPublicAccess(true);
+				schedule.setPublic(true);
 				schedule.setGenerationId(project.getGenerationId());
 				schedule.setUserId(project.getUserId());
 
@@ -71,6 +71,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 				throw new IllegalArgumentException("날짜 형식이 올바르지 않습니다.");
 			}
 		}
+		//날짜순 정렬
+		Collections.sort(schedules,
+				(s1, s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 
 		Collections.sort(schedules, (s1, s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 
