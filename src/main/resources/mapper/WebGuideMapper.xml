@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="com.honeyboard.api.web.guide.mapper.WebGuideMapper">
+    <!-- 웹 개념 전체/기수별 조회 -->
+    <select id="selectAllWebGuide" parameterType="int" resultType="WebGuide">
+        SELECT
+            id AS guideId,
+            title,
+            content,
+            user_id AS userId,
+            generation_id AS generationId,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM web_guide
+        WHERE generation_id = #{generationId}
+        AND is_deleted = false
+    </select>
+
+    <!-- 웹 개념 상세 조회 -->
+    <select id="selectWebGuideById" parameterType="int" resultType="WebGuide">
+        SELECT
+            id AS guideId,
+            title,
+            content,
+            user_id AS userId,
+            generation_id AS generationId,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM web_guide
+        WHERE id = #{guideId}
+        AND is_deleted = false
+    </select>
+
+    <!-- 웹 개념 제목 기반 검색 -->
+    <select id="searchWebGuideByTitle" parameterType="int" resultType="WebGuide">
+        SELECT
+            id AS guideId,
+            title,
+            content,
+            user_id AS userId,
+            generation_id AS generationId,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            is_deleted AS isDeleted
+        FROM web_guide
+        WHERE generation_id = #{generationId}
+        AND title LIKE CONCAT('%', #{title}, '%')
+        AND is_deleted = false
+    </select>
+
+    <!-- 웹 개념 작성 -->
+    <insert id="insertWebGuide" parameterType="WebGuide">
+        INSERT INTO web_guide (
+            id,
+            title,
+            content,
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
+            )
+        VALUES (
+            #{guideId},
+            #{title},
+            #{content},
+            #{userId},
+            #{generationId},
+            NOW(),
+            NOW(),
+            false
+            )
+    </insert>
+
+    <!-- 웹 개념 수정 -->
+    <update id="updateWebGuide" parameterType="WebGuide">
+        UPDATE web_guide
+        SET
+            title = #{title},
+            content = #{content},
+            updated_at = NOW()
+        WHERE id = #{guideId}
+        AND user_id = #{userId}
+        AND is_deleted = false
+    </update>
+
+    <!-- 웹 개념 삭제 -->
+    <update id="deleteWebGuide">
+        UPDATE web_guide
+        SET
+            is_deleted = true,
+            updated_at = NOW()
+        WHERE id = #{guideId}
+        AND user_id = #{userId}
+        AND is_deleted = false
+    </update>
+
+    <!-- 웹 개념 전체 개수 조회 -->
+    <select id="countWebGuide" resultType="int">
+        SELECT COUNT(*)
+        FROM web_guide
+        WHERE generation_id = #{generationId}
+        AND is_deleted = false
+    </select>
+
+    <!-- 웹 개념 검색 개수 조회 -->
+    <select id="countSearchWebGuide" resultType="int">
+        SELECT COUNT(*)
+        FROM web_guide
+        WHERE generation_id = #{generationId}
+        AND title LIKE CONCAT('%', #{title}, '%')
+        AND is_deleted = false
+    </select>
+</mapper>

@@ -3,7 +3,8 @@ package com.honeyboard.api.algorithm.solution.controller;
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
 import com.honeyboard.api.algorithm.solution.service.AlgorithmSolutionService;
 import com.honeyboard.api.common.response.PageResponse;
-import com.honeyboard.api.jwt.model.service.JwtService;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
@@ -29,7 +29,6 @@ import java.util.List;
 public class AlgorithmSolutionController {
 
 	private final AlgorithmSolutionService algorithmSolutionService;
-	private final JwtService jwtService;
 
 	//알고리즘 풀이 작성 POST /api/v1/algorithm/problem/{problemId}/solution..
 	@PostMapping("/{problemId}/solution")
@@ -45,17 +44,15 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 전체 조회 GET /api/v1/algorithm/problem/{problemId}/solution
 	@GetMapping("/{problemId}/solution")
 	public ResponseEntity<?> getAllAlgorithmSolution(
-			@PathVariable int problemId, 
+			@PathVariable int problemId,
 			@RequestParam(value = "generationId", required = false) int generationId,
 			@RequestParam(value = "language", required = false) List<String> language,
 			@RequestParam(value = "sortType", defaultValue = "latest") String sortType,
 			@RequestParam(value = "page", defaultValue = "1") int page,
-	/*		@RequestParam(value = "userId") int userId) {*/
-			@RequestHeader("Authorization") String token) {
+			@CurrentUser User user) {
 		log.info("알고리즘 풀이 전체 조회 요청 - 문제 ID: {}, 페이지: {}", problemId, page);
 
-		String jwtToken = token.substring(7);
-		int userId = jwtService.getUserIdFromToken(jwtToken);
+		int userId = user.getUserId();
 
 		PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
 				problemId, generationId, language, sortType, page, userId);
@@ -80,13 +77,11 @@ public class AlgorithmSolutionController {
 	@PutMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> updateAlgorithmSolution(
 			@PathVariable int solutionId,
-	/*		@RequestParam int userId,*/
-			@RequestHeader("Authorization") String token,
-			@RequestBody AlgorithmSolution algorithmSolution) {
+			@RequestBody AlgorithmSolution algorithmSolution,
+			@CurrentUser User user) {
 		log.info("알고리즘 풀이 수정 요청 - 솔루션 ID: {}", solutionId);
 
-		String jwtToken = token.substring(7);
-		int userId = jwtService.getUserIdFromToken(jwtToken);
+		int userId = user.getUserId();
 
 		algorithmSolution.setSolutionId(solutionId);
 		algorithmSolution.setUserId(userId);
@@ -101,12 +96,10 @@ public class AlgorithmSolutionController {
 	@DeleteMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> deleteAlgorithmSolution(
 			@PathVariable int solutionId,
-	/*		@RequestParam int userId) {*/
-			@RequestHeader("Authorization") String token) {
+			@CurrentUser User user) {
 		log.info("알고리즘 풀이 삭제 요청 - 솔루션 ID: {}", solutionId);
 
-		String jwtToken = token.substring(7);
-		int userId = jwtService.getUserIdFromToken(jwtToken);
+		int userId = user.getUserId();
 
 		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId, userId);
 

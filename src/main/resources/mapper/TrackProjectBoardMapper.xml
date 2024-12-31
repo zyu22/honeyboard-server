@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectBoardMapper">
+
+    <resultMap id="TrackProjectBoardResultMap" type="com.honeyboard.api.project.track.model.TrackProjectBoard">
+        <id property="id" column="id"/>
+        <result property="trackProjectId" column="track_project_id"/>
+        <result property="trackTeamId" column="track_team_id"/>
+        <result property="title" column="title" />
+        <result property="url" column="url"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="teamMembers" column="team_members"/>
+    </resultMap>
+
+    <select id="selectAllTrackProjectsBoards" parameterType="int" resultType="TrackProjectBoard" >
+        SELECT
+            tpb.title AS project_title,       -- 게시글 제목
+            tpb.created_at AS post_date,      -- 게시글 생성 날짜
+            GROUP_CONCAT(u.name ORDER BY u.name) AS team_members -- 팀원들 이름을 ,으로 묶어서 출력 (예: "홍길동, 김철수")
+        FROM
+            track_project_board tpb
+                JOIN
+            track_team_member ttm ON tpb.track_team_id = ttm.track_team_id
+                JOIN
+            user u ON ttm.user_id = u.id
+        WHERE
+            tpb.is_deleted = FALSE           -- 삭제되지 않은 게시글만
+        GROUP BY
+            tpb.id                          -- 게시글 별로 그룹화
+        ORDER BY
+            tpb.created_at DESC;            -- 게시글 생성일 기준 내림차순 정렬
+
+    </select>
+
+    <select id="selectTrackProjectBoard" parameterType="int" resultType="TrackProjectBoard">
+        SELECT
+            tpb.id,
+            tpb.track_project_id,
+            tpb.track_team_id,
+            tpb.title,
+            tpb.url,
+            tpb.content,
+            tpb.updated_at,
+            GROUP_CONCAT(u.name ORDER BY u.name) AS team_members
+        FROM
+            track_project_board tpb
+                JOIN
+            track_team_member ttm ON tpb.track_team_id = ttm.track_team_id
+                JOIN
+            user u ON ttm.user_id = u.id
+        WHERE
+            tpb.id = #{id}   -- 게시글 ID에 해당하는 조건
+        GROUP BY
+            tpb.id;
+    </select>
+
+    <insert id="insertTrackProjectBoard" parameterType="TrackProjectBoard" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO track_project_board(
+            track_project_id, track_team_id, url, title, content, user_id, created_at
+        ) VALUES (
+                     #{trackProjectId},
+                     #{trackTeamId},
+                     #{url},
+                     #{title},
+                     #{content},
+                     #{userId},
+                     CURRENT_TIME
+                 )
+    </insert>
+
+    <update id="updateTrackProjectBoard" >
+        update track_project_board
+        set title=#{title}, url=#{url}, content=#{content}, update_at = CURRENT_TIME
+        where id=#{id} and is_deleted = false
+    </update>
+
+    <update id="deleteTrackProjectBoard" parameterType="int">
+        update track_project_board
+        set is_deleted = true
+        where id =#{id}
+    </update>
+
+</mapper>

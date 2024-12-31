@@ -7,8 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,29 +49,31 @@ public class ScheduleServiceImpl implements ScheduleService {
 		List<Schedule> schedules = scheduleMapper.selectScheduleByMonth(year, month, generationId, role);
 		List<TrackProject> trackProjects = scheduleMapper.selectTrackProjectByMonth(year, month, generationId);
 
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		for (TrackProject project : trackProjects) {
 			try {
 				Schedule schedule = new Schedule();
 				schedule.setScheduleId(project.getTrackProjectId());
 				schedule.setContent(project.getTitle());
 
-				java.util.Date utilDate = formatter.parse(project.getCreatedAt());
-				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-				schedule.setStartDate(sqlDate);
-				schedule.setEndDate(sqlDate);
+				LocalDate date = LocalDate.parse(project.getCreatedAt(), formatter);
+				schedule.setStartDate(date);
+				schedule.setEndDate(date);
 
 				schedule.setScheduleType("TRACK");
-				schedule.setPublicAccess(true);
+				schedule.setPublic(true);
 				schedule.setGenerationId(project.getGenerationId());
 				schedule.setUserId(project.getUserId());
 
 				schedules.add(schedule);
-			} catch (ParseException e) {
+			} catch (DateTimeParseException e) {
 				log.error("날짜 변환 실패 - 프로젝트 ID: {}", project.getTrackProjectId(), e);
 				throw new IllegalArgumentException("날짜 형식이 올바르지 않습니다.");
 			}
 		}
+		//날짜순 정렬
+		Collections.sort(schedules,
+				(s1, s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 
 		Collections.sort(schedules, (s1, s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
 
