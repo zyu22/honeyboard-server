@@ -13,7 +13,7 @@
 			u.name as userName,
 			s.runtime,
 			s.memory,
-			p.name AS languageName
+			p.name AS languageName,
 			CASE 
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
@@ -40,7 +40,7 @@
 			<when test="sortType == 'runtime'">
 				s.runtime ASC
 			</when>
-			<when test="sortType == 'memory">
+			<when test="sortType == 'memory'">
 				s.memory ASC
 			</when>
 			<otherwise>
@@ -60,7 +60,7 @@
 			s.runtime,
 			s.memory,
 			p.name AS languageName,
-			s.content
+			s.content,
 			CASE 
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
@@ -136,7 +136,7 @@
 	
 	
 	<!-- 페이지네이션 -->
-	<select id="countAlgorithmSolutions">
+	<select id="countAlgorithmSolutions" resultType="int">
 	   SELECT COUNT(*)
 	   FROM algorithm_problem_solution s
 	   INNER JOIN user u ON s.user_id = u.id
