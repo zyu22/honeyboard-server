@@ -4,6 +4,8 @@ import com.honeyboard.api.algorithm.guide.model.AlgorithmGuide;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 public interface AlgorithmGuideService {
 
     //알고리즘 개념 전체 조회 (GET /api/v1/algorithm/guide?generation={generationId}) 구현
