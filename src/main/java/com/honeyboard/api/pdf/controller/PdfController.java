@@ -6,6 +6,8 @@ import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
 import com.honeyboard.api.project.track.model.TrackProjectBoard;
 import com.honeyboard.api.project.track.service.TrackProjectBoardService;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -66,7 +68,9 @@ public class PdfController {
     }
 
     @GetMapping("/all/{type}/{id}")
-    public ResponseEntity<byte[]> downloadAllPdf(@PathVariable String type, @PathVariable Integer id) throws IOException {
+    public ResponseEntity<byte[]> downloadAllPdf(
+            @PathVariable String type,
+            @PathVariable Integer id) throws IOException {
         List<Document> documents;
         String fileName;
 
