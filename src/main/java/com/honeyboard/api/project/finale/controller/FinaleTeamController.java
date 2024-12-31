@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import com.honeyboard.api.common.response.FinaleProjectResponse;
+import com.honeyboard.api.project.finale.service.FinaleTeamService;
+import com.honeyboard.api.user.model.mapper.UserMapper;
+import com.honeyboard.api.user.model.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
-import com.honeyboard.api.project.finale.service.FinaleTeamService;
+import com.honeyboard.api.project.finale.service.FinaleProjectService;
 import com.honeyboard.api.user.model.User;
 
 import lombok.RequiredArgsConstructor;
@@ -30,14 +34,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FinaleTeamController {
 
+	private final FinaleProjectService finaleProjectService;
 	private final FinaleTeamService finaleTeamService;
+	private final UserMapper userMapper;
+	private final UserService userService;
 
 	@GetMapping("/{projectId}/status")
 	public ResponseEntity<?> getAllSubmittedStatus(@PathVariable int projectId,
-			@RequestParam(required = false) String date) {
-		String targetDate = (date != null && !date.isEmpty()) ? date
-				: LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+												   @RequestParam(required = false) String date) {
 		try {
+			LocalDate targetDate;
+			if (date != null && !date.isEmpty()) {
+				targetDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyyMMdd"));
+			} else {
+				targetDate = LocalDate.now();
+			}
+
 			List<FinaleTeam> submittedStatus = finaleTeamService.findStatusByDate(targetDate);
 			if (submittedStatus.size() > 0) {
 				return ResponseEntity.ok().body(submittedStatus);
@@ -49,8 +61,11 @@ public class FinaleTeamController {
 	}
 
 	@GetMapping("/team/remaining")
-	public ResponseEntity<?> getRemainedUsers(@RequestParam(required = false) int generationId) {
+	public ResponseEntity<?> getRemainedUsers(@RequestParam(required = false) Integer generationId) {
 		try {
+			if(generationId == null) {
+				generationId = userService.getActiveGenerationId();
+			}
 			List<User> remainedUsers = finaleTeamService.getRemainedUsers(generationId);
 			if (remainedUsers.size() > 0) {
 				return ResponseEntity.ok().body(remainedUsers);
@@ -61,10 +76,30 @@ public class FinaleTeamController {
 		}
 	}
 
+	@GetMapping()
+	public ResponseEntity<?> getAllFinaleProjects(@RequestParam(required = false) Integer generationId) {
+		try {
+			if(generationId == null) {
+				generationId = userService.getActiveGenerationId();
+			}
+			List<FinaleProject> projects = finaleProjectService.getAllFinaleProject(generationId);
+			List<User> users = userService.getAllUsersWithTeamInfo(generationId);
+			LocalDate today = LocalDate.now();
+			List<FinaleTeam> submits = finaleTeamService.findStatusByDate(today);
+			FinaleProjectResponse response = new FinaleProjectResponse(projects, users, submits);
+			if(projects.size() > 0) {
+				return ResponseEntity.ok().body(response);
+			}
+			return ResponseEntity.noContent().build();
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
 	@PostMapping("/team")
 	public ResponseEntity<?> createFinaleProject(@RequestBody FinaleProject finaleProject) {
 		try {
-			if (finaleTeamService.saveFinaleProject(finaleProject)) {
+			if (finaleProjectService.saveFinaleProject(finaleProject)) {
 				return ResponseEntity.ok().body("FinaleProject created successfully");
 			}
 			return ResponseEntity.badRequest().body("The data is inadequate");
@@ -76,7 +111,7 @@ public class FinaleTeamController {
 	@PutMapping("/team/update")
 	public ResponseEntity<?> updateFinaleProject(@RequestBody FinaleProject finaleProject) {
 		try {
-			if (finaleTeamService.updateFinaleProject(finaleProject)) {
+			if (finaleProjectService.updateFinaleProject(finaleProject)) {
 				return ResponseEntity.ok().body("FinaleProject updated successfully");
 			}
 			return ResponseEntity.badRequest().body("Update failed");
@@ -85,10 +120,10 @@ public class FinaleTeamController {
 		}
 	}
 
-	@DeleteMapping("/team/{teamId}")
-	public ResponseEntity<?> removeFinaleProject(@PathVariable int teamId) {
+	@DeleteMapping("/team/{finaleProjectId}")
+	public ResponseEntity<?> deleteFinaleProject(@PathVariable int finaleProjectId) {
 		try {
-			if (finaleTeamService.removeFinaleProject(teamId)) {
+			if (finaleProjectService.softDeleteFinaleProject(finaleProjectId)) {
 				return ResponseEntity.ok().body("FinaleProject removed successfully");
 			}
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("The Project does not exist");

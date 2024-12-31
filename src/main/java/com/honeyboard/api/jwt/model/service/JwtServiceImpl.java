@@ -117,6 +117,7 @@ public class JwtServiceImpl implements JwtService {
                 .subject(user.getEmail())
                 .claim("userId", user.getUserId()) // 토큰에 id 저장
                 .claim("role", user.getRole()) // 토큰에 role 저장
+                .claim("generationId", user.getGenerationId())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expireTime))
                 .signWith(getSigninKey())
@@ -181,5 +182,16 @@ public class JwtServiceImpl implements JwtService {
 
     public String getRoleFromToken(String token) {
         return extractAllClaims(token).get("role", String.class);
+    }
+
+    @Override
+    public User getUserInfoFromToken(String token) {
+        Claims claims = extractAllClaims(token);
+        return User.builder()
+                .userId(claims.get("userId", Integer.class))
+                .email(claims.getSubject())
+                .role(claims.get("role", String.class))
+                .generationId(claims.get("generationId", Integer.class))
+                .build();
     }
 }

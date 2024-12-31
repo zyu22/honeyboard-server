@@ -1,11 +1,8 @@
 package com.honeyboard.api.user.controller;
 
+import com.honeyboard.api.user.model.CurrentUser;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.User;
@@ -37,6 +34,23 @@ public class UserController {
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().build();
 		}
+	}
+
+	@GetMapping("/info")
+	public ResponseEntity<?> getUserInfo(
+			@CurrentUser User user) {
+		try {
+			User loginUser = new User(
+					user.getUserId(),
+					user.getName(),
+					user.getGenerationId(),
+					user.getGenerationName(),
+					user.getRole());
+			return ResponseEntity.ok(loginUser);
+		}catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+
 	}
 
 }
