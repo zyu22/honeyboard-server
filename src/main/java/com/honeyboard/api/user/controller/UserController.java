@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,5 +38,13 @@ public class UserController {
 			return ResponseEntity.internalServerError().build();
 		}
 	}
+
+
+
+//	/api/v1/user/{userId}/bookmark?type={content_type}
+///api/v1/user/{userId}/bookmark
+///api/v1/user/{userId}/bookmark/{bookmarkId}
+///api/v1/user/{userId}/project
+///api/v1/user/{userId}/algorithm
 
 }

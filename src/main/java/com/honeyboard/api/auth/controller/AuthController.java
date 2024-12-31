@@ -16,7 +16,7 @@ import com.honeyboard.api.auth.model.service.EmailService;
 import com.honeyboard.api.auth.model.service.VerificationService;
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.service.UserService;
 import com.honeyboard.api.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletResponse;

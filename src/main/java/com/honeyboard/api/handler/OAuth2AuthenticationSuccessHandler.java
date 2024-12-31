@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.CustomUserDetails;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.service.UserService;
 import com.honeyboard.api.util.CookieUtil;
 
 import jakarta.servlet.ServletException;
