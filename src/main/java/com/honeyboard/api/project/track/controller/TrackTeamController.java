@@ -21,6 +21,10 @@ public class TrackTeamController {
                                            @RequestParam("generation") int generationId) {
         log.info("팀 제출현황 조회 요청 - 프로젝트 ID: {}, 기수: {}", projectId, generationId);
         TrackProjectStatus teamStatus = trackTeamService.getProjectStatus(projectId, generationId);
+        if (teamStatus == null) {
+            log.info("팀 제출현황 조회 완료, 값 없음 - 프로젝트 ID: {}, 기수: {}", projectId, generationId);
+            return ResponseEntity.noContent().build();
+        }
         log.info("팀 제출현황 조회 완료 - 프로젝트 ID: {}, 기수: {}", projectId, generationId);
         return ResponseEntity.status(HttpStatus.OK).body(teamStatus);
     }
