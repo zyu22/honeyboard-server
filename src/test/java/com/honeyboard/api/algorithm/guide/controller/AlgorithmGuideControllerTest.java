@@ -1,10 +1,21 @@
 package com.honeyboard.api.algorithm.guide.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.honeyboard.api.algorithm.guide.model.AlgorithmGuide;
-import com.honeyboard.api.algorithm.guide.service.AlgorithmGuideService;
-import com.honeyboard.api.user.model.CustomUserDetails;
-import com.honeyboard.api.user.model.User;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,14 +25,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.honeyboard.api.algorithm.guide.model.AlgorithmGuide;
+import com.honeyboard.api.algorithm.guide.service.AlgorithmGuideService;
+import com.honeyboard.api.user.model.User;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,8 +40,18 @@ public class AlgorithmGuideControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+//    @MockBean
     private AlgorithmGuideService algorithmGuideService;
+
+    // CurrentUser 관련 설정 추가
+    @MockBean
+    private User mockUser;  // User 객체 Mock 추가
+
+    @BeforeEach
+    void setUp() {
+        // 테스트용 User 설정
+        when(mockUser.getGenerationId()).thenReturn(13);
+    }
 
     @Test
     @WithMockUser
@@ -49,7 +66,28 @@ public class AlgorithmGuideControllerTest {
 
         // when & then
         mockMvc.perform(get("/api/v1/algorithm/guide")
-                .param("generationId", "13"))
+                .param("generationId", "13")
+                .with(user(mockUser)))  // 인증된 사용자 설정
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    void getAllAlgorithmGuide_WithTitle_Success() throws Exception {
+        // given
+        AlgorithmGuide guide = new AlgorithmGuide();
+        guide.setId(1);
+        guide.setTitle("Search Test");
+
+        when(algorithmGuideService.searchAlgorithmGuide(anyInt(), anyString()))
+            .thenReturn(Arrays.asList(guide));
+
+        // when & then
+        mockMvc.perform(get("/api/v1/algorithm/guide")
+                .param("generationId", "13")
+                .param("title", "Search")
+                .with(user(mockUser)))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

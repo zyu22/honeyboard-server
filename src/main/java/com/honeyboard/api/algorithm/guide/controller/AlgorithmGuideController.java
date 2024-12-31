@@ -82,7 +82,10 @@ public class AlgorithmGuideController {
     @PostMapping
     public ResponseEntity<?> addAlgorithmGuide(@RequestParam("generationId") int generationId,
                                                @RequestBody AlgorithmGuide algorithmGuide) {
+    	log.debug("작성까지 도달은 함");
+    	System.out.println("작성까지 도달은 함");
         try {
+        	log.debug("요청: generationId={}, algorithmGuide={}", generationId, algorithmGuide);
             boolean result = algorithmGuideService.addAlgorithmGuide(generationId, algorithmGuide);
             if (result) {
                 return ResponseEntity.status(HttpStatus.CREATED).build();
