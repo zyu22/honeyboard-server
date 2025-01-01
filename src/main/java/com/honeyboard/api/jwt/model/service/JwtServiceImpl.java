@@ -8,6 +8,9 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import com.honeyboard.api.exception.InvalidTokenException;
+import com.honeyboard.api.exception.RefreshTokenNotFoundException;
+import com.honeyboard.api.exception.TokenExpiredException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,27 +42,58 @@ public class JwtServiceImpl implements JwtService {
 
     private final RedisTemplate<String, String> redisTemplate; // 레디스 연동
     private static final String REFRESH_TOKEN_PREFIX = "RT:"; // // Redis에 저장될 리프레시 토큰의 접두어
-    
-    @Override
-    public String extractUserEmail(String token) { // 토큰에서 사용자 이메일 추출
-        return extractClaim(token, Claims::getSubject);
-    }
 
     @Override
-    public boolean isValid(String token, UserDetails user) { // 토큰 유효성 검증 (이메일 일치 여부, 만료 여부)
-        String userEmail = extractUserEmail(token);
-        return (userEmail.equals(user.getUsername())) && !isTokenExpired(token);
-    }
-
-    @Override
-    public boolean isValidRefreshToken(String token, User user) { // 리프레시 토큰 유효성 검증
-        String userEmail = extractUserEmail(token);
-        if (!userEmail.equals(user.getEmail()) || isTokenExpired(token)) {
-            return false;
+    public String extractUserEmail(String token) {
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (Exception e) {
+            throw new InvalidTokenException("유효하지 않은 토큰입니다.");
         }
+    }
 
-        String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + user.getEmail()); // Redis에 저장된 리프레시 토큰과 비교
-        return token.equals(storedToken);
+    @Override
+    public boolean isValid(String token, UserDetails user) {
+        try {
+            String userEmail = extractUserEmail(token);
+            if (!userEmail.equals(user.getUsername())) {
+                throw new InvalidTokenException("토큰의 사용자 정보가 일치하지 않습니다.");
+            }
+            if (isTokenExpired(token)) {
+                throw new TokenExpiredException("만료된 토큰입니다.");
+            }
+            return true;
+        } catch (TokenExpiredException | InvalidTokenException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidTokenException("토큰 검증 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Override
+    public boolean isValidRefreshToken(String token, User user) {
+        try {
+            String userEmail = extractUserEmail(token);
+            if (!userEmail.equals(user.getEmail())) {
+                throw new InvalidTokenException("리프레시 토큰의 사용자 정보가 일치하지 않습니다.");
+            }
+            if (isTokenExpired(token)) {
+                throw new TokenExpiredException("만료된 리프레시 토큰입니다.");
+            }
+
+            String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + user.getEmail());
+            if (storedToken == null) {
+                throw new RefreshTokenNotFoundException("저장된 리프레시 토큰을 찾을 수 없습니다.");
+            }
+            if (!token.equals(storedToken)) {
+                throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+            }
+            return true;
+        } catch (TokenExpiredException | InvalidTokenException | RefreshTokenNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InvalidTokenException("리프레시 토큰 검증 중 오류가 발생했습니다.");
+        }
     }
 
 
@@ -138,20 +172,24 @@ public class JwtServiceImpl implements JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public Map<String, String> rotateTokens(String oldRefreshToken, User user) { // 토큰 로테이션 (리프레시 토큰으로 새로운 액세스/리프레시 토큰 쌍 발급)
-        if (!isValidRefreshToken(oldRefreshToken, user)) { // (RTR, RefreshTokenRotate 방식 사용)
+    public Map<String, String> rotateTokens(String oldRefreshToken, User user) {
+        try {
+            if (!isValidRefreshToken(oldRefreshToken, user)) {
+                throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+            }
+
+            String newAccessToken = generateAccessToken(user);
+            String newRefreshToken = generateRefreshToken(user);
+
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("accessToken", newAccessToken);
+            tokens.put("refreshToken", newRefreshToken);
+
+            return tokens;
+        } catch (Exception e) {
             invalidateRefreshToken(user.getEmail());
-            return null;
+            throw e;
         }
-
-        // 새로운 토큰 쌍 생성
-        String newAccessToken = generateAccessToken(user);
-        String newRefreshToken = generateRefreshToken(user);
-        Map tokens = new HashMap<>();
-        tokens.put("accessToken", newAccessToken);
-        tokens.put("refreshToken", newRefreshToken);
-
-        return tokens;
     }
 
     public void invalidateRefreshToken(String email) { // Redis에서 리프레시 토큰 삭제
@@ -186,12 +224,16 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public User getUserInfoFromToken(String token) {
-        Claims claims = extractAllClaims(token);
-        return User.builder()
-                .userId(claims.get("userId", Integer.class))
-                .email(claims.getSubject())
-                .role(claims.get("role", String.class))
-                .generationId(claims.get("generationId", Integer.class))
-                .build();
+        try {
+            Claims claims = extractAllClaims(token);
+            return User.builder()
+                    .userId(claims.get("userId", Integer.class))
+                    .email(claims.getSubject())
+                    .role(claims.get("role", String.class))
+                    .generationId(claims.get("generationId", Integer.class))
+                    .build();
+        } catch (Exception e) {
+            throw new InvalidTokenException("토큰에서 사용자 정보를 추출할 수 없습니다.");
+        }
     }
 }

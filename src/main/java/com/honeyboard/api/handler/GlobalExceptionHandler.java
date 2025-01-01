@@ -1,5 +1,6 @@
 package com.honeyboard.api.handler;
 
+import com.honeyboard.api.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,79 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(
                         HttpStatus.BAD_REQUEST.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    // 이메일 중복 예외 처리
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateEmailException e) {
+        log.error("DuplicateEmailException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)  // 409 상태코드 사용
+                .body(new ErrorResponse(
+                        HttpStatus.CONFLICT.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleTokenExpired(TokenExpiredException e) {
+        log.error("TokenExpiredException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException e) {
+        log.error("InvalidTokenException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRefreshTokenNotFound(RefreshTokenNotFoundException e) {
+        log.error("RefreshTokenNotFoundException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(VerificationCodeException.class)
+    public ResponseEntity<ErrorResponse> handleVerificationCode(VerificationCodeException e) {
+        log.error("VerificationCodeException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(VerificationCodeExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleVerificationCodeExpired(VerificationCodeExpiredException e) {
+        log.error("VerificationCodeExpiredException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.GONE)  // 410 상태코드 사용
+                .body(new ErrorResponse(
+                        HttpStatus.GONE.value(),
                         e.getMessage(),
                         LocalDateTime.now()
                 ));

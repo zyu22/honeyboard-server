@@ -1,4 +1,4 @@
-package com.honeyboard.api.pdf;
+package com.honeyboard.api.pdf.model;
 
 public enum DocumentType {
 	FINALE("최종 프로젝트", "finale_project_board"), TRACK("트랙 프로젝트", "track_project_board");
