@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.honeyboard.api.project.model.mapper.TrackProjectMapper">
+<mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectMapper">
     <!-- 전체 조회 -->
     <select id="selectAllTrackProjects" parameterType="Integer" resultType="TrackProject">
         SELECT 
@@ -9,11 +9,11 @@
             title,
             objective,
             content,
-            user_id AS userId,
-            generation_id AS generationId,
-            created_at AS createdAt,
-            updated_at AS updatedAt,
-            is_deleted AS isDeleted
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
         FROM track_project
         WHERE is_deleted = false
         <if test="generationId != null">

@@ -1,4 +1,4 @@
-package com.honeyboard.api.track.project.controller;
+package com.honeyboard.api.project.track.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.project.track.model.*;
