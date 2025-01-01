@@ -3,18 +3,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.honeyboard.api.web.recommend.mapper.WebRecommendMapper">
-    <!-- 웹 학습사이트 전체/기수별 조회 -->
+    <!-- 웹 추천 전체/기수별 조회 -->
     <select id="selectAllWebRecommend" parameterType="int" resultType="WebRecommend">
         SELECT
             id AS recommendId,
             title,
             url,
-            content,
-            user_id AS userId,
-            generation_id AS generationId,
-            created_at AS createdAt,
-            updated_at AS updatedAt,
-            is_deleted AS isDeleted
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
         FROM web_recommend
         WHERE generation_id = #{generationId}
         AND is_deleted = false
@@ -22,25 +21,24 @@
         LIMIT #{offset}, #{pageSize}
     </select>
 
-    <!-- 웹 학습사이트 제목 기반 검색 -->
+    <!-- 웹 추천 제목 기반 검색 -->
     <select id="searchWebRecommendByTitle" resultType="WebRecommend">
         SELECT
             id AS recommendId,
             title,
             url,
-            content,
-            user_id AS userId,
-            generation_id AS generationId,
-            created_at AS createdAt,
-            updated_at AS updatedAt,
-            is_deleted AS isDeleted
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
         FROM web_recommend
         WHERE generation_id = #{generationId}
         AND title LIKE CONCAT('%', #{title}, '%')
         AND is_deleted = false
     </select>
 
-    <!-- 웹 학습사이트 상세 조회 -->
+    <!-- 웹 추천 상세 조회 -->
     <select id="selectWebRecommendById" parameterType="int" resultType="WebRecommend">
         SELECT
             id,
@@ -57,7 +55,7 @@
         AND is_deleted = false
     </select>
 
-    <!-- 웹 학습사이트 작성 -->
+    <!-- 웹 추천 작성 -->
     <insert id="insertWebRecommend" parameterType="WebRecommend">
         INSERT INTO web_recommend (
             title,
@@ -81,7 +79,7 @@
         )
     </insert>
 
-    <!-- 웹 학습사이트 수정 -->
+    <!-- 웹 추천 수정 -->
     <update id="updateWebRecommend" parameterType="WebRecommend">
         UPDATE web_recommend
         SET
@@ -94,7 +92,7 @@
         AND is_deleted = false
     </update>
 
-    <!-- 웹 학습사이트 삭제 -->
+    <!-- 웹 추천 삭제 -->
     <update id="deleteWebRecommend">
         UPDATE web_recommend
         SET
@@ -104,7 +102,7 @@
         AND is_deleted = false
     </update>
 
-    <!-- 웹 학습사이트 전체 개수 조회 -->
+    <!-- 웹 추천 전체 개수 조회 -->
     <select id="countWebRecommend" resultType="int">
         SELECT COUNT(*)
         FROM web_recommend
@@ -112,7 +110,7 @@
         AND is_deleted = false
     </select>
 
-    <!-- 웹 학습사이트 검색 개수 조회 -->
+    <!-- 웹 추천 검색 개수 조회 -->
     <select id="countSearchWebRecommend" resultType="int">
         SELECT COUNT(*)
         FROM web_recommend
