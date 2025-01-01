@@ -27,7 +27,7 @@
 		WHERE s.is_deleted = false
 			AND s.problem_id = #{problemId}
 		<if test="generationId != null">
-        	AND u.generation_id = #{generationId}
+        	AND s.generation_id = #{generationId}
     	</if>
     	<if test="languages != null and languages.size > 0">
         	AND p.name IN
@@ -44,10 +44,10 @@
 				s.memory ASC
 			</when>
 			<otherwise>
-				s.created_at DESC
+				s.id DESC
 			</otherwise>
 		</choose>
-		LIMIT 12 OFFSET #{offset}
+		LIMIT 9 OFFSET #{offset}
 	</select>
 	
 	<!-- 알고리즘 풀이 상세 조회	 -->
