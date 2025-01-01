@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)  // 시큐리티 필터 비활성화
-public class TrackControllerTest {
+public class TrackTeamControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

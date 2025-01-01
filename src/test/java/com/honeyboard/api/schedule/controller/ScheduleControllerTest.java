@@ -38,9 +38,9 @@ public class ScheduleControllerTest {
         request.setEndDate(LocalDate.parse("2024-12-04"));
 
         request.setScheduleType("NORMAL");
-        request.setPublic(true);
-        request.setUserId(5);
-        request.setGenerationId(13);
+        request.setPublicAccess(true);
+        request.setUserId(1);
+        request.setGenerationId(1);
 
         // when & then
         mockMvc.perform(post("/api/v1/schedule")
@@ -105,7 +105,7 @@ public class ScheduleControllerTest {
         request.setEndDate(LocalDate.parse("2024-12-04"));
 
         request.setScheduleType("NORMAL");
-        request.setPublic(true);
+        request.setPublicAccess(true);
 
         // when & then
         mockMvc.perform(put("/api/v1/schedule/{scheduleId}", scheduleId)

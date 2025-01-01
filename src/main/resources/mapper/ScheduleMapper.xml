@@ -13,7 +13,7 @@
 	        start_date,
 	        end_date,
 	        schedule_type,
-	        is_public AS isPublic,
+	        is_public AS publicAccess,
 	        generation_id,
 	        user_id
 	    FROM schedule
@@ -33,7 +33,7 @@
 	<select id="selectTrackProjectByMonth" resultType="TrackProject">
 		SELECT id,
 		       title,
-		       created_at AS createdAt,
+		       created_at,
 			   generation_id,
 			   user_id
 		FROM track_project
@@ -58,7 +58,7 @@
                 #{startDate},
                 #{endDate},
                 #{scheduleType},
-    	        #{isPublic},
+    	        #{publicAccess},
                 #{userId},
                 #{generationId}
 		)
@@ -72,7 +72,7 @@
 			start_date = #{startDate},
 			end_date = #{endDate},
 			schedule_type = #{scheduleType},
-			is_public = #{isPublic}
+			is_public = #{publicAccess}
 		WHERE id = #{scheduleId}
 	</update>
 	
