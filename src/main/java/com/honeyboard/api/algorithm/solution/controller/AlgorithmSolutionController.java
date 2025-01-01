@@ -1,6 +1,7 @@
 package com.honeyboard.api.algorithm.solution.controller;
 
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
+import com.honeyboard.api.algorithm.solution.model.AlgorithmSolutionResponse;
 import com.honeyboard.api.algorithm.solution.service.AlgorithmSolutionService;
 import com.honeyboard.api.common.response.PageResponse;
 import com.honeyboard.api.user.model.CurrentUser;
@@ -54,7 +55,7 @@ public class AlgorithmSolutionController {
 
 		int userId = user.getUserId();
 
-		PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
+		PageResponse<AlgorithmSolutionResponse> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
 				problemId, generationId, language, sortType, currentPage, userId);
 
 		log.info("알고리즘 풀이 전체 조회 완료 - 총 솔루션 수: {}", pageResponse.getContent().size());
@@ -67,7 +68,7 @@ public class AlgorithmSolutionController {
 			@PathVariable int solutionId) {
 		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}", solutionId);
 
-		AlgorithmSolution solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
+		AlgorithmSolutionResponse solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
 
 		log.info("알고리즘 풀이 상세 조회 완료");
 		return ResponseEntity.ok(solution);
@@ -101,7 +102,7 @@ public class AlgorithmSolutionController {
 
 		int userId = user.getUserId();
 
-		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId, userId);
+		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId);
 
 		log.info("알고리즘 풀이 삭제 완료");
 		return ResponseEntity.ok().build();
