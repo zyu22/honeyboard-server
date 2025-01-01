@@ -45,17 +45,17 @@ public class AlgorithmSolutionController {
 	@GetMapping("/{problemId}/solution")
 	public ResponseEntity<?> getAllAlgorithmSolution(
 			@PathVariable int problemId,
-			@RequestParam(value = "generationId", required = false) int generationId,
+			@RequestParam(value = "generationId", required = false) Integer generationId,
 			@RequestParam(value = "language", required = false) List<String> language,
 			@RequestParam(value = "sortType", defaultValue = "latest") String sortType,
-			@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
 			@CurrentUser User user) {
-		log.info("알고리즘 풀이 전체 조회 요청 - 문제 ID: {}, 페이지: {}", problemId, page);
+		log.info("알고리즘 풀이 전체 조회 요청 - 문제 ID: {}, 페이지: {}", problemId, currentPage);
 
 		int userId = user.getUserId();
 
 		PageResponse<AlgorithmSolution> pageResponse = algorithmSolutionService.getAllAlgorithmSolution(
-				problemId, generationId, language, sortType, page, userId);
+				problemId, generationId, language, sortType, currentPage, userId);
 
 		log.info("알고리즘 풀이 전체 조회 완료 - 총 솔루션 수: {}", pageResponse.getContent().size());
 		return ResponseEntity.ok(pageResponse);

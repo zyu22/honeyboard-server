@@ -36,15 +36,15 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 
 	@Override
 	public PageResponse<AlgorithmSolution> getAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages,
-																			   String sortType, int page, int userId) {
-		log.info("알고리즘 솔루션 전체 조회 시작 - 문제 ID: {}, 기수: {}, 페이지: {}", problemId, generationId, page);
+																			   String sortType, int currentPage, int userId) {
+		log.info("알고리즘 솔루션 전체 조회 시작 - 문제 ID: {}, 기수: {}, 페이지: {}", problemId, generationId, currentPage);
 
 		// 전체 풀이 수
 	    int totalElements = algorithmSolutionMapper.countAlgorithmSolutions(problemId, generationId, languages, userId);
 	    
 	    // PageInfo(pageSize = 9)
-	    PageInfo pageInfo = new PageInfo(page, 9, totalElements);
-	    int offset = (page - 1) * 9;
+	    PageInfo pageInfo = new PageInfo(currentPage, 9, totalElements);
+	    int offset = (currentPage - 1) * 9;
 	    
 	    //전체 조회 -> List
 	    List<AlgorithmSolution> solutions = algorithmSolutionMapper.selectAllAlgorithmSolution(problemId, generationId, languages, sortType, offset, userId);

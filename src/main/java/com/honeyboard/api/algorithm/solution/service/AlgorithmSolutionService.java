@@ -8,7 +8,7 @@ import java.util.List;
 public interface AlgorithmSolutionService {
 
 	void addAlgorithmSolution(AlgorithmSolution algorithmSolution);
-	PageResponse<AlgorithmSolution> getAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages, String sortType, int page, int userId);
+	PageResponse<AlgorithmSolution> getAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages, String sortType, int currentPage, int userId);
 	AlgorithmSolution getAlgorithmSolution(int solutionId);
 	void updateAlgorithmSolution(AlgorithmSolution algorithmSolution);
 	void softDeleteAlgorithmSolution(int solutionId, int userId);
