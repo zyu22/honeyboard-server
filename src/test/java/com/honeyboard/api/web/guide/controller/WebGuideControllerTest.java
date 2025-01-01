@@ -53,7 +53,6 @@ public class WebGuideControllerTest {
         for (WebGuide guide : response.getContent()) {
             System.out.println("개념 ID: " + guide.getId());
             System.out.println("제목: " + guide.getTitle());
-            System.out.println("내용: " + guide.getContent());
             System.out.println("-------------------------");
         }
     }
