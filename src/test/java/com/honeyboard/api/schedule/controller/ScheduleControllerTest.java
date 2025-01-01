@@ -39,8 +39,8 @@ public class ScheduleControllerTest {
 
         request.setScheduleType("NORMAL");
         request.setPublic(true);
-        request.setUserId(1);
-        request.setGenerationId(1);
+        request.setUserId(5);
+        request.setGenerationId(13);
 
         // when & then
         mockMvc.perform(post("/api/v1/schedule")
