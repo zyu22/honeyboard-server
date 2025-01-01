@@ -2,7 +2,7 @@ package com.honeyboard.api.algorithm.solution.model;
 
 import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -22,8 +22,8 @@ public class AlgorithmSolution {
 	private int memory;
 	private int languageId;
 	private int generationId;
-	private Date createdAt;
-	private Date updatedAt;
+	private LocalDate createdAt;
+	private LocalDate updatedAt;
 	private boolean isDeleted;
 	private boolean isBookmarked;
 
