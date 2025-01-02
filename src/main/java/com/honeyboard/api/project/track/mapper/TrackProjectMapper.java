@@ -1,12 +1,11 @@
 package com.honeyboard.api.project.track.mapper;
 
-import java.util.List;
-
+import com.honeyboard.api.project.track.model.TrackProject;
+import com.honeyboard.api.user.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.honeyboard.api.project.track.model.TrackProject;
-import com.honeyboard.api.user.model.User;
+import java.util.List;
 
 @Mapper
 public interface TrackProjectMapper {
@@ -24,7 +23,7 @@ public interface TrackProjectMapper {
     
     // 제외 멤버 등록
     int insertExcludedMembers(@Param("trackProjectId") int trackProjectId, 
-                            @Param("userIds") List<Integer> userIds);
+                            @Param("excludedMemberIds") List<Integer> excludedMemberIds);
     
     // 프로젝트 수정
     int updateTrackProject(@Param("trackId") int trackId, 

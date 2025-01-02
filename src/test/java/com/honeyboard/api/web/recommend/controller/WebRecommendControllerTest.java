@@ -114,13 +114,12 @@ public class WebRecommendControllerTest {
     @WithMockUser
     void updateWebRecommend_Success() throws Exception {
         // given
-        int recommendId = 1;
+        int recommendId = 3;
         WebRecommend request = new WebRecommend();
         request.setTitle("Updated Spring Guide");
-        request.setUrl("https://spring.io/guides/updated");
+        request.setUrl("https://spring.io/guides/updated2");
         request.setContent("Updated Spring guide description");
         request.setUserId(5);
-        request.setId(recommendId);
 
         // when & then
         mockMvc.perform(put("/api/v1/web/recommend/{recommendId}", recommendId)
