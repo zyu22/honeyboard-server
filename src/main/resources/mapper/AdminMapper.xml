@@ -43,12 +43,11 @@
 
     <update id="updateGenerationIsActive" parameterType="int">
         UPDATE generation
-        SET is_active =
-                CASE
-                    WHEN is_active = TRUE THEN FALSE
-                    ELSE TRUE
-                    END
-        WHERE id = #{generationId};
+        SET is_active = CASE
+                            WHEN id = #{generationId} THEN TRUE
+                            ELSE FALSE
+            END
+        WHERE id = #{generationId} OR is_active = TRUE
     </update>
 
     <delete id="deleteGenerationById" parameterType="int">
