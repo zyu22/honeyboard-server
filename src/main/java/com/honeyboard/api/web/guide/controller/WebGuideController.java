@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/api/v1/web/guide")
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class WebGuideController {
 
     @GetMapping
     public ResponseEntity<?> getAllWebGuide(
-            @RequestParam Integer generationId,
+            @RequestParam(value = "generationId", required = false) Integer generationId,
             @RequestParam(defaultValue = "1") int currentPage,
             @RequestParam(defaultValue = "8") int pageSize) {
         log.info("웹 개념 전체 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}", generationId, currentPage, pageSize);
