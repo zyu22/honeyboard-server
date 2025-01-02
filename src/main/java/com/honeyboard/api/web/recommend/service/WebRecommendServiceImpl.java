@@ -24,7 +24,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElements);
         int offset = (currentPage-1)*pageSize;
 
-        List<WebRecommend> webRecommends = webRecommendMapper.selectAllWebRecommend(generationId, offset ,pageSize);
+        List<WebRecommend> webRecommends = webRecommendMapper.selectAllWebRecommend(generationId, offset, pageSize);
 
         log.info("웹 추천 전체 조회 완료 - 조회된 사이트 수: {}", webRecommends.size());
         return new PageResponse<>(webRecommends, pageInfo);
@@ -38,7 +38,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElements);
         int offset = (currentPage-1)*pageSize;
 
-        List<WebRecommend> webRecommends = webRecommendMapper.searchWebRecommendByTitle(title, generationId, currentPage, pageSize);
+        List<WebRecommend> webRecommends = webRecommendMapper.searchWebRecommendByTitle(title, generationId, offset, pageSize);
 
         log.info("웹 추천 검색 완료 - 검색된 사이트 수: {}", webRecommends.size());
         return new PageResponse<>(webRecommends, pageInfo);
