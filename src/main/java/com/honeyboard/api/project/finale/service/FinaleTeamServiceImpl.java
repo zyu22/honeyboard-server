@@ -2,7 +2,8 @@ package com.honeyboard.api.project.finale.service;
 
 import com.honeyboard.api.project.finale.mapper.FinaleTeamMapper;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
-import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.user.model.UserName;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
     }
 
     @Override
-    public List<User> getRemainedUsers(int generationId) {
+    public List<UserName> getRemainedUsers(int generationId) {
         if (generationId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
         }
