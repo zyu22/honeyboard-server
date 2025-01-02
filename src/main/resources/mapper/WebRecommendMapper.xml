@@ -37,6 +37,8 @@
         WHERE generation_id = #{generationId}
           AND title LIKE CONCAT('%', #{title}, '%')
           AND is_deleted = false
+        ORDER BY created_at
+        LIMIT #{offset}, #{pageSize}
     </select>
 
     <!-- 웹 추천 상세 조회 -->
