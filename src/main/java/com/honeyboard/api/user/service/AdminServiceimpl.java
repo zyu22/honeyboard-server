@@ -39,7 +39,7 @@ public class AdminServiceimpl implements AdminService {
     @Override
     public void updateUser(int userId, UserInfo userInfo) {
         log.info("유저 정보 변경 시작 - 유저 ID: {}", userId);
-        int result = adminMapper.updateUserInfo(userInfo);
+        int result = adminMapper.updateUserInfo(userInfo, userId);
 
         if(result <= 0) {
             throw new IllegalArgumentException("유저 정보 변경에 실패하였습니다.");
@@ -50,13 +50,13 @@ public class AdminServiceimpl implements AdminService {
     @Override
     public void addGeneration(Generation generation) {
         log.info("기수 등록 시작 - 기수 번호: {}", generation.getName());
-        adminMapper.insertGeneration(generation);
+        int result = adminMapper.insertGeneration(generation);
 
-        if(generation.getId() == 0) {
-            throw new IllegalArgumentException("기수 등록 실패하였습니다.");
+        if(result <= 0) {
+            throw new IllegalArgumentException("기수 등록에 실패하였습니다.");
         }
 
-        log.info("기수 등록 완료 - 기수 번호: {}", generation.getName());
+        log.info("기수 등록 완료 - 기수: {}, ID: {}", generation.getName(), generation.getId());
     }
 
     @Override

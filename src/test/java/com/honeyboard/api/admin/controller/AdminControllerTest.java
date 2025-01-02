@@ -84,10 +84,13 @@ public class AdminControllerTest {
     @WithMockUser
     void updateUser_Success() throws Exception {
         // given
-        int userId = 100; // 테스트용 유저 ID
+        int userId = 21; // 테스트용 유저 ID
         UserInfo updatedUserInfo = new UserInfo();
         updatedUserInfo.setName("Updated Name");
         updatedUserInfo.setEmail("updated_email@example.com");
+        updatedUserInfo.setSsafy(true);
+        updatedUserInfo.setGenerationId(13);
+
 
         // when
         mockMvc.perform(put("/api/v1/admin/user/{userId}", userId)
@@ -102,7 +105,7 @@ public class AdminControllerTest {
     void createGeneration_Success() throws Exception {
         // given
         Generation generation = new Generation();
-        generation.setName("New Generation");
+        generation.setName("14");
 
         // when
         mockMvc.perform(post("/api/v1/admin/generation")
@@ -129,7 +132,7 @@ public class AdminControllerTest {
     @WithMockUser
     void deleteGeneration_Success() throws Exception {
         // given
-        int generationId = 1; // 테스트용 기수 ID
+        int generationId = 15; // 테스트용 기수 ID
 
         // when
         mockMvc.perform(delete("/api/v1/admin/generation/{generationId}", generationId)
