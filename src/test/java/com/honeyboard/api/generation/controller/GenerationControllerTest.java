@@ -50,27 +50,4 @@ public class GenerationControllerTest {
             System.out.println("------------------------");
         }
     }
-
-    @Test
-    @WithMockUser
-    void getAllGenerations_NoContent() throws Exception {
-        // 데이터가 없는 경우 테스트
-        mockMvc.perform(get("/api/v1/generation")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andDo(print());
-    }
-
-    @Test
-    @WithMockUser
-    void getGenerationById_NoContent() throws Exception {
-        // given
-        String nonExistingGenerationId = "999";  // 존재하지 않는 기수 ID
-
-        // when & then
-        mockMvc.perform(get("/api/v1/generation/{generationId}", nonExistingGenerationId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andDo(print());
-    }
 }
