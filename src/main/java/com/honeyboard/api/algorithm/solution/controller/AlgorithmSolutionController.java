@@ -96,11 +96,9 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 삭제 DELETE /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@DeleteMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> deleteAlgorithmSolution(
-			@PathVariable int solutionId,
-			@CurrentUser User user) {
+			@PathVariable int solutionId) {
 		log.info("알고리즘 풀이 삭제 요청 - 솔루션 ID: {}", solutionId);
 
-		int userId = user.getUserId();
 
 		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId);
 
