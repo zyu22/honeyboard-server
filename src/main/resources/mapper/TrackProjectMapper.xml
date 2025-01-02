@@ -7,8 +7,6 @@
         SELECT 
             id,
             title,
-            objective,
-            content,
             user_id,
             generation_id,
             created_at,
@@ -105,4 +103,13 @@
         FROM track_excluded_member
         WHERE project_id = #{projectId}
     </select>
+
+    <!-- 제외 멤버 추가-->
+    <insert id="insertExcludedMembers">
+        INSERT INTO track_excluded_member (project_id, user_id)
+        VALUES
+        <foreach collection="excludedMemberIds" item="userId" separator=",">
+            (#{trackProjectId}, #{userId})
+        </foreach>
+    </insert>
 </mapper>

@@ -47,7 +47,7 @@ public class TrackProjectControllerTest {
     @WithMockUser
     void getTrackProject_Success() throws Exception {
         // given
-        int trackId = 1;
+        int trackId = 2;
 
         // when & then
         MvcResult result = mockMvc.perform(get("/api/v1/project/track/{trackId}", trackId)
@@ -62,6 +62,7 @@ public class TrackProjectControllerTest {
         System.out.println("\n=== 프로젝트 상세 조회 결과 ===");
         System.out.println("프로젝트 ID: " + response.getId());
         System.out.println("프로젝트 제목: " + response.getTitle());
+        System.out.println("프로젝트 내용: " + response.getContent());
     }
 
     @Test
@@ -86,10 +87,13 @@ public class TrackProjectControllerTest {
         TrackProject request = new TrackProject();
         request.setGenerationId(13);
         request.setTitle("테스트 프로젝트");
+        request.setContent("테스트 입니다!!!!");
+        request.setObjective("이건 테스트 프로젝트입니다.");
+        request.setUserId(5);
 
         List<Integer> excludedMemberIds = new ArrayList<>();
-        excludedMemberIds.add(1);
-        excludedMemberIds.add(2);
+        excludedMemberIds.add(10);
+        excludedMemberIds.add(15);
         request.setExcludedMemberIds(excludedMemberIds);
 
         // when & then
@@ -104,10 +108,13 @@ public class TrackProjectControllerTest {
     @WithMockUser
     void updateTrackProject_Success() throws Exception {
         // given
-        int trackId = 1;
+        int trackId = 10;
         TrackProject request = new TrackProject();
         request.setGenerationId(13);
         request.setTitle("수정된 프로젝트");
+        request.setObjective("수정되었는데요?");
+        request.setContent("수정수정수정데스네");
+
 
         // when & then
         mockMvc.perform(put("/api/v1/project/track/{trackId}", trackId)
@@ -121,7 +128,7 @@ public class TrackProjectControllerTest {
     @WithMockUser
     void deleteTrackProject_Success() throws Exception {
         // given
-        int trackId = 1;
+        int trackId = 10;
 
         // when & then
         mockMvc.perform(delete("/api/v1/project/track/{trackId}", trackId))
