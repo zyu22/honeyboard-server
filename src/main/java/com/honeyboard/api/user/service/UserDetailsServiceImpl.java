@@ -1,4 +1,4 @@
-package com.honeyboard.api.user.model.service;
+package com.honeyboard.api.user.service;
 
 import com.honeyboard.api.user.model.CustomUserDetails;
 import com.honeyboard.api.user.model.User;

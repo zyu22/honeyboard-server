@@ -1,4 +1,4 @@
-package com.honeyboard.api.auth.model.util;
+package com.honeyboard.api.auth.util;
 
 import java.util.Map;
 
