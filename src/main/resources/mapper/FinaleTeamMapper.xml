@@ -19,7 +19,7 @@
 	        AND fpb.is_deleted = false
 	</select>
 	
-	<select id="selectRemainedUsers" parameterType="int" resultType="User">
+	<select id="selectRemainedUsers" parameterType="int" resultType="UserName">
 		SELECT DISTINCT u.id AS userId, u.name
 		FROM user u
 		WHERE u.generation_id = #{generationId}
