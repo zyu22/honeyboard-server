@@ -15,7 +15,7 @@ public class AlgorithmSolutionResponse {
 	private String summary;
 	private String content;
 	private int userId;
-	private String Author;
+	private String author;
 	private int runtime;
 	private int memory;
 	private String languageName;
