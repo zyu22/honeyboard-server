@@ -19,7 +19,8 @@
         <if test="generationId != null">
             AND generation_id = #{generationId}
         </if>
-
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
     </select>
 
     <!-- 웹 개념 상세 조회 -->
@@ -51,6 +52,8 @@
         WHERE generation_id = #{generationId}
           AND title LIKE CONCAT('%', #{title}, '%')
           AND is_deleted = false
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
     </select>
 
     <!-- 웹 개념 작성 -->

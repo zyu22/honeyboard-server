@@ -3,7 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
-<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectMapper">
+<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleTeamMapper">
 	
 	<select id="selectSubmitStatusByDate" parameterType="java.time.LocalDate" resultType="FinaleTeam">
 	    SELECT 
