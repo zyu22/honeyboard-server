@@ -16,8 +16,7 @@ import java.util.List;
 public
 class FinaleTeamServiceImpl implements FinaleTeamService {
 
-    private
-    FinaleTeamMapper finaleTeamMapper;
+    private final FinaleTeamMapper finaleTeamMapper;
 
     @Override
     public List<FinaleTeam> findStatusByDate(LocalDate targetDate) {
