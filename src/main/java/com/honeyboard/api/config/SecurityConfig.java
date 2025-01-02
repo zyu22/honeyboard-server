@@ -1,6 +1,6 @@
 package com.honeyboard.api.config;
 
-import com.honeyboard.api.auth.model.service.CustomOAuth2UserService;
+import com.honeyboard.api.auth.service.CustomOAuth2UserService;
 import com.honeyboard.api.filter.JwtVerificationFilter;
 import com.honeyboard.api.handler.LoginFailureHandler;
 import com.honeyboard.api.handler.LoginSuccessHandler;

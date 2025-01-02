@@ -21,14 +21,7 @@ public class TrackTeamServiceImpl implements TrackTeamService {
     @Override
     public TrackProjectStatus getProjectStatus(int projectId, int generationId) {
         log.info("프로젝트 상태 조회 시작 - 기수: {}, 프로젝트: {}", generationId, projectId);
-
         TrackProjectStatus status = trackTeamMapper.selectTrackProjectStatus(generationId, projectId);
-
-        if (status == null) {
-            log.error("프로젝트 상태 조회 실패 - 데이터가 존재하지 않습니다. 기수: {}, 프로젝트: {}", generationId, projectId);
-            throw new IllegalArgumentException("프로젝트 상태 정보가 존재하지 않습니다.");
-        }
-
         log.info("프로젝트 상태 조회 완료");
         return status;
     }

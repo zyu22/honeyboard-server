@@ -18,6 +18,8 @@
         FROM web_recommend
         WHERE generation_id = #{generationId}
         AND is_deleted = false
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
     </select>
 
     <!-- 웹 학습사이트 제목 기반 검색 -->
@@ -41,15 +43,15 @@
     <!-- 웹 학습사이트 상세 조회 -->
     <select id="selectWebRecommendById" parameterType="int" resultType="WebRecommend">
         SELECT
-            id AS recommendId,
+            id,
             title,
             url,
             content,
-            user_id AS userId,
-            generation_id AS generationId,
-            created_at AS createdAt,
-            updated_at AS updatedAt,
-            is_deleted AS isDeleted
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
         FROM web_recommend
         WHERE id = #{recommendId}
         AND is_deleted = false
@@ -58,7 +60,6 @@
     <!-- 웹 학습사이트 작성 -->
     <insert id="insertWebRecommend" parameterType="WebRecommend">
         INSERT INTO web_recommend (
-            id,
             title,
             url,
             content,
@@ -69,7 +70,6 @@
             is_deleted
         )
         VALUES (
-            #{recommendId},
             #{title},
             #{url},
             #{content},
@@ -85,11 +85,12 @@
     <update id="updateWebRecommend" parameterType="WebRecommend">
         UPDATE web_recommend
         SET
-            title = #{title},
-            content = #{content},
+            title = #{webRecommend.title},
+            content = #{webRecommend.content},
+            url = #{webRecommend.url},
             updated_at = NOW()
         WHERE id = #{recommendId}
-        AND user_id = #{userId}
+        AND user_id = #{webRecommend.userId}
         AND is_deleted = false
     </update>
 
@@ -100,7 +101,6 @@
             is_deleted = true,
             updated_at = NOW()
         WHERE id = #{recommendId}
-        AND user_id = #{userId}
         AND is_deleted = false
     </update>
 
