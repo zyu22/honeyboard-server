@@ -1,9 +1,20 @@
 package com.honeyboard.api.user.mapper;
 
-import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.user.model.UserInfo;
 
 import java.util.List;
 
 public interface AdminMapper {
-    List<User> selectUserByGeneration(Integer generationId);
+    List<UserInfo> selectUserByGeneration(Integer generationId);
+
+    UserInfo selectUserById(int userId);
+
+    int updateUserInfo(UserInfo userInfo);
+
+    int insertGeneration(Generation generation);
+
+    int updateGenerationIsActive(int generationId);
+
+    int deleteGenerationById(int generationId);
 }
