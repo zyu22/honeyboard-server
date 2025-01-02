@@ -19,11 +19,11 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/user")
-    public ResponseEntity<?> getUsersByGeneration(@RequestParam("generationId") Integer generationId) {
+    public ResponseEntity<?> getUsersByGeneration(@RequestParam(value = "generationId", required = false) Integer generationId) {
         log.info("기수별 학생 정보 조회 요청 - 기수: {}", generationId);
         List<UserInfo> users = adminService.getUserByGeneration(generationId);
 
-        if(users.isEmpty() || users.size() == 0) {
+        if (users.isEmpty() || users.size() == 0) {
             log.info("기수별 학생 조회 완료, 값 없음");
             return ResponseEntity.noContent().build();
         }

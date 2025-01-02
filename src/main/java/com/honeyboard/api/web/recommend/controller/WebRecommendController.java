@@ -18,7 +18,7 @@ public class WebRecommendController {
 
     @GetMapping
     public ResponseEntity<?> getAllWebRecommend(
-            @RequestParam Integer generationId,
+            @RequestParam(value = "generationId", required = false) Integer generationId,
             @RequestParam(defaultValue = "1") int currentPage,
             @RequestParam(defaultValue = "16") int pageSize) {
         log.info("웹 추천 전체 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}", generationId, currentPage, pageSize);
