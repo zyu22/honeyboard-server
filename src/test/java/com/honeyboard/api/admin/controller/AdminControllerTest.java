@@ -116,10 +116,10 @@ public class AdminControllerTest {
     @WithMockUser
     void updateGenerationIsActive_Success() throws Exception {
         // given
-        int generationId = 1; // 테스트용 기수 ID
+        int generationId = 13; // 테스트용 기수 ID
 
         // when
-        mockMvc.perform(patch("/api/v1/admin/generation/{generationId}isActive/", generationId)
+        mockMvc.perform(patch("/api/v1/admin/generation/{generationId}/isActive", generationId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
