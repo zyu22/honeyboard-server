@@ -140,12 +140,10 @@
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.12.571</version>
         </dependency>
-<<<<<<< HEAD
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-=======
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -160,7 +158,6 @@
             <artifactId>thymeleaf-spring6</artifactId>
             <version>3.1.2.RELEASE</version>
         </dependency>
->>>>>>> 7d2e536a36b37daa5362ea6ad61e35748385cbbe
     </dependencies>
     <profiles>
         <profile>
