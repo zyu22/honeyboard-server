@@ -1,10 +1,10 @@
-package com.honeyboard.api.user.model.service;
+package com.honeyboard.api.user.service;
 
 import com.honeyboard.api.exception.DuplicateEmailException;
 import org.springframework.stereotype.Service;
 
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.mapper.UserMapper;
+import com.honeyboard.api.user.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
 

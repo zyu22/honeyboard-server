@@ -1,18 +1,17 @@
 package com.honeyboard.api.auth.controller;
 
 import com.honeyboard.api.auth.model.EmailVerification;
-import com.honeyboard.api.auth.model.service.EmailService;
-import com.honeyboard.api.auth.model.service.VerificationService;
+import com.honeyboard.api.auth.service.EmailService;
+import com.honeyboard.api.auth.service.VerificationService;
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.service.UserService;
 import com.honeyboard.api.util.CookieUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
