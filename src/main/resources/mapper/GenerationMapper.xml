@@ -7,13 +7,4 @@
         from generation
     </select>
 
-    <select id="selectUserByGeneration" resultType="User">
-        select id,
-               email,
-               name,
-               generation_id,
-               is_ssafy
-        from user
-        where generation_id
-    </select>
 </mapper>
