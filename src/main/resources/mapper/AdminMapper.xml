@@ -8,9 +8,11 @@
         generation_id,
         is_ssafy as ssafy
         FROM user
+        WHERE role = 'USER'
         <if test="generationId != null">
-            WHERE generation_id = #{generationId}
+            AND generation_id = #{generationId}
         </if>
+        ORDER BY name
     </select>
 
     <select id="selectUserById" resultType="UserInfo">
