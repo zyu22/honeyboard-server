@@ -25,16 +25,16 @@
         WHERE id = #{userId}
     </select>
 
-    <update id="updateUserInfo" parameterType="UserInfo">
+    <update id="updateUserInfo">
         UPDATE user
-        SET name          = #{name},
-            email         = #{email},
-            is_ssafy      = #{ssafy},
-            generation_id = #{generationId}
+        SET name          = #{UserInfo.name},
+            email         = #{UserInfo.email},
+            is_ssafy      = #{UserInfo.ssafy},
+            generation_id = #{UserInfo.generationId}
         WHERE id = #{userId}
     </update>
 
-    <insert id="insertGeneration" parameterType="Generation">
+    <insert id="insertGeneration" parameterType="Generation" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO generation(name,
                                is_active)
         VALUES (#{name},
