@@ -72,7 +72,6 @@ public class WebRecommendController {
             @PathVariable int recommendId,
             @RequestBody WebRecommend webRecommend) {
         log.info("웹 추천 수정 요청 - ID: {}", recommendId);
-        webRecommend.setId(recommendId);
         webRecommendService.updateWebRecommend(recommendId, webRecommend);
         log.info("웹 추천 수정 완료 - ID: {}", recommendId);
         return ResponseEntity.ok().build();

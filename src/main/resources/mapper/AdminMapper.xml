@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honeyboard.api.user.mapper.AdminMapper">
+    <select id="selectUserByGeneration" resultType="User">
+        select id,
+               email,
+               name,
+               generation_id,
+               is_ssafy
+        from user
+        <if test="generationId != null">
+            where generation_id = #{generationId}
+        </if>
+    </select>
+</mapper>

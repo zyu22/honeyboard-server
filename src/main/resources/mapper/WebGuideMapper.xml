@@ -8,7 +8,7 @@
         SELECT
             id,
             title,
-            content,
+            thumbnail,
             user_id,
             generation_id,
             created_at,
@@ -40,7 +40,7 @@
         SELECT
             id,
             title,
-            content,
+            thumbnail,
             user_id,
             generation_id,
             created_at,
@@ -57,6 +57,7 @@
         INSERT INTO web_guide (
             title,
             content,
+            thumbnail,
             user_id,
             generation_id,
             created_at,
@@ -66,6 +67,7 @@
         VALUES (
             #{title},
             #{content},
+            #{thumbnail},
             #{userId},
             #{generationId},
             NOW(),
@@ -80,6 +82,7 @@
         SET
             title = #{webGuide.title},
             content = #{webGuide.content},
+            thumbnail = #{webGuide.thumbnail},
             updated_at = NOW()
         WHERE id = #{guideId}
         AND is_deleted = false
