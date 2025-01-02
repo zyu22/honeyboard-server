@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
