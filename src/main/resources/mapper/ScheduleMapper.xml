@@ -31,9 +31,9 @@
 
 	<!-- 관통 프로젝트에서 일정 조회-->
 	<select id="selectTrackProjectByMonth" resultType="TrackProject">
-		SELECT id AS trackProjrctId,
+		SELECT id,
 		       title,
-		       created_at AS createdAt,
+		       created_at,
 			   generation_id,
 			   user_id
 		FROM track_project
@@ -58,7 +58,7 @@
                 #{startDate},
                 #{endDate},
                 #{scheduleType},
-    	        #{isPublic},
+    	        #{publicAccess},
                 #{userId},
                 #{generationId}
 		)
@@ -72,7 +72,7 @@
 			start_date = #{startDate},
 			end_date = #{endDate},
 			schedule_type = #{scheduleType},
-			is_public = #{isPublic}
+			is_public = #{publicAccess}
 		WHERE id = #{scheduleId}
 	</update>
 	

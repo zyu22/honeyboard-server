@@ -1,6 +1,8 @@
 package com.honeyboard.api.chat.controller;
 
+import com.honeyboard.api.chat.model.Chat;
 import com.honeyboard.api.chat.service.ChatService;
+import com.honeyboard.api.common.response.PageResponse;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -24,21 +26,18 @@ public class ChatController {
             @RequestParam(defaultValue = "50") int size,
             @CurrentUser User loginUser
     ) {
-        int generationId = loginUser.getGenerationId();
-        try {
-            log.debug("채팅 목록 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}",
-                    generationId, page, size);
+        log.debug("채팅 목록 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}",
+                loginUser.getGenerationId(), page, size);
 
-            return ResponseEntity.ok(
-                    chatService.getChatListByGenerationId(page, size, generationId)
-            );
+        PageResponse<Chat> response = chatService.getChatListByGenerationId(
+                page,
+                size,
+                loginUser.getGenerationId()
+        );
 
-        } catch (Exception e) {
-            log.error("채팅 목록 조회 실패 - 기수: {}, 에러: {}",
-                    generationId, e.getMessage(), e);
-
-            return ResponseEntity.internalServerError()
-                    .body("채팅 목록 조회 중 오류가 발생했습니다.");
-        }
+        return response.getContent().isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(response);
     }
+
 }

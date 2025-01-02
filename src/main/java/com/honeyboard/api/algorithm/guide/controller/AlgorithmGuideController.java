@@ -32,6 +32,7 @@ public class AlgorithmGuideController {
 
     //알고리즘 개념 전체 조회 (GET /api/v1/algorithm/guide?generation={generationId}) 구현
     @GetMapping
+<<<<<<< HEAD
     public ResponseEntity<?> getAllAlgorithmGuide(@RequestParam(required = false) Integer generationId,
                                                   @RequestParam(required = false) String title,
                                                   @CurrentUser User user) {
@@ -44,42 +45,35 @@ public class AlgorithmGuideController {
             }else{
                 generation = generationId;
             }
+=======
+    public ResponseEntity<List<AlgorithmGuide>> getAllAlgorithmGuide(
+            @RequestParam(required = false) Integer generationId,
+            @RequestParam(required = false) String title,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-            if (title == null) {
-                algorithmGuides = algorithmGuideService.getAlgorithmGuides(generation);
-            }else{
-                algorithmGuides = algorithmGuideService.searchAlgorithmGuide(generation,title);
-            }
+        int generation = generationId != null ? generationId : userDetails.getUser().getGenerationId();
+>>>>>>> 7d2e536a36b37daa5362ea6ad61e35748385cbbe
 
-            if(algorithmGuides.isEmpty()){
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok().body(algorithmGuides);
+        List<AlgorithmGuide> algorithmGuides = title != null ?
+                algorithmGuideService.searchAlgorithmGuide(generation, title) :
+                algorithmGuideService.getAlgorithmGuides(generation);
 
-        } catch (Exception e) {
-            log.error("알고리즘 개념 조회 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return algorithmGuides.isEmpty() ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(algorithmGuides);
     }
 
-    //알고리즘 개념 상세 조회 (GET /api/v1/algorithm/guide/{id}?bookmark={bookmarkflag}) 구현
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAlgorithmGuideDetail(@PathVariable int id,
-                                                     @RequestParam("bookmark") boolean bookmarkflag) {
-        try {
-            AlgorithmGuide algorithmGuide = algorithmGuideService.getAlgorithmGuideDetail(id, bookmarkflag);
-            if(algorithmGuide==null){
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok().body(algorithmGuide);
-        } catch (Exception e) {
-            log.error("알고리즘 개념 상세 조회 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<AlgorithmGuide> getAlgorithmGuideDetail(
+            @PathVariable int id,
+            @RequestParam("bookmark") boolean bookmarkflag) {
+
+        AlgorithmGuide algorithmGuide = algorithmGuideService.getAlgorithmGuideDetail(id, bookmarkflag);
+        return algorithmGuide == null ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(algorithmGuide);
     }
 
-    //알고리즘 개념 작성 (POST /api/v1/algorithm/guide?generation={generationId}) 구현
     @PostMapping
+<<<<<<< HEAD
     public ResponseEntity<?> addAlgorithmGuide(@RequestParam("generationId") int generationId,
                                                @RequestBody AlgorithmGuide algorithmGuide) {
         try {
@@ -93,37 +87,29 @@ public class AlgorithmGuideController {
             log.error("알고리즘 개념 작성 중 에러 발생", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+=======
+    public ResponseEntity<Void> addAlgorithmGuide(
+            @RequestParam("generationId") int generationId,
+            @RequestBody AlgorithmGuide algorithmGuide) {
+
+        algorithmGuideService.addAlgorithmGuide(generationId, algorithmGuide);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+>>>>>>> 7d2e536a36b37daa5362ea6ad61e35748385cbbe
     }
 
-    //알고리즘 개념 수정 (PUT /api/v1/algorithm/guide/{id}) 구현
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAlgorithmGuide(@PathVariable int id,
-                                                  @RequestBody AlgorithmGuide algorithmGuide) {
-        try {
-            boolean result = algorithmGuideService.updateAlgorithmGuide(id, algorithmGuide);
-            if (result) {
-                return ResponseEntity.ok().build();
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("알고리즘 개념 수정 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<Void> updateAlgorithmGuide(
+            @PathVariable int id,
+            @RequestBody AlgorithmGuide algorithmGuide) {
+
+        algorithmGuideService.updateAlgorithmGuide(id, algorithmGuide);
+        return ResponseEntity.ok().build();
     }
 
-    //알고리즘 개념 삭제 (DELETE /api/v1/algorithm/guide/{id}) 구현
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAlgorithmGuide(@PathVariable int id) {
-        try {
-            boolean result = algorithmGuideService.deleteAlgorithmGuide(id);
-            if (result) {
-                return ResponseEntity.ok().build();
-            }
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("알고리즘 개념 삭제 중 에러 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<Void> deleteAlgorithmGuide(@PathVariable int id) {
+        algorithmGuideService.deleteAlgorithmGuide(id);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.honeyboard.api.user.model.mapper.UserMapper">
+<mapper namespace="com.honeyboard.api.user.mapper.UserMapper">
 
     <!-- 사용자 등록 -->
     <insert id="insertUser" parameterType="user" useGeneratedKeys="true" keyProperty="userId">
@@ -30,17 +30,19 @@
 
     <!-- ID로 사용자 조회 -->
     <select id="selectUserById" parameterType="int" resultType="user">
-        SELECT id            AS userId,
-               email,
-               password,
-               name,
-               generation_id AS generationId,
-               role,
-               login_type    AS loginType,
-               is_ssafy      AS isSsafy,
-               created_at    AS createdAt
-        FROM user
-        WHERE id = #{userId}
+        SELECT u.id            AS userId,
+               u.email,
+               u.password,
+               u.name,
+               u.generation_id AS generationId,
+               g.name         AS generationName,
+               u.role,
+               u.login_type   AS loginType,
+               u.is_ssafy     AS isSsafy,
+               u.created_at   AS createdAt
+        FROM user u
+                 LEFT JOIN generation g ON u.generation_id = g.id
+        WHERE u.id = #{userId}
     </select>
 
     <!-- 이메일로 사용자 조회 -->

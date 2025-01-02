@@ -4,10 +4,10 @@ import com.honeyboard.api.common.response.PageResponse;
 import com.honeyboard.api.web.recommend.model.WebRecommend;
 
 public interface WebRecommendService {
-    PageResponse<WebRecommend> getAllWebRecommend(Integer generationId, int currentPage);
-    PageResponse<WebRecommend> searchWebRecommend(String title, Integer generationId, int currentPage);
+    PageResponse<WebRecommend> getAllWebRecommend(Integer generationId, int currentPage, int pageSize);
+    PageResponse<WebRecommend> searchWebRecommend(String title, Integer generationId, int currentPage, int pageSize);
     WebRecommend getWebRecommend(int recommendId);
-    boolean addWebRecommend(WebRecommend webRecommend);
-    boolean updateWebRecommend(int recommendId, WebRecommend webRecommend);
-    boolean deleteWebRecommend(int recommendId);
+    void addWebRecommend(WebRecommend webRecommend);
+    void updateWebRecommend(int recommendId, WebRecommend webRecommend);
+    void deleteWebRecommend(int recommendId);
 }

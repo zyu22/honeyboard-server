@@ -1,4 +1,4 @@
-package com.honeyboard.api.auth.model.service;
+package com.honeyboard.api.auth.service;
 
 public interface EmailService {
 
