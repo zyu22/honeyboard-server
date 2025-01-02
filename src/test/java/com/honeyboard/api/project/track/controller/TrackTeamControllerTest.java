@@ -1,4 +1,4 @@
-package com.honeyboard.api.track.project.controller;
+package com.honeyboard.api.project.track.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.project.track.model.*;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)  // 시큐리티 필터 비활성화
-public class TrackControllerTest {
+public class TrackTeamControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

@@ -61,7 +61,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 				schedule.setEndDate(date);
 
 				schedule.setScheduleType("TRACK");
-				schedule.setPublic(true);
+				schedule.setPublicAccess(true);
 				schedule.setGenerationId(project.getGenerationId());
 				schedule.setUserId(project.getUserId());
 
