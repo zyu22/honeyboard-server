@@ -8,9 +8,11 @@
         generation_id,
         is_ssafy as ssafy
         FROM user
+        WHERE role = 'USER'
         <if test="generationId != null">
-            WHERE generation_id = #{generationId}
+            AND generation_id = #{generationId}
         </if>
+        ORDER BY name
     </select>
 
     <select id="selectUserById" resultType="UserInfo">
@@ -41,12 +43,11 @@
 
     <update id="updateGenerationIsActive" parameterType="int">
         UPDATE generation
-        SET is_active =
-                CASE
-                    WHEN is_active = TRUE THEN FALSE
-                    ELSE TRUE
-                    END
-        WHERE id = #{generationId};
+        SET is_active = CASE
+                            WHEN id = #{generationId} THEN TRUE
+                            ELSE FALSE
+            END
+        WHERE id = #{generationId} OR is_active = TRUE
     </update>
 
     <delete id="deleteGenerationById" parameterType="int">

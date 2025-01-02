@@ -57,7 +57,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PatchMapping("/generation/{generationId}isActive/")
+    @PatchMapping("/generation/{generationId}/isActive")
     public ResponseEntity<?> updateGenerationIsActive(@PathVariable("generationId") int generationId) {
         log.info("기수 활성화 상태 수정 요청 - 기수 ID: {}", generationId);
         adminService.updateGenerationIsActive(generationId);
