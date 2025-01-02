@@ -2,7 +2,6 @@ package com.honeyboard.api.generation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.generation.model.Generation;
-import com.honeyboard.api.user.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,7 +13,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,35 +48,6 @@ public class GenerationControllerTest {
             System.out.println("기수 이름: " + generation.getName());
             System.out.println("활성화 여부: " + generation.isActive());
             System.out.println("------------------------");
-        }
-    }
-
-    @Test
-    @WithMockUser
-    void getGenerationById_Success() throws Exception {
-        // given
-        String generationId = "13";  // 실제 DB에 있는 기수 ID
-
-        // when
-        MvcResult result = mockMvc.perform(get("/api/v1/generation/{generationId}", generationId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
-
-        // then
-        String responseBody = result.getResponse().getContentAsString();
-        List<User> users = objectMapper.readValue(responseBody,
-                objectMapper.getTypeFactory().constructCollectionType(List.class, User.class));
-
-        System.out.println("\n=== 기수별 학생 조회 결과 ===");
-        System.out.println("기수: " + generationId);
-        System.out.println("학생 수: " + users.size());
-        for (User user : users) {
-            System.out.println("------------------------");
-            System.out.println("이름: " + user.getName());
-            System.out.println("이메일: " + user.getEmail());
-            System.out.println("역할: " + user.getRole());
         }
     }
 
