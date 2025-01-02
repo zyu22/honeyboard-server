@@ -18,7 +18,7 @@ public class WebRecommendController {
 
     @GetMapping
     public ResponseEntity<?> getAllWebRecommend(
-            @RequestParam Integer generationId,
+            @RequestParam(value = "generationId", required = false) Integer generationId,
             @RequestParam(defaultValue = "1") int currentPage,
             @RequestParam(defaultValue = "16") int pageSize) {
         log.info("웹 추천 전체 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}", generationId, currentPage, pageSize);
@@ -72,7 +72,6 @@ public class WebRecommendController {
             @PathVariable int recommendId,
             @RequestBody WebRecommend webRecommend) {
         log.info("웹 추천 수정 요청 - ID: {}", recommendId);
-        webRecommend.setId(recommendId);
         webRecommendService.updateWebRecommend(recommendId, webRecommend);
         log.info("웹 추천 수정 완료 - ID: {}", recommendId);
         return ResponseEntity.ok().build();
