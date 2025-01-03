@@ -62,6 +62,7 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
         validateTeamRequest(request);
 
         try {
+            // 중복 멤버 체크
             List<Integer> existingMembers = finaleTeamMapper.findExistingTeamMembers(request.getMemberIds(), null);
             if (!existingMembers.isEmpty()) {
                 String memberIds = existingMembers.stream()
@@ -72,21 +73,28 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
                 );
             }
 
+            // 팀 생성을 위한 데이터 설정
             FinaleTeam newTeam = new FinaleTeam();
+            newTeam.setProjectName(request.getProjectName());
+            newTeam.setSummary(request.getSummary());
             newTeam.setGenerationId(request.getGenerationId());
+            newTeam.setCompleted(false);
 
+            // 팀장을 제외한 팀원 목록 생성
             List<Integer> memberIds = request.getMemberIds().stream()
                     .filter(id -> !id.equals(request.getLeaderId()))
                     .collect(Collectors.toList());
 
+            // 팀과 팀원 정보를 한 번에 저장
             finaleTeamMapper.insertFinaleTeamWithMembers(newTeam, request.getLeaderId(), memberIds);
         } catch (DuplicateTeamMemberException e) {
-            throw e;  // 그대로 전파
+            throw e;
         } catch (Exception e) {
             log.error("팀 생성 실패: {}", e.getMessage());
             throw new RuntimeException("팀 생성에 실패했습니다.", e);
         }
     }
+
 
     @Override
     @Transactional
@@ -98,9 +106,10 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
         }
 
         try {
+            // 다른 팀에 속한 멤버 체크
             List<Integer> existingMembers = finaleTeamMapper.findExistingTeamMembers(
                     request.getMemberIds(),
-                    request.getTeamId()  // 현재 팀은 제외하고 검사
+                    request.getTeamId()
             );
 
             if (!existingMembers.isEmpty()) {
@@ -112,17 +121,19 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
                 );
             }
 
+            // 팀장을 제외한 팀원 목록 생성
             List<Integer> memberIds = request.getMemberIds().stream()
                     .filter(id -> !id.equals(request.getLeaderId()))
                     .collect(Collectors.toList());
 
+            // 팀 정보와 멤버 정보를 한 번에 업데이트
             finaleTeamMapper.updateTeamMembers(
                     request.getTeamId(),
                     request.getLeaderId(),
                     memberIds
             );
         } catch (DuplicateTeamMemberException e) {
-            throw e;  // 그대로 전파
+            throw e;
         } catch (Exception e) {
             log.error("팀 수정 실패 - 팀 ID: {}, 오류: {}", request.getTeamId(), e.getMessage());
             throw new RuntimeException("팀 수정에 실패했습니다.", e);
@@ -130,6 +141,12 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
     }
 
     private void validateTeamRequest(FinaleTeamRequest team) {
+        if (team.getProjectName() == null || team.getProjectName().trim().isEmpty()) {
+            throw new IllegalArgumentException("프로젝트 이름은 필수입니다.");
+        }
+        if (team.getSummary() == null || team.getSummary().trim().isEmpty()) {
+            throw new IllegalArgumentException("프로젝트 설명은 필수입니다.");
+        }
         if (team.getGenerationId() == null || team.getGenerationId() <= 0) {
             throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
         }

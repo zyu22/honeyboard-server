@@ -12,8 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinaleTeamRequest {
+
     private Integer teamId;
+    private String projectName;
+    private String summary;
     private Integer generationId;
     private Integer leaderId;
     private List<Integer> memberIds;
+
 }

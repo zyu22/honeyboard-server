@@ -84,8 +84,21 @@
 	</select>
 
 	<insert id="insertFinaleTeamWithMembers" parameterType="map" useGeneratedKeys="true" keyProperty="team.teamId">
-		INSERT INTO finale_team (generation_id, created_at)
-		VALUES (#{team.generationId}, CURRENT_DATE);
+		INSERT INTO finale_team (
+		project_name,
+		summary,
+		generation_id,
+		is_completed,
+		created_at,
+		updated_at
+		) VALUES (
+		#{team.projectName},
+		#{team.summary},
+		#{team.generationId},
+		false,
+		CURRENT_DATE,
+		CURRENT_DATE
+		);
 
 		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
 		VALUES
@@ -98,15 +111,22 @@
 	</insert>
 
 	<update id="updateTeamMembers">
+		UPDATE finale_team
+		SET
+		project_name = #{team.projectName},
+		summary = #{team.summary},
+		updated_at = CURRENT_DATE
+		WHERE id = #{team.teamId};
+
 		DELETE FROM finale_team_member
-		WHERE finale_team_id = #{teamId};
+		WHERE finale_team_id = #{team.teamId};
 
 		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
 		VALUES
-		(#{teamId}, #{leaderId}, 'leader', CURRENT_DATE)
+		(#{team.teamId}, #{leaderId}, 'leader', CURRENT_DATE)
 		<if test="memberIds != null and memberIds.size > 0">
 			<foreach collection="memberIds" item="memberId" separator=",">
-				,(#{teamId}, #{memberId}, 'member', CURRENT_DATE)
+				,(#{team.teamId}, #{memberId}, 'member', CURRENT_DATE)
 			</foreach>
 		</if>
 	</update>
