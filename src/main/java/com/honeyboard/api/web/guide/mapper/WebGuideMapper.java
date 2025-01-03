@@ -6,8 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface WebGuideMapper {
-    List<WebGuide> selectAllWebGuide(Integer generationId, int offset);
-    List<WebGuide> searchWebGuideByTitle(String title, Integer generationId, int offset);
+    List<WebGuide> selectAllWebGuide(Integer generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<WebGuide> searchWebGuideByTitle(String title, Integer generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
     WebGuide selectWebGuideById(int guideId);
     int insertWebGuide(WebGuide webGuide);
     int updateWebGuide(@Param("guideId") int guideId, @Param("webGuide")WebGuide webGuide);

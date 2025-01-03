@@ -53,7 +53,6 @@ public class WebGuideControllerTest {
         for (WebGuide guide : response.getContent()) {
             System.out.println("개념 ID: " + guide.getId());
             System.out.println("제목: " + guide.getTitle());
-            System.out.println("내용: " + guide.getContent());
             System.out.println("-------------------------");
         }
     }
@@ -98,8 +97,9 @@ public class WebGuideControllerTest {
         WebGuide request = new WebGuide();
         request.setUserId(5);
         request.setGenerationId(13);
-        request.setTitle("HTML 기초");
-        request.setContent("HTML은 웹의 기초가 되는 마크업 언어입니다.");
+        request.setTitle("CSS 기초");
+        request.setContent("CSS인데요.");
+        request.setThumbnail("www.naver.com");
 
         // when & then
         mockMvc.perform(post("/api/v1/web/guide")

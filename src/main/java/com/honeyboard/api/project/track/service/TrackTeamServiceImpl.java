@@ -29,25 +29,31 @@ public class TrackTeamServiceImpl implements TrackTeamService {
     @Override
     @Transactional
     public void addTrackTeam(TrackTeam trackTeam) {
-        log.info("팀 생성 시작 - 기수: {}", trackTeam.getGenerationId());
-        trackTeamMapper.insertTrackTeam(trackTeam);
-        int teamId = trackTeam.getId();
+        try {
+            log.info("팀 생성 시작 - 기수: {}", trackTeam.getGenerationId());
+            trackTeamMapper.insertTrackTeam(trackTeam);
+            int teamId = trackTeam.getId();
 
-        if (teamId <= 0) {
-            throw new IllegalArgumentException("팀 생성에 실패했습니다.");
+            if (teamId <= 0) {
+                throw new IllegalArgumentException("팀 생성에 실패했습니다.");
+            }
+
+            if (trackTeam.getMembers() == null || trackTeam.getMembers().isEmpty()) {
+                throw new IllegalArgumentException("팀 멤버가 없습니다.");
+            }
+
+            List<TrackTeamMember> teamMembers = trackTeam.getMembers();
+            for(TrackTeamMember teamMember : teamMembers) {
+                teamMember.setTrackTeamId(teamId);
+            }
+            trackTeamMapper.insertTrackTeamMember(trackTeam);
+
+            log.info("팀 생성 완료 - 팀 인원 수: {}", trackTeam.getMembers().size());
+        } catch (Exception e) {
+            log.error("팀 생성 실패 - 기수: {}, 오류: {}", trackTeam.getGenerationId(), e.getMessage());
+            throw new RuntimeException("팀 생성 중 오류가 발생했습니다: " + e.getMessage(), e);
         }
 
-        if (trackTeam.getMembers() == null || trackTeam.getMembers().isEmpty()) {
-            throw new IllegalArgumentException("팀 멤버가 없습니다.");
-        }
-
-        List<TrackTeamMember> teamMembers = trackTeam.getMembers();
-        for(TrackTeamMember teamMember : teamMembers) {
-            teamMember.setTrackTeamId(teamId);
-        }
-        trackTeamMapper.insertTrackTeamMember(trackTeam);
-
-        log.info("팀 생성 완료 - 팀 인원 수: {}", trackTeam.getMembers().size());
     }
 
     @Override
