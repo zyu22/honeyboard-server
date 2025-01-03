@@ -34,7 +34,4 @@ build/
 .vscode/
 
 ### ENV ###
-.env.properties
-
-# .gitignore
-.env.properties
+.env
