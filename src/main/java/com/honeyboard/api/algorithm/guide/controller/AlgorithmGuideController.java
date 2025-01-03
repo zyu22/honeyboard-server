@@ -24,7 +24,7 @@ public class AlgorithmGuideController {
     @GetMapping
     public ResponseEntity<?> getAllAlgorithmGuide(
     		@RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "16") int size,
+            @RequestParam(defaultValue = "8") int size,
             @RequestParam(required = false) Integer generationId,
             @RequestParam(required = false) String searchType,
             @RequestParam(required = false) String keyword,
