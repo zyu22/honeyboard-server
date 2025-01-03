@@ -20,6 +20,7 @@ public class FinaleProject {
 	private String url;
 	private String title;
 	private String content;
+	private String thumbnail;
 	private Integer userId;
 	private String name;
 	private LocalDate createdAt;
