@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.finale.service;
 
+import com.honeyboard.api.exception.DuplicateTeamMemberException;
 import com.honeyboard.api.project.finale.mapper.FinaleTeamMapper;
 import com.honeyboard.api.project.finale.model.FinaleMember;
 import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
@@ -61,6 +62,16 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
         validateTeamRequest(request);
 
         try {
+            List<Integer> existingMembers = finaleTeamMapper.findExistingTeamMembers(request.getMemberIds(), null);
+            if (!existingMembers.isEmpty()) {
+                String memberIds = existingMembers.stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(", "));
+                throw new DuplicateTeamMemberException(
+                        "이미 팀에 속해있는 멤버가 있습니다. (사용자 ID: " + memberIds + ")"
+                );
+            }
+
             FinaleTeam newTeam = new FinaleTeam();
             newTeam.setGenerationId(request.getGenerationId());
 
@@ -69,6 +80,8 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
                     .collect(Collectors.toList());
 
             finaleTeamMapper.insertFinaleTeamWithMembers(newTeam, request.getLeaderId(), memberIds);
+        } catch (DuplicateTeamMemberException e) {
+            throw e;  // 그대로 전파
         } catch (Exception e) {
             log.error("팀 생성 실패: {}", e.getMessage());
             throw new RuntimeException("팀 생성에 실패했습니다.", e);
@@ -85,6 +98,20 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
         }
 
         try {
+            List<Integer> existingMembers = finaleTeamMapper.findExistingTeamMembers(
+                    request.getMemberIds(),
+                    request.getTeamId()  // 현재 팀은 제외하고 검사
+            );
+
+            if (!existingMembers.isEmpty()) {
+                String memberIds = existingMembers.stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(", "));
+                throw new DuplicateTeamMemberException(
+                        "다른 팀에 이미 속해있는 멤버가 있습니다. (사용자 ID: " + memberIds + ")"
+                );
+            }
+
             List<Integer> memberIds = request.getMemberIds().stream()
                     .filter(id -> !id.equals(request.getLeaderId()))
                     .collect(Collectors.toList());
@@ -94,13 +121,13 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
                     request.getLeaderId(),
                     memberIds
             );
+        } catch (DuplicateTeamMemberException e) {
+            throw e;  // 그대로 전파
         } catch (Exception e) {
             log.error("팀 수정 실패 - 팀 ID: {}, 오류: {}", request.getTeamId(), e.getMessage());
             throw new RuntimeException("팀 수정에 실패했습니다.", e);
         }
     }
-
-
 
     private void validateTeamRequest(FinaleTeamRequest team) {
         if (team.getGenerationId() == null || team.getGenerationId() <= 0) {

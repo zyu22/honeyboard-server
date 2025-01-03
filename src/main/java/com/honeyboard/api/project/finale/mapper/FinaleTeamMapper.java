@@ -38,4 +38,10 @@ public interface FinaleTeamMapper {
 			@Param("leaderId") Integer leaderId,
 			@Param("memberIds") List<Integer> memberIds
 	);
+
+	List<Integer> findExistingTeamMembers(
+			@Param("userIds") List<Integer> userIds,
+			@Param("excludeTeamId") Integer excludeTeamId
+	);
+
 }

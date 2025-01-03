@@ -69,6 +69,20 @@
 		)
 	</select>
 
+	<select id="findExistingTeamMembers" resultType="Integer">
+		SELECT DISTINCT user_id
+		FROM finale_team_member ftm
+		JOIN finale_team ft ON ftm.finale_team_id = ft.id
+		WHERE ftm.user_id IN
+		<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+		<if test="excludeTeamId != null">
+			AND ftm.finale_team_id != #{excludeTeamId}
+		</if>
+		AND ft.is_deleted = false
+	</select>
+
 	<insert id="insertFinaleTeamWithMembers" parameterType="map" useGeneratedKeys="true" keyProperty="team.teamId">
 		INSERT INTO finale_team (generation_id, created_at)
 		VALUES (#{team.generationId}, CURRENT_DATE);
