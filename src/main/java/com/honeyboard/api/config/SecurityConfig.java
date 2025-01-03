@@ -59,12 +59,10 @@ public class SecurityConfig {
                     log.debug("URL 기반 보안 설정 구성");
                     auth.requestMatchers(
                                     "/ws/**",
-                                    "/api/v1/**",
                                     "/api/v1/auth/**",
                                     "/oauth2/**",
                                     "/login/oauth2/**",
-                                    "/swagger-ui/**",
-                                    "/api/v1/auth/logout"
+                                    "/swagger-ui/**"
                             ).permitAll()
                             .requestMatchers("/api/v1/admin").hasRole("ADMIN")
                             .requestMatchers("/api/v1/user").hasRole("USER")
