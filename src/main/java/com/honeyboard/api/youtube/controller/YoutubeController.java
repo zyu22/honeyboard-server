@@ -32,7 +32,7 @@ public class YoutubeController {
 
     //유튜브 영상 저장
     @PostMapping("/playlist")
-    public ResponseEntity<?> creatPlaylist(@RequestBody Youtube youtube) {
+    public ResponseEntity<?> createPlaylist(@RequestBody Youtube youtube) {
         log.info("유튜브 영상 저장 요청 - 제목: {}", youtube.getTitle());
 
         youtubeService.addYoutubeVideo(youtube);
