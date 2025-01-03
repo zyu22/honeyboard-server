@@ -75,13 +75,13 @@
     <update id="updateTrackProjectBoard" >
         update track_project_board
         set title=#{title}, url=#{url}, content=#{content}, update_at = CURRENT_TIME
-        where id=#{id} and is_deleted = false
+        where id=#{boardId} and is_deleted = false
     </update>
 
     <update id="deleteTrackProjectBoard" parameterType="int">
         update track_project_board
         set is_deleted = true
-        where id =#{id}
+        where id =#{boardId}
     </update>
 
 </mapper>
