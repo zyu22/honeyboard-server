@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.honeyboard.api.project.finale.model.FinaleProjectResponse;
 import com.honeyboard.api.project.finale.service.FinaleTeamService;
-import com.honeyboard.api.user.model.mapper.UserMapper;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.mapper.UserMapper;
+import com.honeyboard.api.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +24,7 @@ import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.project.finale.service.FinaleProjectService;
 import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.user.model.UserName;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,14 +55,14 @@ public class FinaleTeamController {
 	}
 
 	@GetMapping("/team/remaining")
-	public ResponseEntity<List<User>> getRemainedUsers(
+	public ResponseEntity<List<UserName>> getRemainedUsers(
 			@RequestParam(required = false) Integer generationId) {
 
 		if (generationId == null) {
 			generationId = userService.getActiveGenerationId();
 		}
 
-		List<User> remainedUsers = finaleTeamService.getRemainedUsers(generationId);
+		List<UserName> remainedUsers = finaleTeamService.getRemainedUsers(generationId);
 		return remainedUsers.isEmpty() ? ResponseEntity.noContent().build()
 				: ResponseEntity.ok(remainedUsers);
 	}

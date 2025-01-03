@@ -24,7 +24,7 @@ public class WebGuideServiceImpl implements WebGuideService {
         PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElements);
         int offset = (currentPage-1) * pageSize;
 
-        List<WebGuide> webGuides = webGuideMapper.selectAllWebGuide(generationId, offset);
+        List<WebGuide> webGuides = webGuideMapper.selectAllWebGuide(generationId, offset, pageSize);
 
         log.info("웹 개념 전체 조회 완료 - 조회된 개념 수: {}", webGuides.size());
         return new PageResponse<>(webGuides, pageInfo);
@@ -38,7 +38,7 @@ public class WebGuideServiceImpl implements WebGuideService {
         PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElements);
         int offset = (currentPage-1) * pageSize;
 
-        List<WebGuide> webGuides = webGuideMapper.searchWebGuideByTitle(title, generationId, offset);
+        List<WebGuide> webGuides = webGuideMapper.searchWebGuideByTitle(title, generationId, offset, pageSize);
 
         log.info("웹 개념 검색 완료 - 검색된 개념 수: {}", webGuides.size());
         return new PageResponse<>(webGuides, pageInfo);

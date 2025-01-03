@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.honeyboard.api.project.model.mapper.TrackProjectMapper">
+<mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectMapper">
     <!-- 전체 조회 -->
     <select id="selectAllTrackProjects" parameterType="Integer" resultType="TrackProject">
         SELECT 
             id,
             title,
-            objective,
-            content,
-            user_id AS userId,
-            generation_id AS generationId,
-            created_at AS createdAt,
-            updated_at AS updatedAt,
-            is_deleted AS isDeleted
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
         FROM track_project
         WHERE is_deleted = false
         <if test="generationId != null">
@@ -105,4 +103,13 @@
         FROM track_excluded_member
         WHERE project_id = #{projectId}
     </select>
+
+    <!-- 제외 멤버 추가-->
+    <insert id="insertExcludedMembers">
+        INSERT INTO track_excluded_member (project_id, user_id)
+        VALUES
+        <foreach collection="excludedMemberIds" item="userId" separator=",">
+            (#{trackProjectId}, #{userId})
+        </foreach>
+    </insert>
 </mapper>
