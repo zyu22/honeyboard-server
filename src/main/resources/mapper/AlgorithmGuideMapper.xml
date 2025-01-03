@@ -4,32 +4,33 @@
 
 <mapper namespace="com.honeyboard.api.algorithm.guide.mapper.AlgorithmGuideMapper">
 
-    <select id="getAlgorithmGuides" parameterType="int" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
+    <!-- 알고리즘 가이드 목록 조회 -->
+    <select id="getAlgorithmGuides" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
         SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
         FROM algorithm_guide
         WHERE generation_id = #{generationId}
           AND is_deleted = false
         ORDER BY created_at DESC
-    </select>
-
-    <!-- 알고리즘 가이드 상세 조회 -->
-    <select id="getAlgorithmGuideDetail">
-        SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
-        FROM algorithm_guide
-        WHERE id = #{id}
-        AND is_deleted = false
-        <!-- bookmark 관련 로직 추가 필요시 작성 -->
+        LIMIT #{offset}, #{pageSize}
     </select>
 
     <!-- 알고리즘 가이드 검색 -->
-    <select id="searchAlgorithmGuide">
+    <select id="searchAlgorithmGuide" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
         SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
         FROM algorithm_guide
         WHERE generation_id = #{generationId}
-          AND title LIKE CONCAT('%', #{title}, '%')
+          AND (
+              CASE #{searchType}
+                  WHEN 'title' THEN title LIKE CONCAT('%', #{keyword}, '%')
+                  WHEN 'content' THEN content LIKE CONCAT('%', #{keyword}, '%')
+                  ELSE false
+              END
+          )
           AND is_deleted = false
         ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
     </select>
+
 
     <!-- 알고리즘 가이드 작성 -->
     <insert id="addAlgorithmGuide">
@@ -65,10 +66,33 @@
     </update>
 
     <!-- 알고리즘 가이드 삭제 (soft delete) -->
-    <delete id="deleteAlgorithmGuide">
+    <delete id="softDeleteAlgorithmGuide">
         UPDATE algorithm_guide
         SET is_deleted = 1
         WHERE id = #{id}
     </delete>
+
+	<!-- 검색된 알고리즘 가이드 수 -->
+    <select id="countSearchAlgorithmGuide" resultType="int">
+        SELECT COUNT(*)
+        FROM algorithm_guide
+        WHERE generation_id = #{generationId}
+          AND (
+              CASE #{searchType}
+                  WHEN 'title' THEN title LIKE CONCAT('%', #{keyword}, '%')
+                  WHEN 'content' THEN content LIKE CONCAT('%', #{keyword}, '%')
+                  ELSE false
+              END
+          )
+          AND is_deleted = false
+    </select>
+
+    <!-- 전체 알고리즘 가이드 수 -->
+    <select id="countAlgorithmGuide" resultType="int">
+        SELECT COUNT(*)
+        FROM algorithm_guide
+        WHERE generation_id = #{generationId}
+          AND is_deleted = false
+    </select>
 
 </mapper>

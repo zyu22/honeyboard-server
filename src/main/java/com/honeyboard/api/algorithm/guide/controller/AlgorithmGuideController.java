@@ -2,6 +2,7 @@ package com.honeyboard.api.algorithm.guide.controller;
 
 import com.honeyboard.api.algorithm.guide.model.AlgorithmGuide;
 import com.honeyboard.api.algorithm.guide.service.AlgorithmGuideService;
+import com.honeyboard.api.common.response.PageResponse;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +23,30 @@ public class AlgorithmGuideController {
 
     @GetMapping
     public ResponseEntity<?> getAllAlgorithmGuide(
+    		@RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "16") int size,
             @RequestParam(required = false) Integer generationId,
-            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword,
             @CurrentUser User user) {
-        log.info("알고리즘 개념 전체 조회 요청 - 기수: {}, 검색어: {}", generationId, title);
+        log.info("알고리즘 개념 전체 조회 요청 - 기수: {}, 검색어: {}", generationId, searchType, keyword);
         
-        int generation = generationId == null ? user.getGenerationId() : generationId;
-        List<AlgorithmGuide> algorithmGuides = title != null ?
-                algorithmGuideService.searchAlgorithmGuide(generation, title) :
-                algorithmGuideService.getAlgorithmGuides(generation);
+        if(generationId==null) {
+        	generationId = user.getGenerationId();
+        }
+        PageResponse<AlgorithmGuide> algorithmGuides;
+        if(keyword != null) {
+        	algorithmGuides = algorithmGuideService.searchAlgorithmGuide(page, size, generationId, searchType, keyword);
+        }else {
+        	algorithmGuides = algorithmGuideService.getAlgorithmGuides(page, size, generationId);        	
+        }
 
-        if (algorithmGuides.isEmpty()) {
+        if (algorithmGuides==null) {
             log.info("알고리즘 개념 전체 조회 완료 - 데이터 없음");
             return ResponseEntity.noContent().build();
         }
 
-        log.info("알고리즘 개념 전체 조회 완료 - 조회된 개수: {}", algorithmGuides.size());
+        log.info("알고리즘 개념 전체 조회 완료 - 조회된 개수: {}", algorithmGuides.getContent().size());
         return ResponseEntity.ok(algorithmGuides);
     }
 
@@ -83,9 +92,9 @@ public class AlgorithmGuideController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAlgorithmGuide(@PathVariable int id) {
+    public ResponseEntity<Void> softDeleteAlgorithmGuide(@PathVariable int id) {
         log.info("알고리즘 개념 삭제 요청 - ID: {}", id);
-        algorithmGuideService.deleteAlgorithmGuide(id);
+        algorithmGuideService.softDeleteAlgorithmGuide(id);
         log.info("알고리즘 개념 삭제 완료 - ID: {}", id);
         return ResponseEntity.ok().build();
     }
