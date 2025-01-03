@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.honeyboard.api.user.mapper.BookmarkMapper">
+
+    <!-- 1) 알고리즘 가이드 북마크 조회 -->
+    <select id="selectAllAlgorithmGuideBookmarks"
+            parameterType="int"
+            resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
+        SELECT a.id,
+               a.title,
+               a.content,
+               a.user_id       AS userId,
+               a.generation_id AS generationId,
+               a.created_at    AS createdAt,
+               a.updated_at    AS updatedAt,
+               a.is_deleted    AS isDeleted
+        FROM bookmark b
+                 JOIN algorithm_guide a ON b.content_id = a.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'algo_guide'
+          AND a.is_deleted = FALSE
+        ORDER BY a.created_at DESC
+    </select>
+
+    <!-- 2) 알고리즘 문제풀이(솔루션) 북마크 조회 -->
+    <select id="selectAllAlgorithmSolutionBookmarks"
+            parameterType="int"
+            resultType="com.honeyboard.api.algorithm.solution.model.AlgorithmSolution">
+        SELECT
+            s.id            AS solutionId,
+            s.problem_id    AS problemId,
+            s.title,
+            s.summary,
+            s.content,
+            s.user_id       AS userId,
+            s.runtime,
+            s.memory,
+            s.language_id   AS languageId,
+            s.generation_id AS generationId,
+            s.created_at    AS createdAt,
+            s.updated_at    AS updatedAt,
+            s.is_deleted    AS isDeleted,
+            u.name          AS author
+
+        FROM bookmark b
+                 JOIN algorithm_problem_solution s ON b.content_id = s.id
+                 JOIN user u ON s.user_id = u.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'algo_solution'
+          AND s.is_deleted = FALSE
+        ORDER BY s.created_at DESC
+    </select>
+
+
+    <!-- 3) 웹 가이드 북마크 조회 -->
+    <select id="selectAllWebGuideBookmarks"
+            parameterType="int"
+            resultType="com.honeyboard.api.web.guide.model.WebGuide">
+        SELECT w.id,
+               w.title,
+               w.content,
+               w.user_id       AS userId,
+               w.generation_id AS generationId,
+               w.created_at    AS createdAt,
+               w.updated_at    AS updatedAt,
+               w.is_deleted    AS isDeleted
+        FROM bookmark b
+                 JOIN web_guide w ON b.content_id = w.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'web_guide'
+          AND w.is_deleted = FALSE
+        ORDER BY w.created_at DESC
+    </select>
+
+    <!-- 4) 웹 추천(링크) 북마크 조회 -->
+    <select id="selectAllWebRecommendBookmarks"
+            parameterType="int"
+            resultType="com.honeyboard.api.web.recommend.model.WebRecommend">
+        SELECT r.id,
+               r.title,
+               r.url,
+               r.content,
+               r.user_id       AS userId,
+               r.generation_id AS generationId,
+               r.created_at    AS createdAt,
+               r.updated_at    AS updatedAt,
+               r.is_deleted    AS isDeleted
+        FROM bookmark b
+                 JOIN web_recommend r ON b.content_id = r.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'web_recommend'
+          AND r.is_deleted = FALSE
+        ORDER BY r.created_at DESC
+    </select>
+
+    <!-- bookmark 추가 (중복 시 무시) -->
+    <insert id="insertBookmark" parameterType="com.honeyboard.api.user.model.Bookmark">
+        INSERT IGNORE INTO bookmark (user_id, content_type, content_id, created_at)
+    VALUES (#{userId}, #{contentType}, #{contentId}, CURRENT_DATE)
+    </insert>
+
+    <!-- bookmark 삭제 -->
+    <delete id="deleteBookmark" parameterType="map">
+        DELETE FROM bookmark
+        WHERE id = #{bookmarkId}
+          AND user_id = #{userId}
+    </delete>
+
+</mapper>

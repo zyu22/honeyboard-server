@@ -6,8 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface WebRecommendMapper {
-    List<WebRecommend> selectAllWebRecommend(Integer generationId, int offset, int pageSize);
-    List<WebRecommend> searchWebRecommendByTitle(String title, Integer generationId, int offset, int pageSize);
+    List<WebRecommend> selectAllWebRecommend(Integer generationId,  @Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<WebRecommend> searchWebRecommendByTitle(String title, Integer generationId,  @Param("offset") int offset, @Param("pageSize") int pageSize);
     WebRecommend selectWebRecommendById(int recommendId);
     int insertWebRecommend(WebRecommend webRecommend);
     int updateWebRecommend(@Param("recommendId") int recommendId, @Param("webRecommend")WebRecommend webRecommend);

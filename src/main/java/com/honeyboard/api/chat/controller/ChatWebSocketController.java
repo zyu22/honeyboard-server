@@ -4,7 +4,7 @@ package com.honeyboard.api.chat.controller;
 import com.honeyboard.api.chat.model.Chat;
 import com.honeyboard.api.chat.service.ChatService;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.service.UserService;
+import com.honeyboard.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;

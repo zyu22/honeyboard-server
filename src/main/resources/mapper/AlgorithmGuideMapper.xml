@@ -67,7 +67,7 @@
     <!-- 알고리즘 가이드 삭제 (soft delete) -->
     <delete id="deleteAlgorithmGuide">
         UPDATE algorithm_guide
-        SET is_deleted = true
+        SET is_deleted = 1
         WHERE id = #{id}
     </delete>
 

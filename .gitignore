@@ -18,6 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
+!.idea/compiler.xml
 
 ### NetBeans ###
 /nbproject/private/
@@ -33,4 +34,7 @@ build/
 .vscode/
 
 ### ENV ###
-.env
+.env.properties
+
+# .gitignore
+.env.properties
