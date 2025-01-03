@@ -50,11 +50,11 @@ public class AdminController {
     }
 
     @PostMapping("/generation")
-    public ResponseEntity<?> createGeneration(@RequestBody Generation generation) {
+    public ResponseEntity<?> createGeneration(@RequestBody Generation generation) {  // 제네릭 타입 추가
         log.info("기수 등록 요청 - 기수 번호 : {}", generation.getName());
-        adminService.addGeneration(generation);
-        log.info("기수 등록 완료 - 기수 번호 : {}", generation.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        int generationId = adminService.addGeneration(generation);  // ID 받기
+        log.info("기수 등록 완료 - 기수 번호 : {}, ID: {}", generation.getName(), generationId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(generationId);  // ID를 응답 본문에 포함
     }
 
     @PatchMapping("/generation/{generationId}/isActive")

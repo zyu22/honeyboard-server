@@ -42,4 +42,8 @@ public class User {
         this.generationName = generationName;
         this.role = role;
     }
+
+    public int getGenerationId() {
+        return this.generationId;
+    }
 }

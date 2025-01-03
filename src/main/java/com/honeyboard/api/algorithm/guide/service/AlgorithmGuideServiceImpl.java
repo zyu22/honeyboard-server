@@ -2,6 +2,9 @@ package com.honeyboard.api.algorithm.guide.service;
 
 import com.honeyboard.api.algorithm.guide.mapper.AlgorithmGuideMapper;
 import com.honeyboard.api.algorithm.guide.model.AlgorithmGuide;
+import com.honeyboard.api.common.model.PageInfo;
+import com.honeyboard.api.common.response.PageResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,30 +19,26 @@ public class AlgorithmGuideServiceImpl implements AlgorithmGuideService {
     private final AlgorithmGuideMapper algorithmGuideMapper;
 
     @Override
-    public List<AlgorithmGuide> getAlgorithmGuides(int generationId) {
-        if (generationId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
-        }
-        return algorithmGuideMapper.getAlgorithmGuides(generationId);
+    public PageResponse<AlgorithmGuide> getAlgorithmGuides(int currentPage, int pageSize, int generationId) {
+    	int totalElement = algorithmGuideMapper.countAlgorithmGuide(generationId);
+    	int offset = (currentPage - 1) * pageSize;
+    	PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElement);
+    	List<AlgorithmGuide> list = algorithmGuideMapper.getAlgorithmGuides(offset, pageSize, generationId);
+        return new PageResponse<>(list, pageInfo);
     }
 
     @Override
     public AlgorithmGuide getAlgorithmGuideDetail(int id, boolean bookmarkflag) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 가이드 ID입니다.");
-        }
         return algorithmGuideMapper.getAlgorithmGuideDetail(id, bookmarkflag);
     }
 
     @Override
-    public List<AlgorithmGuide> searchAlgorithmGuide(int generationId, String title) {
-        if (generationId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
-        }
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("검색어를 입력해주세요.");
-        }
-        return algorithmGuideMapper.searchAlgorithmGuide(generationId, title);
+    public PageResponse<AlgorithmGuide> searchAlgorithmGuide(int currentPage, int pageSize, int generationId, String searchType, String keyword) {
+    	int totalElement = algorithmGuideMapper.countSearchAlgorithmGuide(generationId, searchType, keyword);
+    	int offset = (currentPage - 1) * pageSize;
+    	PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElement);
+        List<AlgorithmGuide> list = algorithmGuideMapper.searchAlgorithmGuide(offset, pageSize, generationId, searchType, keyword);
+        return new PageResponse<>(list, pageInfo);
     }
 
     @Override
@@ -81,13 +80,13 @@ public class AlgorithmGuideServiceImpl implements AlgorithmGuideService {
     }
 
     @Override
-    public boolean deleteAlgorithmGuide(int id) {
+    public boolean softDeleteAlgorithmGuide(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("유효하지 않은 가이드 ID입니다.");
         }
 
         try {
-            int result = algorithmGuideMapper.deleteAlgorithmGuide(id);
+            int result = algorithmGuideMapper.softDeleteAlgorithmGuide(id);
             if (result != 1) {
                 throw new RuntimeException("알고리즘 가이드 삭제에 실패했습니다.");
             }

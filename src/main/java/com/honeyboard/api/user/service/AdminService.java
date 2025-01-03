@@ -14,7 +14,7 @@ public interface AdminService {
 
     void updateUser(int userId, UserInfo userInfo);
 
-    void addGeneration(Generation generation);
+    int addGeneration(Generation generation);
 
     void updateGenerationIsActive(int generationId);
 
