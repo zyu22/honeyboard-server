@@ -19,6 +19,7 @@ public class TrackProject {
     private String title;
     private String objective; // 목표
     private String content;
+    private String thumbnail;
     private int generationId; // 기수
     private int userId;
     private String createdAt;
