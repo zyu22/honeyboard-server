@@ -60,13 +60,14 @@
 
     <insert id="insertTrackProjectBoard" parameterType="TrackProjectBoard" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO track_project_board(
-            track_project_id, track_team_id, url, title, content, user_id, created_at
+            track_project_id, track_team_id, url, title, content, thumbnail,user_id, created_at
         ) VALUES (
                      #{trackProjectId},
                      #{trackTeamId},
                      #{url},
                      #{title},
                      #{content},
+                     #{thumbnail},
                      #{userId},
                      CURRENT_TIME
                  )
@@ -74,7 +75,7 @@
 
     <update id="updateTrackProjectBoard" >
         update track_project_board
-        set title=#{title}, url=#{url}, content=#{content}, update_at = CURRENT_TIME
+        set title=#{title}, url=#{url}, content=#{content}, thumbnail = #{thumbnail} update_at = CURRENT_TIME
         where id=#{id} and is_deleted = false
     </update>
 
