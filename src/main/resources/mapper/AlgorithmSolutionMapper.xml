@@ -72,7 +72,6 @@
 		INNER JOIN programming_language p ON s.language_id = p.id
 		LEFT JOIN bookmark b ON b.content_id = s.id
 			AND b.content_type = 'algo_solution'
-        	AND b.user_id = #{userId}
         WHERE s.id = #{solutionId}
         	AND s.is_deleted = false
 	</select>
