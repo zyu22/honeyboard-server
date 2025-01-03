@@ -87,8 +87,6 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
 
             // 팀과 팀원 정보를 한 번에 저장
             finaleTeamMapper.insertFinaleTeamWithMembers(newTeam, request.getLeaderId(), memberIds);
-        } catch (DuplicateTeamMemberException e) {
-            throw e;
         } catch (Exception e) {
             log.error("팀 생성 실패: {}", e.getMessage());
             throw new RuntimeException("팀 생성에 실패했습니다.", e);
@@ -132,8 +130,6 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
                     request.getLeaderId(),
                     memberIds
             );
-        } catch (DuplicateTeamMemberException e) {
-            throw e;
         } catch (Exception e) {
             log.error("팀 수정 실패 - 팀 ID: {}, 오류: {}", request.getTeamId(), e.getMessage());
             throw new RuntimeException("팀 수정에 실패했습니다.", e);
