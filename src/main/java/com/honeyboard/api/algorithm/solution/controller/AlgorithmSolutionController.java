@@ -35,8 +35,17 @@ public class AlgorithmSolutionController {
 	@PostMapping("/{problemId}/solution")
 	public ResponseEntity<?> createAlgorithmSolution(
 			@PathVariable int problemId,
-			@RequestBody AlgorithmSolution algorithmSolution) {
+			@RequestBody AlgorithmSolution algorithmSolution,
+			@CurrentUser User user) {
 		log.info("알고리즘 풀이 작성 요청 - 문제 ID: {}", problemId);
+
+		int userId = user.getUserId();
+		int generationId = user.getGenerationId();
+
+		algorithmSolution.setUserId(userId);
+		algorithmSolution.setGenerationId(generationId);
+		algorithmSolution.setProblemId(problemId);
+
 		algorithmSolutionService.addAlgorithmSolution(algorithmSolution);
 		log.info("알고리즘 풀이 작성 완료 - 문제 ID: {}", problemId);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -65,6 +74,7 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 상세 조회 GET /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@GetMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> getAlgorithmSolution(
+			@PathVariable int problemId,
 			@PathVariable int solutionId) {
 		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}", solutionId);
 
@@ -77,6 +87,7 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 수정 PUT /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@PutMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> updateAlgorithmSolution(
+			@PathVariable int problemId,
 			@PathVariable int solutionId,
 			@RequestBody AlgorithmSolution algorithmSolution,
 			@CurrentUser User user) {
