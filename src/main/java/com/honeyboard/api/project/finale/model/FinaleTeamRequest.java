@@ -11,11 +11,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public
-class FinaleTeamRequest {
-
+public class FinaleTeamRequest {
+    private Integer teamId;
     private Integer generationId;
     private Integer leaderId;
     private List<Integer> memberIds;
-
 }

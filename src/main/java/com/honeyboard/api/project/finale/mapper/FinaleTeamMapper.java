@@ -10,13 +10,29 @@ import org.apache.ibatis.annotations.Param;
 
 public interface FinaleTeamMapper {
 
-	public List<FinaleTeam> selectSubmitStatusByDate(LocalDate targetDate);
+	List<FinaleTeam> selectSubmitStatusByDate(LocalDate targetDate);
 
-	public List<UserName> selectRemainedUsers(int generationId);
+	List<UserName> selectRemainedUsers(int generationId);
 
-	public List<FinaleMember> selectTeamMembers(int teamId);
+	List<FinaleMember> selectTeamMembers(int teamId);
+
+	FinaleTeam selectTeamById(int teamId);
 
 	int insertFinaleTeam(FinaleTeam team);
+
+	boolean existsTeamById(Integer teamId);
+
+	int deleteTeamMembers(Integer teamId);
+	int insertTeamMember(
+			@Param("teamId") Integer teamId,
+			@Param("userId") Integer userId,
+			@Param("role") String role
+	);
+
+	int deleteTeamMember(
+			@Param("teamId") Integer teamId,
+			@Param("userId") Integer userId
+	);
 
 	int insertFinaleTeamMember(
 			@Param("teamId") Integer teamId,

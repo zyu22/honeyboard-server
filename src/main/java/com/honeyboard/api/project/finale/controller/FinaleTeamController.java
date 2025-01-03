@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/project/finale")
+@RequestMapping("/api/v1/project/finale/team")
 @RequiredArgsConstructor
 @Slf4j
 public class FinaleTeamController {
@@ -53,7 +53,7 @@ public class FinaleTeamController {
 				: ResponseEntity.ok(submittedStatus);
 	}
 
-	@GetMapping("/team/remaining")
+	@GetMapping("/remaining")
 	public ResponseEntity<List<UserName>> getRemainedUsers(
 			@RequestParam(required = false) Integer generationId) {
 
@@ -66,10 +66,16 @@ public class FinaleTeamController {
 				: ResponseEntity.ok(remainedUsers);
 	}
 
-	@PostMapping("/team")
-	public ResponseEntity<?> createTeam(@RequestBody FinaleTeamRequest request) {
+	@PostMapping
+	public ResponseEntity<FinaleTeam> createTeam(@RequestBody FinaleTeamRequest request) {
 		FinaleTeam team = finaleTeamService.createTeam(request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		return ResponseEntity.status(HttpStatus.CREATED).body(team);
+	}
+
+	@PutMapping("/update")
+	public ResponseEntity<FinaleTeam> updateTeam(@RequestBody FinaleTeamRequest request) {
+		FinaleTeam updatedTeam = finaleTeamService.updateTeam(request);
+		return ResponseEntity.ok(updatedTeam);
 	}
 
 }

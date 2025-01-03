@@ -14,4 +14,6 @@ interface FinaleTeamService {
     List<UserName> getRemainedUsers(int generationId);
 
     FinaleTeam createTeam(FinaleTeamRequest finaleTeam);
+
+    FinaleTeam updateTeam(FinaleTeamRequest request);
 }

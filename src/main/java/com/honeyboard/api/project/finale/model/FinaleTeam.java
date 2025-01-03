@@ -20,5 +20,6 @@ public class FinaleTeam {
 	private Integer generationId;
 	private LocalDate submittedAt;
 	private LocalDate createdAt;
+	private List<FinaleMember> members;
 
 }

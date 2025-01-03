@@ -1,6 +1,7 @@
 package com.honeyboard.api.project.finale.service;
 
 import com.honeyboard.api.project.finale.mapper.FinaleTeamMapper;
+import com.honeyboard.api.project.finale.model.FinaleMember;
 import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
@@ -8,9 +9,12 @@ import com.honeyboard.api.user.model.UserName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,38 +56,91 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
     }
 
     @Override
-    public FinaleTeam createTeam(FinaleTeamRequest team) {
-        validateTeamRequest(team);
+    public FinaleTeam createTeam(FinaleTeamRequest request) {
+        validateTeamRequest(request);
 
         FinaleTeam newTeam = new FinaleTeam();
-        team.setGenerationId(team.getGenerationId());
+        newTeam.setGenerationId(request.getGenerationId());
 
         try {
             // 팀 생성
             finaleTeamMapper.insertFinaleTeam(newTeam);
 
             // 팀장 등록
-            finaleTeamMapper.insertFinaleTeamMember(
+            finaleTeamMapper.insertTeamMember(
                     newTeam.getTeamId(),
-                    team.getLeaderId(),
+                    request.getLeaderId(),
                     "leader"
             );
 
             // 팀원들 등록
-            for (Integer memberId : team.getMemberIds()) {
-                finaleTeamMapper.insertFinaleTeamMember(
-                        newTeam.getTeamId(),
-                        memberId,
-                        "member"
-                );
+            for (Integer memberId : request.getMemberIds()) {
+                if (!memberId.equals(request.getLeaderId())) {
+                    finaleTeamMapper.insertTeamMember(
+                            newTeam.getTeamId(),
+                            memberId,
+                            "member"
+                    );
+                }
             }
 
-            return newTeam;
+            // 생성된 팀 정보 조회
+            FinaleTeam team = finaleTeamMapper.selectTeamById(newTeam.getTeamId());
+            team.setMembers(finaleTeamMapper.selectTeamMembers(newTeam.getTeamId()));
+            return team;
         } catch (Exception e) {
             log.error("팀 생성 실패: {}", e.getMessage());
             throw new RuntimeException("팀 생성에 실패했습니다.", e);
         }
     }
+
+    @Override
+    @Transactional
+    public FinaleTeam updateTeam(FinaleTeamRequest request) {
+        validateTeamRequest(request);
+
+        if (!finaleTeamMapper.existsTeamById(request.getTeamId())) {
+            throw new IllegalArgumentException("존재하지 않는 팀입니다.");
+        }
+
+        try {
+            // 현재 팀 멤버 조회
+            List<FinaleMember> currentMembers = finaleTeamMapper.selectTeamMembers(request.getTeamId());
+
+            // 제거될 멤버 처리
+            for (FinaleMember member : currentMembers) {
+                if (!request.getMemberIds().contains(member.getUserId())) {
+                    finaleTeamMapper.deleteTeamMember(request.getTeamId(), member.getUserId());
+                }
+            }
+
+            // 현재 멤버 ID 목록 생성
+            Set<Integer> currentMemberIds = currentMembers.stream()
+                    .map(FinaleMember::getUserId)
+                    .collect(Collectors.toSet());
+
+            // 새로운 멤버 추가 및 역할 설정
+            for (Integer memberId : request.getMemberIds()) {
+                if (!currentMemberIds.contains(memberId)) {
+                    String role = memberId.equals(request.getLeaderId()) ? "leader" : "member";
+                    finaleTeamMapper.insertTeamMember(request.getTeamId(), memberId, role);
+                } else if (memberId.equals(request.getLeaderId())) {
+                    finaleTeamMapper.deleteTeamMember(request.getTeamId(), memberId);
+                    finaleTeamMapper.insertTeamMember(request.getTeamId(), memberId, "leader");
+                }
+            }
+
+            // 수정된 팀 정보 조회
+            FinaleTeam team = finaleTeamMapper.selectTeamById(request.getTeamId());
+            team.setMembers(finaleTeamMapper.selectTeamMembers(request.getTeamId()));
+            return team;
+        } catch (Exception e) {
+            log.error("팀 수정 실패 - 팀 ID: {}, 오류: {}", request.getTeamId(), e.getMessage());
+            throw new RuntimeException("팀 수정에 실패했습니다.", e);
+        }
+    }
+
+
 
     private void validateTeamRequest(FinaleTeamRequest team) {
         if (team.getGenerationId() == null || team.getGenerationId() <= 0) {

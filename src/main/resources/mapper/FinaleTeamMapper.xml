@@ -30,22 +30,34 @@
 			WHERE ft.generation_id = #{generationId}
 		)
 	</select>
-	
+
 	<select id="selectTeamMembers" parameterType="int" resultType="FinaleMember">
-	    SELECT 
-	        ftm.user_id AS userId,
-	        u.name AS userName,
-	        ftm.role AS memberRole
-	    FROM finale_team_member ftm
-	    JOIN user u ON ftm.user_id = u.id
-	    JOIN finale_project fp ON ftm.finale_team_id = fp.team_id
-	    WHERE ftm.finale_team_id = #{teamId}
-	    AND fp.is_deleted = false
-	    ORDER BY 
-	        CASE ftm.role 
-	            WHEN 'leader' THEN 1 
-	            WHEN 'member' THEN 2 
-	        END
+		SELECT
+			ftm.id as finaleMemberId,
+			ftm.finale_team_id as finaleTeamId,
+			ftm.user_id as userId,
+			u.name as name,
+			ftm.role as role,
+			ftm.created_at as createdAt
+		FROM finale_team_member ftm
+				 JOIN user u ON ftm.user_id = u.id
+		WHERE ftm.finale_team_id = #{teamId}
+		ORDER BY
+			CASE ftm.role
+				WHEN 'leader' THEN 1
+				WHEN 'member' THEN 2
+				END
+	</select>
+
+	<select id="selectTeamById" parameterType="int" resultType="FinaleTeam">
+		SELECT
+			id as teamId,
+			generation_id as generationId,
+			submitted_at as submittedAt,
+			created_at as createdAt
+		FROM finale_team
+		WHERE id = #{teamId}
+		  AND is_deleted = false
 	</select>
 
 	<insert id="insertFinaleTeam" parameterType="FinaleTeam" useGeneratedKeys="true" keyProperty="id">
@@ -53,10 +65,38 @@
 		VALUES (#{generationId}, CURRENT_DATE)
 	</insert>
 
-	<insert id="insertFinaleTeamMember">
-		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
-		VALUES (#{teamId}, #{userId}, #{role}, CURRENT_DATE)
-	</insert>
+	<select id="existsTeamById" parameterType="int" resultType="boolean">
+		SELECT EXISTS (
+			SELECT 1
+			FROM finale_team
+			WHERE id = #{teamId}
+			  AND is_deleted = false
+		)
+	</select>
 
+	<delete id="deleteTeamMembers" parameterType="int">
+		DELETE FROM finale_team_member
+		WHERE finale_team_id = #{teamId}
+	</delete>
+
+	<delete id="deleteTeamMember">
+		DELETE FROM finale_team_member
+		WHERE finale_team_id = #{teamId}
+		  AND user_id = #{userId}
+	</delete>
+
+	<insert id="insertTeamMember">
+		INSERT INTO finale_team_member (
+			finale_team_id,
+			user_id,
+			role,
+			created_at
+		) VALUES (
+					 #{teamId},
+					 #{userId},
+					 #{role},
+					 CURRENT_DATE
+				 )
+	</insert>
 
 </mapper>
