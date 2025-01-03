@@ -16,7 +16,7 @@
 
     <!-- 알고리즘 가이드 검색 -->
     <select id="searchAlgorithmGuide" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
-        SELECT id, title, content, user_id, generation_id, created_at, updated_at, is_deleted
+        SELECT id, title, content, thumbnail, user_id, generation_id, created_at, updated_at, is_deleted
         FROM algorithm_guide
         WHERE generation_id = #{generationId}
           AND (
@@ -37,6 +37,7 @@
         INSERT INTO algorithm_guide (
             title,
             content,
+            thumbnail,
             user_id,
             generation_id,
             created_at,
@@ -46,6 +47,7 @@
         VALUES (
                    #{algorithmGuide.title},
                    #{algorithmGuide.content},
+                   #{algorithmGuide.thumbnail},
                    #{algorithmGuide.userId},
                    #{generationId},
                    NOW(),
@@ -60,6 +62,7 @@
         SET
             title = #{algorithmGuide.title},
             content = #{algorithmGuide.content},
+            thumbnail = #{algorithmGuide.thumbnail},
             updated_at = NOW()
         WHERE id = #{id}
           AND is_deleted = false
