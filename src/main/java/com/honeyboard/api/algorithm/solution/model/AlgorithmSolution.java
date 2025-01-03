@@ -18,6 +18,7 @@ public class AlgorithmSolution {
 	private String summary;
 	private String content;
 	private int userId;
+	private String Author;
 	private int runtime;
 	private int memory;
 	private int languageId;
