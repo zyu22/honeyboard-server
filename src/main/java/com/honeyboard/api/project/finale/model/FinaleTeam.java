@@ -17,8 +17,12 @@ import lombok.ToString;
 public class FinaleTeam {
 
 	private Integer teamId;
+	private String projectName;
+	private String summary;
 	private Integer generationId;
-	private LocalDate submittedAt;
+	private boolean isCompleted;
 	private LocalDate createdAt;
+	private LocalDate updatedAt;
+	private List<FinaleMember> members;
 
 }

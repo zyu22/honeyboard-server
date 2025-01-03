@@ -53,7 +53,7 @@
                 JOIN
             user u ON ttm.user_id = u.id
         WHERE
-            tpb.id = #{id}   -- 게시글 ID에 해당하는 조건
+            tpb.id = #{boardId}   -- 게시글 ID에 해당하는 조건
         GROUP BY
             tpb.id;
     </select>
@@ -75,13 +75,13 @@
     <update id="updateTrackProjectBoard" >
         update track_project_board
         set title=#{title}, url=#{url}, content=#{content}, update_at = CURRENT_TIME
-        where id=#{id} and is_deleted = false
+        where id=#{boardId} and is_deleted = false
     </update>
 
     <update id="deleteTrackProjectBoard" parameterType="int">
         update track_project_board
         set is_deleted = true
-        where id =#{id}
+        where id =#{boardId}
     </update>
 
 </mapper>

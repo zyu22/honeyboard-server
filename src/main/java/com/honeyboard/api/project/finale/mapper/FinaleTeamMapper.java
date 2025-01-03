@@ -4,16 +4,44 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.honeyboard.api.project.finale.model.FinaleMember;
-import com.honeyboard.api.project.finale.model.FinaleProject;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
+import org.apache.ibatis.annotations.Param;
 
 public interface FinaleTeamMapper {
 
-	public List<FinaleTeam> selectSubmitStatusByDate(LocalDate targetDate);
+	List<FinaleTeam> selectSubmitStatusByDate(LocalDate targetDate);
 
-	public List<UserName> selectRemainedUsers(int generationId);
+	List<UserName> selectRemainedUsers(int generationId);
 
-	public List<FinaleMember> selectTeamMembers(int teamId);
+	List<FinaleMember> selectTeamMembers(int teamId);
+
+	FinaleTeam selectTeamById(int teamId);
+
+	boolean existsTeamById(Integer teamId);
+
+	int deleteTeamMembers(Integer teamId);
+
+	int deleteTeamMember(
+			@Param("teamId") Integer teamId,
+			@Param("userId") Integer userId
+	);
+
+	int insertFinaleTeamWithMembers(
+			@Param("team") FinaleTeam team,
+			@Param("leaderId") Integer leaderId,
+			@Param("memberIds") List<Integer> memberIds
+	);
+
+	int updateTeamMembers(
+			@Param("teamId") Integer teamId,
+			@Param("leaderId") Integer leaderId,
+			@Param("memberIds") List<Integer> memberIds
+	);
+
+	List<Integer> findExistingTeamMembers(
+			@Param("userIds") List<Integer> userIds,
+			@Param("excludeTeamId") Integer excludeTeamId
+	);
 
 }
