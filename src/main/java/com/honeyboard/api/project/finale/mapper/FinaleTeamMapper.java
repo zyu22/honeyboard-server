@@ -18,25 +18,24 @@ public interface FinaleTeamMapper {
 
 	FinaleTeam selectTeamById(int teamId);
 
-	int insertFinaleTeam(FinaleTeam team);
-
 	boolean existsTeamById(Integer teamId);
 
 	int deleteTeamMembers(Integer teamId);
-	int insertTeamMember(
-			@Param("teamId") Integer teamId,
-			@Param("userId") Integer userId,
-			@Param("role") String role
-	);
 
 	int deleteTeamMember(
 			@Param("teamId") Integer teamId,
 			@Param("userId") Integer userId
 	);
 
-	int insertFinaleTeamMember(
+	int insertFinaleTeamWithMembers(
+			@Param("team") FinaleTeam team,
+			@Param("leaderId") Integer leaderId,
+			@Param("memberIds") List<Integer> memberIds
+	);
+
+	int updateTeamMembers(
 			@Param("teamId") Integer teamId,
-			@Param("userId") Integer userId,
-			@Param("role") String role
+			@Param("leaderId") Integer leaderId,
+			@Param("memberIds") List<Integer> memberIds
 	);
 }

@@ -68,14 +68,17 @@ public class FinaleTeamController {
 
 	@PostMapping
 	public ResponseEntity<FinaleTeam> createTeam(@RequestBody FinaleTeamRequest request) {
-		FinaleTeam team = finaleTeamService.createTeam(request);
-		return ResponseEntity.status(HttpStatus.CREATED).body(team);
+		finaleTeamService.createTeam(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@PutMapping("/update")
-	public ResponseEntity<FinaleTeam> updateTeam(@RequestBody FinaleTeamRequest request) {
-		FinaleTeam updatedTeam = finaleTeamService.updateTeam(request);
-		return ResponseEntity.ok(updatedTeam);
+	@PutMapping("/update/{id}")
+	public ResponseEntity<FinaleTeam> updateTeam(
+			@PathVariable int id,
+			@RequestBody FinaleTeamRequest request) {
+			request.setTeamId(id);
+			finaleTeamService.updateTeam(request);
+			return ResponseEntity.ok().build();
 	}
 
 }

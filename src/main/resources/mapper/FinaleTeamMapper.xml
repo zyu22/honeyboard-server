@@ -60,11 +60,6 @@
 		  AND is_deleted = false
 	</select>
 
-	<insert id="insertFinaleTeam" parameterType="FinaleTeam" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO finale_team (generation_id, created_at)
-		VALUES (#{generationId}, CURRENT_DATE)
-	</insert>
-
 	<select id="existsTeamById" parameterType="int" resultType="boolean">
 		SELECT EXISTS (
 			SELECT 1
@@ -73,6 +68,34 @@
 			  AND is_deleted = false
 		)
 	</select>
+
+	<insert id="insertFinaleTeamWithMembers" parameterType="map" useGeneratedKeys="true" keyProperty="team.teamId">
+		INSERT INTO finale_team (generation_id, created_at)
+		VALUES (#{team.generationId}, CURRENT_DATE);
+
+		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
+		VALUES
+		(#{team.teamId}, #{leaderId}, 'leader', CURRENT_DATE)
+		<if test="memberIds != null and memberIds.size > 0">
+			<foreach collection="memberIds" item="memberId" separator=",">
+				,(#{team.teamId}, #{memberId}, 'member', CURRENT_DATE)
+			</foreach>
+		</if>
+	</insert>
+
+	<update id="updateTeamMembers">
+		DELETE FROM finale_team_member
+		WHERE finale_team_id = #{teamId};
+
+		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
+		VALUES
+		(#{teamId}, #{leaderId}, 'leader', CURRENT_DATE)
+		<if test="memberIds != null and memberIds.size > 0">
+			<foreach collection="memberIds" item="memberId" separator=",">
+				,(#{teamId}, #{memberId}, 'member', CURRENT_DATE)
+			</foreach>
+		</if>
+	</update>
 
 	<delete id="deleteTeamMembers" parameterType="int">
 		DELETE FROM finale_team_member
@@ -84,19 +107,5 @@
 		WHERE finale_team_id = #{teamId}
 		  AND user_id = #{userId}
 	</delete>
-
-	<insert id="insertTeamMember">
-		INSERT INTO finale_team_member (
-			finale_team_id,
-			user_id,
-			role,
-			created_at
-		) VALUES (
-					 #{teamId},
-					 #{userId},
-					 #{role},
-					 CURRENT_DATE
-				 )
-	</insert>
 
 </mapper>
