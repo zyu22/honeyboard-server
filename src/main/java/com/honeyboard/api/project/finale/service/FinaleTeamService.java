@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.finale.service;
 
+import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
 
@@ -11,4 +12,6 @@ interface FinaleTeamService {
     List<FinaleTeam> findStatusByDate(LocalDate targetDate);
 
     List<UserName> getRemainedUsers(int generationId);
+
+    FinaleTeam createTeam(FinaleTeamRequest finaleTeam);
 }

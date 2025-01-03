@@ -47,5 +47,16 @@
 	            WHEN 'member' THEN 2 
 	        END
 	</select>
-	
+
+	<insert id="insertFinaleTeam" parameterType="FinaleTeam" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO finale_team (generation_id, created_at)
+		VALUES (#{generationId}, CURRENT_DATE)
+	</insert>
+
+	<insert id="insertFinaleTeamMember">
+		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
+		VALUES (#{teamId}, #{userId}, #{role}, CURRENT_DATE)
+	</insert>
+
+
 </mapper>

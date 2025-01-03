@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.honeyboard.api.project.finale.model.FinaleProjectResponse;
+import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
 import com.honeyboard.api.project.finale.service.FinaleTeamService;
 import com.honeyboard.api.user.mapper.UserMapper;
 import com.honeyboard.api.user.service.UserService;
@@ -35,9 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FinaleTeamController {
 
-	private final FinaleProjectService finaleProjectService;
 	private final FinaleTeamService finaleTeamService;
-	private final UserMapper userMapper;
 	private final UserService userService;
 
 	@GetMapping("/{projectId}/status")
@@ -67,46 +66,10 @@ public class FinaleTeamController {
 				: ResponseEntity.ok(remainedUsers);
 	}
 
-	@GetMapping()
-	public ResponseEntity<FinaleProjectResponse> getAllFinaleProjects(
-			@RequestParam(required = false) Integer generationId) {
-
-		if (generationId == null) {
-			generationId = userService.getActiveGenerationId();
-		}
-
-		List<FinaleProject> projects = finaleProjectService.getAllFinaleProject(generationId);
-		if (projects.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-
-		List<User> users = userService.getAllUsersWithTeamInfo(generationId);
-		List<FinaleTeam> submits = finaleTeamService.findStatusByDate(LocalDate.now());
-
-		FinaleProjectResponse response = new FinaleProjectResponse(projects, users, submits);
-		return ResponseEntity.ok(response);
-	}
-
 	@PostMapping("/team")
-	public ResponseEntity<FinaleProject> createFinaleProject(
-			@RequestBody FinaleProject finaleProject) {
-
-		finaleProjectService.saveFinaleProject(finaleProject);
-		return ResponseEntity.status(HttpStatus.CREATED).body(finaleProject);
-	}
-
-	@PutMapping("/team/update")
-	public ResponseEntity<FinaleProject> updateFinaleProject(
-			@RequestBody FinaleProject finaleProject) {
-
-		finaleProjectService.updateFinaleProject(finaleProject);
-		return ResponseEntity.ok(finaleProject);
-	}
-
-	@DeleteMapping("/team/{finaleProjectId}")
-	public ResponseEntity<Void> deleteFinaleProject(@PathVariable int finaleProjectId) {
-		finaleProjectService.softDeleteFinaleProject(finaleProjectId);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<?> createTeam(@RequestBody FinaleTeamRequest request) {
+		FinaleTeam team = finaleTeamService.createTeam(request);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 }
