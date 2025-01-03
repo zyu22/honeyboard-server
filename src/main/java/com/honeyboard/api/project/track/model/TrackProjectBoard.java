@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,6 +22,5 @@ public class TrackProjectBoard {
     private String createdAt;
     private String updatedAt;
     private boolean isDeleted;
-
     private String teamMembers;
 }
