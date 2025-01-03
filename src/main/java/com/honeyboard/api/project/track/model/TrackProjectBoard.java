@@ -18,7 +18,6 @@ public class TrackProjectBoard {
     private String title;
     private String url;
     private String content;
-    private String thumbnail;
     private String createdAt;
     private String updatedAt;
     private boolean isDeleted;
