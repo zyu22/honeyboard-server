@@ -9,6 +9,7 @@
 	    <result property="summary" column="summary"/>
 	    <result property="title" column="title"/>
 	    <result property="content" column="content"/>
+        <result property="thumbnail" column="thumbnail"/>
 	    <result property="authorName" column="authorName"/>
 	    <result property="createdAt" column="createdAt"/>
 	    <collection property="finaleTeam" ofType="FinaleMember">
@@ -25,6 +26,7 @@
             fpb.summary,
             fpb.title,
             fpb.content,
+            fpb.thumbnail,
             u.name AS authorName,
             fpb.created_at AS createdAt
         FROM finale_project_board fpb
@@ -40,6 +42,7 @@
 	        fpb.summary,
 	        fpb.title,
 	        fpb.content,
+	        fpb.thumbnail,
 	        u.name AS authorName,
 	        fpb.created_at AS createdAt,
 	        ftm.user_id AS memberId,
@@ -60,6 +63,7 @@
             summary,
             title,
             content,
+            thumbnail,
             user_id,
             created_at
         ) VALUES (
@@ -68,6 +72,7 @@
             #{summary},
             #{title},
             #{content},
+            #{thumbnail},
             #{userId},
             CURRENT_DATE
         )
@@ -79,6 +84,7 @@
             summary = #{board.summary},
             title = #{board.title},
             content = #{board.content},
+            thumbnail = #{board.thumbnail},
             updated_at = CURRENT_DATE
         WHERE id = #{boardId}
         AND is_deleted = false

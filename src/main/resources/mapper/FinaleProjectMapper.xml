@@ -12,6 +12,7 @@
 			fp.url,
 			fp.title,
 			fp.content,
+			fp.thumbnail,
 			fp.user_id as userId,
 			u.name as name,
 			fp.created_at as createdAt,
@@ -29,6 +30,7 @@
 			url,
 			title,
 			content,
+			thumbnail,
 			user_id,
 			created_at,
 			updated_at
@@ -37,6 +39,7 @@
 			#{url},
 			#{title},
 			#{content},
+			#{thumbnail},
 			#{userId},
 			CURRENT_DATE,
 			CURRENT_DATE
@@ -49,6 +52,7 @@
 			url = #{url},
 			title = #{title},
 			content = #{content},
+			thumbnail = #{thumbnail},
 			updated_at = CURRENT_DATE
 		WHERE team_id = #{teamId}
 		AND is_deleted = false
