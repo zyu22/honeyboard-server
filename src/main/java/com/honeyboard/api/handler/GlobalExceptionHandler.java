@@ -155,6 +155,19 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now()
                 ));
     }
+
+    //Youtube 영상 중복 저장
+    @ExceptionHandler(DuplicateVideoException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateVideo(DuplicateVideoException e) {
+        log.error("DuplicateVideoException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)  // 409 상태코드 사용
+                .body(new ErrorResponse(
+                        HttpStatus.CONFLICT.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
 }
 
 // 에러 응답을 위한 DTO
