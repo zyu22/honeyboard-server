@@ -53,7 +53,7 @@
                 JOIN
             user u ON ttm.user_id = u.id
         WHERE
-            tpb.id = #{id}   -- 게시글 ID에 해당하는 조건
+            tpb.id = #{boardId}   -- 게시글 ID에 해당하는 조건
         GROUP BY
             tpb.id;
     </select>
