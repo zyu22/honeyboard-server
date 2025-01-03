@@ -78,7 +78,7 @@
 	</select>
 	
 	<!-- 알고리즘 풀이 작성 -->
-	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolution">
+	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolution" useGeneratedKeys="true" keyProperty="solutionId">
 		INSERT INTO algorithm_problem_solution (
 			problem_id,
 			title,
