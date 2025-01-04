@@ -68,8 +68,13 @@ public class AlgorithmGuideController {
 
     @PostMapping
     public ResponseEntity<?> addAlgorithmGuide(
-		    @RequestParam("generationId") int generationId,
-		    @RequestBody AlgorithmGuide algorithmGuide) {
+            @RequestParam(required = false) Integer generationId,
+		    @RequestBody AlgorithmGuide algorithmGuide,
+            @CurrentUser User user) {
+        if(generationId==null) {
+            generationId = user.getGenerationId();
+        }
+
 	    log.info("알고리즘 개념 작성 요청 - 기수: {}, 알고리즘: {}", generationId, algorithmGuide);
 	    boolean result = algorithmGuideService.addAlgorithmGuide(generationId, algorithmGuide);
 	    if (result) {
