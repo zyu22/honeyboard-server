@@ -117,6 +117,19 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(DuplicateTeamMemberException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateTeamMember(DuplicateTeamMemberException e) {
+        log.error("DuplicateTeamMemberException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)  // 409 상태코드 사용
+                .body(new ErrorResponse(
+                        HttpStatus.CONFLICT.value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+
     // NullPointerException 처리
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException e) {
