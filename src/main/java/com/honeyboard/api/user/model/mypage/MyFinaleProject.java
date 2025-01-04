@@ -1,4 +1,4 @@
-package com.honeyboard.api.user.model;
+package com.honeyboard.api.user.model.mypage;
 
 import lombok.*;
 
@@ -12,7 +12,6 @@ import java.util.Date;
 @ToString
 public class MyFinaleProject {
     private int finaleProjectBoardId;
-    private int finaleTeamId;
     private String title;
     private Date createdAt;
 }

@@ -1,10 +1,8 @@
 package com.honeyboard.api.user.mapper;
 
-import com.honeyboard.api.project.finale.model.FinaleMember;
-import com.honeyboard.api.project.track.model.TrackTeamMember;
-import com.honeyboard.api.user.model.MyAlgorithmSolution;
-import com.honeyboard.api.user.model.MyFinaleProject;
-import com.honeyboard.api.user.model.MyTrackProject;
+import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
+import com.honeyboard.api.user.model.mypage.MyFinaleProject;
+import com.honeyboard.api.user.model.mypage.MyTrackProject;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +15,7 @@ public interface MyPageMapper {
     List<MyTrackProject> selectAllMyTrackProjects(@Param("userId") int userId);
 
     /* 1-1) 해당 트랙 팀에 속한 멤버 목록 조회 */
-    List<TrackTeamMember> selectTrackTeamMembers(@Param("trackTeamId") int trackTeamId);
+    List<String> selectTrackTeamMembers(@Param("trackTeamId") int trackTeamId);
 
     /* 2) 내가 참여한 파이널 프로젝트 조회 */
     List<MyFinaleProject> selectAllMyFinaleProjects(@Param("userId") int userId);

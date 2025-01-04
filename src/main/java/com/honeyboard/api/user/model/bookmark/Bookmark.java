@@ -1,4 +1,4 @@
-package com.honeyboard.api.user.model;
+package com.honeyboard.api.user.model.bookmark;
 import lombok.*;
 
 import java.util.Date;

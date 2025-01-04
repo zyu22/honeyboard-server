@@ -1,10 +1,9 @@
 package com.honeyboard.api.user.service;
 
-import com.honeyboard.api.project.track.model.TrackTeamMember;
 import com.honeyboard.api.user.mapper.MyPageMapper;
-import com.honeyboard.api.user.model.MyAlgorithmSolution;
-import com.honeyboard.api.user.model.MyFinaleProject;
-import com.honeyboard.api.user.model.MyTrackProject;
+import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
+import com.honeyboard.api.user.model.mypage.MyFinaleProject;
+import com.honeyboard.api.user.model.mypage.MyTrackProject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +36,9 @@ public class MyPageServiceImpl implements MyPageService {
             for (MyTrackProject trackProject : result) {
                 int trackTeamId = trackProject.getTrackTeamId();
 
-                List<TrackTeamMember> members = myPageMapper.selectTrackTeamMembers(trackTeamId);
-                trackProject.setTeamMembers(members);
+             List<String> members = myPageMapper.selectTrackTeamMembers(trackTeamId);
+             trackProject.setTeamMembers(members);
+
             }
 
             log.info("[MyPage] 트랙 프로젝트 조회 성공 - userId={}, projectCount={}", userId, result.size());
