@@ -16,6 +16,7 @@ public class FinaleProjectBoard {
     private String summary;
     private String title;
     private String content;
+    private String thumbnail;
     private String authorName;
     private LocalDate createdAt;
 

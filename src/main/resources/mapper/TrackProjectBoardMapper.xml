@@ -18,8 +18,9 @@
 
     <select id="selectAllTrackProjectsBoards" parameterType="int" resultType="TrackProjectBoard" >
         SELECT
-            tpb.title AS project_title,       -- 게시글 제목
-            tpb.created_at AS post_date,      -- 게시글 생성 날짜
+            tpb.title AS title,       -- 게시글 제목
+            tpb.created_at AS createdAt,      -- 게시글 생성 날짜
+            tpb.thumbnail AS thumbnail,
             GROUP_CONCAT(u.name ORDER BY u.name) AS team_members -- 팀원들 이름을 ,으로 묶어서 출력 (예: "홍길동, 김철수")
         FROM
             track_project_board tpb
@@ -42,6 +43,7 @@
             tpb.track_project_id,
             tpb.track_team_id,
             tpb.title,
+            tpb.thumbnail,
             tpb.url,
             tpb.content,
             tpb.updated_at,
@@ -60,13 +62,14 @@
 
     <insert id="insertTrackProjectBoard" parameterType="TrackProjectBoard" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO track_project_board(
-            track_project_id, track_team_id, url, title, content, user_id, created_at
+            track_project_id, track_team_id, url, title, content, thumbnail, user_id, created_at
         ) VALUES (
                      #{trackProjectId},
                      #{trackTeamId},
                      #{url},
                      #{title},
                      #{content},
+                     #{thumbnail},
                      #{userId},
                      CURRENT_TIME
                  )
@@ -74,8 +77,8 @@
 
     <update id="updateTrackProjectBoard" >
         update track_project_board
-        set title=#{title}, url=#{url}, content=#{content}, update_at = CURRENT_TIME
-        where id=#{boardId} and is_deleted = false
+        set title = #{title}, url = #{url}, content = #{content}, thumbnail = #{thumbnail}, update_at = CURRENT_TIME
+        where id = #{boardId} and is_deleted = false
     </update>
 
     <update id="deleteTrackProjectBoard" parameterType="int">
