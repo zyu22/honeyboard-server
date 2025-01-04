@@ -27,7 +27,7 @@ public class ProgrammingLanguageController {
 
         List<ProgrammingLanguage> languages = programmingLanguageService.getAllProgrammingLanguage();
 
-        log.info("프로그래밍 언어 전체 조회 완료 - 총 언어 수:", languages.size());
+        log.info("프로그래밍 언어 전체 조회 완료 - 총 언어 수: {}", languages.size());
         return ResponseEntity.ok(languages);
     }
 }
