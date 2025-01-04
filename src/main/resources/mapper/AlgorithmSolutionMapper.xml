@@ -14,7 +14,7 @@
 			u.name as author,
 			s.runtime,
 			s.memory,
-			p.name AS languageName,
+			s.language_id,
 			CASE 
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
@@ -31,7 +31,7 @@
         	AND s.generation_id = #{generationId}
     	</if>
     	<if test="languages != null and languages.size > 0">
-        	AND p.name IN
+        	AND p.id IN
         	<foreach collection="languages" item="language" open="(" separator="," close=")">
             	#{language}
         	</foreach>
@@ -62,14 +62,13 @@
 			u.name as author,
 			s.runtime,
 			s.memory,
-			p.name AS languageName,
+			s.language_id,
 			CASE 
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
         	END as bookmark
         FROM algorithm_problem_solution s
 		INNER JOIN user u ON s.user_id = u.id
-		INNER JOIN programming_language p ON s.language_id = p.id
 		LEFT JOIN bookmark b ON b.content_id = s.id
 			AND b.content_type = 'algo_solution'
         WHERE s.id = #{solutionId}

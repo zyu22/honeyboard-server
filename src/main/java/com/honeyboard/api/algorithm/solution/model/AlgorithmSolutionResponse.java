@@ -18,7 +18,7 @@ public class AlgorithmSolutionResponse {
 	private String author;
 	private int runtime;
 	private int memory;
-	private String languageName;
+	private int languageId;
 	private boolean bookmark;
 
 }
