@@ -1,8 +1,8 @@
 package com.honeyboard.api.user.service;
 
-import com.honeyboard.api.user.model.MyAlgorithmSolution;
-import com.honeyboard.api.user.model.MyFinaleProject;
-import com.honeyboard.api.user.model.MyTrackProject;
+import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
+import com.honeyboard.api.user.model.mypage.MyFinaleProject;
+import com.honeyboard.api.user.model.mypage.MyTrackProject;
 
 import java.util.List;
 

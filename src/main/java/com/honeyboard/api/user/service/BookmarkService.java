@@ -1,6 +1,6 @@
 package com.honeyboard.api.user.service;
 
-import com.honeyboard.api.user.model.Bookmark;
+import com.honeyboard.api.user.model.bookmark.Bookmark;
 import java.util.List;
 
 public interface BookmarkService {
@@ -12,6 +12,6 @@ public interface BookmarkService {
     void addBookmark(int userId, Bookmark bookmark);
 
     //북마크 삭제
-    void deleteBookmark(int userId, int bookmarkId);
+    void deleteBookmark(int userId, String contentType ,int contentId);
 
 }

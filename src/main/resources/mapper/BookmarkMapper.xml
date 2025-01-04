@@ -8,15 +8,12 @@
     <!-- 1) 알고리즘 가이드 북마크 조회 -->
     <select id="selectAllAlgorithmGuideBookmarks"
             parameterType="int"
-            resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
+            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmGuide">
         SELECT a.id,
                a.title,
-               a.content,
                a.user_id       AS userId,
-               a.generation_id AS generationId,
-               a.created_at    AS createdAt,
-               a.updated_at    AS updatedAt,
-               a.is_deleted    AS isDeleted
+               a.thumbnail    AS thumbnail,
+               a.created_at    AS createdAt
         FROM bookmark b
                  JOIN algorithm_guide a ON b.content_id = a.id
         WHERE b.user_id = #{userId}
@@ -28,21 +25,13 @@
     <!-- 2) 알고리즘 문제풀이(솔루션) 북마크 조회 -->
     <select id="selectAllAlgorithmSolutionBookmarks"
             parameterType="int"
-            resultType="com.honeyboard.api.algorithm.solution.model.AlgorithmSolution">
+            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmSolution">
         SELECT
             s.id            AS solutionId,
-            s.problem_id    AS problemId,
-            s.title,
-            s.summary,
-            s.content,
-            s.user_id       AS userId,
+            s.title AS solutionTitle,
             s.runtime,
             s.memory,
             s.language_id   AS languageId,
-            s.generation_id AS generationId,
-            s.created_at    AS createdAt,
-            s.updated_at    AS updatedAt,
-            s.is_deleted    AS isDeleted,
             u.name          AS author
 
         FROM bookmark b
@@ -58,15 +47,11 @@
     <!-- 3) 웹 가이드 북마크 조회 -->
     <select id="selectAllWebGuideBookmarks"
             parameterType="int"
-            resultType="com.honeyboard.api.web.guide.model.WebGuide">
+            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedWebGuide">
         SELECT w.id,
                w.title,
-               w.content,
-               w.user_id       AS userId,
-               w.generation_id AS generationId,
                w.created_at    AS createdAt,
-               w.updated_at    AS updatedAt,
-               w.is_deleted    AS isDeleted
+               w.thumbnail AS thumbnail
         FROM bookmark b
                  JOIN web_guide w ON b.content_id = w.id
         WHERE b.user_id = #{userId}
@@ -78,16 +63,11 @@
     <!-- 4) 웹 추천(링크) 북마크 조회 -->
     <select id="selectAllWebRecommendBookmarks"
             parameterType="int"
-            resultType="com.honeyboard.api.web.recommend.model.WebRecommend">
+            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedWebRecommendation">
         SELECT r.id,
                r.title,
                r.url,
-               r.content,
-               r.user_id       AS userId,
-               r.generation_id AS generationId,
-               r.created_at    AS createdAt,
-               r.updated_at    AS updatedAt,
-               r.is_deleted    AS isDeleted
+               r.created_at    AS createdAt
         FROM bookmark b
                  JOIN web_recommend r ON b.content_id = r.id
         WHERE b.user_id = #{userId}
@@ -97,7 +77,7 @@
     </select>
 
     <!-- bookmark 추가 (중복 시 무시) -->
-    <insert id="insertBookmark" parameterType="com.honeyboard.api.user.model.Bookmark">
+    <insert id="insertBookmark" parameterType="com.honeyboard.api.user.model.bookmark.Bookmark">
         INSERT IGNORE INTO bookmark (user_id, content_type, content_id, created_at)
     VALUES (#{userId}, #{contentType}, #{contentId}, CURRENT_DATE)
     </insert>
@@ -105,8 +85,9 @@
     <!-- bookmark 삭제 -->
     <delete id="deleteBookmark" parameterType="map">
         DELETE FROM bookmark
-        WHERE id = #{bookmarkId}
-          AND user_id = #{userId}
+        WHERE user_id = #{userId}
+          AND content_type = #{contentType}
+          AND content_id = #{contentId}
     </delete>
 
 </mapper>

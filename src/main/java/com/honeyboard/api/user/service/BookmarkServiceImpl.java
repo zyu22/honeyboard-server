@@ -1,7 +1,7 @@
 package com.honeyboard.api.user.service;
 
 import com.honeyboard.api.user.mapper.BookmarkMapper;
-import com.honeyboard.api.user.model.Bookmark;
+import com.honeyboard.api.user.model.bookmark.Bookmark;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -104,37 +104,41 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public void deleteBookmark(int userId, int bookmarkId) {
+    public void deleteBookmark(int userId, String contentType ,int contentId) {
 
         //파라미터 검증
         if (userId <= 0) {
-            log.warn("유효하지 않은 유저 ID입니다. userId={}", userId);
+            log.error("유효하지 않은 유저 ID입니다. userId={}", userId);
             throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
         }
-        if (bookmarkId <= 0) {
-            log.warn("유효하지 않은 bookmark ID입니다. bookmarkId={}", bookmarkId);
-            throw new IllegalArgumentException("유효하지 않은 bookmark ID입니다.");
+        if (contentId <= 0) {
+            log.error("유효하지 않은 content ID입니다. contentId={}", contentId);
+            throw new IllegalArgumentException("유효하지 않은 content ID입니다.");
+        }
+
+        if (!contentType.equals("algo_guide")&&!contentType.equals("algo_solution")&&!contentType.equals("web_guide")&&!contentType.equals("web_recommend")) {
+            log.error("유효하지 않은 contentType입니다. contentType={}", contentType);
+            throw new IllegalArgumentException("유효하지 않은 contentType입니다.");
         }
 
         // 삭제
         try {
-            log.info("[Bookmark] 삭제 시작 - userId={}, bookmarkId={}", userId, bookmarkId);
+            log.info("[Bookmark] 삭제 시작 - userId={}, contentType={}, contentId={} ", userId,contentType, contentId);
 
-            int rowCount = bookmarkMapper.deleteBookmark(userId, bookmarkId);
+            int rowCount = bookmarkMapper.deleteBookmark(userId, contentType, contentId);
 
             if (rowCount == 0) {
 
-                log.warn("[Bookmark] 삭제 대상이 없음 - userId={}, bookmarkId={}", userId, bookmarkId);
+                log.warn("[Bookmark] 삭제 대상이 없음 - userId={}, userId={},contentType={}, contentId={} ", userId,contentType, contentId);
 
-                throw new RuntimeException("삭제할 북마크가 존재하지 않습니다. (bookmarkId=" + bookmarkId + ")");
+                throw new RuntimeException("삭제할 북마크가 존재하지 않습니다. (contentType=" + contentType +"contentId="+contentId+ ")");
 
             }
 
-            log.info("[Bookmark] 삭제 성공 - userId={}, bookmarkId={}", userId, bookmarkId);
+            log.info("[Bookmark] 삭제 성공 - userId={}, contentType={}, contentId={} ", userId,contentType, contentId);
 
         } catch (Exception e) {
-            log.error("[Bookmark] 삭제 실패 - userId={}, bookmarkId={}, 오류: {}",
-                    userId, bookmarkId, e.getMessage(), e);
+            log.error("[Bookmark] 삭제 실패 userId={}, contentType={}, contentId={} ", userId, contentType, contentId, e);
             throw new RuntimeException("북마크 삭제 중 오류가 발생했습니다.", e);
         }
     }
