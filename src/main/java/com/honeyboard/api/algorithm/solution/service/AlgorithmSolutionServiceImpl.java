@@ -2,6 +2,7 @@ package com.honeyboard.api.algorithm.solution.service;
 
 import com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper;
 import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
+import com.honeyboard.api.algorithm.solution.model.AlgorithmSolutionResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,29 +36,29 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 	}
 
 	@Override
-	public PageResponse<AlgorithmSolution> getAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages,
-																			   String sortType, int page, int userId) {
-		log.info("알고리즘 솔루션 전체 조회 시작 - 문제 ID: {}, 기수: {}, 페이지: {}", problemId, generationId, page);
+	public PageResponse<AlgorithmSolutionResponse> getAllAlgorithmSolution(int problemId, Integer generationId, List<String> languages,
+																			   String sortType, int currentPage, int userId) {
+		log.info("알고리즘 솔루션 전체 조회 시작 - 문제 ID: {}, 기수: {}, 페이지: {}", problemId, generationId, currentPage);
 
 		// 전체 풀이 수
 	    int totalElements = algorithmSolutionMapper.countAlgorithmSolutions(problemId, generationId, languages, userId);
 	    
 	    // PageInfo(pageSize = 9)
-	    PageInfo pageInfo = new PageInfo(page, 9, totalElements);
-	    int offset = (page - 1) * 9;
+	    PageInfo pageInfo = new PageInfo(currentPage, 9, totalElements);
+	    int offset = (currentPage - 1) * 9;
 	    
 	    //전체 조회 -> List
-	    List<AlgorithmSolution> solutions = algorithmSolutionMapper.selectAllAlgorithmSolution(problemId, generationId, languages, sortType, offset, userId);
+	    List<AlgorithmSolutionResponse> solutions = algorithmSolutionMapper.selectAllAlgorithmSolution(problemId, generationId, languages, sortType, offset, userId);
 		log.info("알고리즘 솔루션 전체 조회 완료 - 총 솔루션 수: {}", totalElements);
 
 	    return new PageResponse<>(solutions, pageInfo);
 	}
 
 	@Override
-	public AlgorithmSolution getAlgorithmSolution(int solutionId) {
+	public AlgorithmSolutionResponse getAlgorithmSolution(int solutionId) {
 		log.info("알고리즘 솔루션 상세 조회 시작 - 솔루션 ID: {}", solutionId);
 
-		AlgorithmSolution solution = algorithmSolutionMapper.selectAlgorithmSolution(solutionId);
+		AlgorithmSolutionResponse solution = algorithmSolutionMapper.selectAlgorithmSolution(solutionId);
 
 		if (solution == null) {
 			log.error("알고리즘 솔루션 조회 실패 - 존재하지 않는 솔루션 ID: {}", solutionId);
@@ -86,13 +87,13 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 	}
 
 	@Override
-	public void softDeleteAlgorithmSolution(int solutionId, int userId) {
-		log.info("알고리즘 솔루션 삭제 시작 - 솔루션 ID: {}, 사용자 ID: {}", solutionId, userId);
+	public void softDeleteAlgorithmSolution(int solutionId) {
+		log.info("알고리즘 솔루션 삭제 시작 - 솔루션 ID: {}", solutionId);
 
-		int result = algorithmSolutionMapper.deleteAlgorithmSolution(solutionId, userId);
+		int result = algorithmSolutionMapper.deleteAlgorithmSolution(solutionId);
 
 		if (result != 1) {
-			log.error("알고리즘 솔루션 삭제 실패 - 솔루션 ID: {}, 사용자 ID: {}", solutionId, userId);
+			log.error("알고리즘 솔루션 삭제 실패 - 솔루션 ID: {}", solutionId);
 			throw new IllegalArgumentException("알고리즘 솔루션 삭제에 실패했습니다.");
 		}
 

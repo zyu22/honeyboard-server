@@ -6,18 +6,19 @@
 <mapper namespace="com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper">
 
 	<!-- 전체 조회 + 정렬 + 삭제 여부 + 내 기수만 + 페이지네이션 -->
-	<select id="selectAllAlgorithmSolution" resultType="AlgorithmSolution">
+	<select id="selectAllAlgorithmSolution" resultType="AlgorithmSolutionResponse">
 		SELECT
 			s.id as solutionId,
 			s.title,
-			u.name as userName,
+			s.user_id,
+			u.name as author,
 			s.runtime,
 			s.memory,
 			p.name AS languageName,
 			CASE 
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
-        	END as isBookmarked
+        	END as bookmark
 		FROM algorithm_problem_solution s
 		INNER JOIN user u ON s.user_id = u.id
 		INNER JOIN programming_language p ON s.language_id = p.id
@@ -27,7 +28,7 @@
 		WHERE s.is_deleted = false
 			AND s.problem_id = #{problemId}
 		<if test="generationId != null">
-        	AND u.generation_id = #{generationId}
+        	AND s.generation_id = #{generationId}
     	</if>
     	<if test="languages != null and languages.size > 0">
         	AND p.name IN
@@ -44,39 +45,39 @@
 				s.memory ASC
 			</when>
 			<otherwise>
-				s.created_at DESC
+				s.id DESC
 			</otherwise>
 		</choose>
-		LIMIT 12 OFFSET #{offset}
+		LIMIT 9 OFFSET #{offset}
 	</select>
 	
 	<!-- 알고리즘 풀이 상세 조회	 -->
-	<select id="selectAlgorithmSolution" resultType="AlgorithmSolution">
+	<select id="selectAlgorithmSolution" resultType="AlgorithmSolutionResponse">
 		SELECT
-			s.id as solutionId,
+			s.id AS solutionId,
 			s.title,
-			u.name as userName,
 			s.summary,
+			s.content,
+			s.user_id,
+			u.name as author,
 			s.runtime,
 			s.memory,
 			p.name AS languageName,
-			s.content,
 			CASE 
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
-        	END as isBookmarked
+        	END as bookmark
         FROM algorithm_problem_solution s
 		INNER JOIN user u ON s.user_id = u.id
 		INNER JOIN programming_language p ON s.language_id = p.id
 		LEFT JOIN bookmark b ON b.content_id = s.id
 			AND b.content_type = 'algo_solution'
-        	AND b.user_id = #{userId}
         WHERE s.id = #{solutionId}
         	AND s.is_deleted = false
 	</select>
 	
 	<!-- 알고리즘 풀이 작성 -->
-	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolution">
+	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolution" useGeneratedKeys="true" keyProperty="solutionId">
 		INSERT INTO algorithm_problem_solution (
 			problem_id,
 			title,
@@ -119,7 +120,6 @@
 			language_id = #{languageId},
 			updated_at = NOW()
 		WHERE id = #{solutionId}
-			AND user_id = #{userId}
         	AND is_deleted = false
 	</update>
 	
@@ -130,7 +130,6 @@
         	is_deleted = true,
         	updated_at = NOW()
     	WHERE id = #{solutionId}
-        	AND user_id = #{userId}
         	AND is_deleted = false
 	</update>
 	

@@ -19,12 +19,9 @@ public class FinaleMember {
 
 	private Integer finaleMemberId;
 	private Integer finaleTeamId;
-	private User user;
-
-	private enum role {
-		LEADER, MEMBER;
-	};
-
+	private Integer userId;
+	private String name;
+	private String role;
 	private LocalDate createdAt;
 
 }

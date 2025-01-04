@@ -38,8 +38,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     private final CookieUtil cookieUtil;
     private final List<String> excludedUrls = Arrays.asList(
             "/api/v1/auth",
-            "/swagger-ui",
-            "/api/v1"
+            "/swagger-ui"
     );
 
     private String extractTokenFromCookies(Cookie[] cookies, String tokenName) {
