@@ -23,22 +23,17 @@ public class AlgorithmGuideController {
 
     @GetMapping
     public ResponseEntity<?> getAllAlgorithmGuide(
-    		@RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "8") int size,
-            @RequestParam(required = false) Integer generationId,
-            @RequestParam(required = false) String searchType,
-            @RequestParam(required = false) String keyword,
-            @CurrentUser User user) {
-        log.info("알고리즘 개념 전체 조회 요청 - 기수: {}, 검색어: {}", generationId, searchType, keyword);
-        
-        if(generationId==null) {
-        	generationId = user.getGenerationId();
-        }
+    		@RequestParam(defaultValue = "1") int currentPage,
+            @RequestParam(defaultValue = "8") int pageSize,
+            @RequestParam(defaultValue = "0") int generationId,
+            @RequestParam(required = false) String title) {
+        log.info("알고리즘 개념 전체 조회 요청 - 기수: {}, 검색어: {}", generationId, title);
+
         PageResponse<AlgorithmGuide> algorithmGuides;
-        if(keyword != null) {
-        	algorithmGuides = algorithmGuideService.searchAlgorithmGuide(page, size, generationId, searchType, keyword);
+        if(title != null) {
+        	algorithmGuides = algorithmGuideService.searchAlgorithmGuide(currentPage, pageSize, generationId, title);
         }else {
-        	algorithmGuides = algorithmGuideService.getAlgorithmGuides(page, size, generationId);        	
+        	algorithmGuides = algorithmGuideService.getAlgorithmGuides(currentPage, pageSize, generationId);
         }
 
         if (algorithmGuides==null) {

@@ -6,29 +6,32 @@
 
     <!-- 알고리즘 가이드 목록 조회 -->
     <select id="getAlgorithmGuides" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
-        SELECT id, title, thumbnail, user_id, generation_id, created_at, updated_at, is_deleted
+        SELECT id, title, thumbnail, created_at
         FROM algorithm_guide
-        WHERE generation_id = #{generationId}
-          AND is_deleted = false
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
         ORDER BY created_at DESC
         LIMIT #{offset}, #{pageSize}
     </select>
 
     <!-- 알고리즘 가이드 검색 -->
     <select id="searchAlgorithmGuide" resultType="com.honeyboard.api.algorithm.guide.model.AlgorithmGuide">
-        SELECT id, title, thumbnail, user_id, generation_id, created_at, updated_at, is_deleted
+        SELECT id, title, thumbnail, created_at
         FROM algorithm_guide
-        WHERE generation_id = #{generationId}
-          AND (
-              CASE #{searchType}
-                  WHEN 'title' THEN title LIKE CONCAT('%', #{keyword}, '%')
-                  WHEN 'content' THEN content LIKE CONCAT('%', #{keyword}, '%')
-                  ELSE false
-              END
-          )
-          AND is_deleted = false
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
+        AND title LIKE CONCAT('%', #{title}, '%')
         ORDER BY created_at DESC
         LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 알고리즘 가이드 상세 조회 -->
+    <select id="">
+
     </select>
 
 
@@ -41,8 +44,7 @@
             user_id,
             generation_id,
             created_at,
-            updated_at,
-            is_deleted
+            updated_at
         )
         VALUES (
                    #{algorithmGuide.title},
@@ -51,8 +53,7 @@
                    #{algorithmGuide.userId},
                    #{generationId},
                    NOW(),
-                   NOW(),
-                   false
+                   NOW()
                )
     </insert>
 
@@ -80,14 +81,10 @@
         SELECT COUNT(*)
         FROM algorithm_guide
         WHERE generation_id = #{generationId}
-          AND (
-              CASE #{searchType}
-                  WHEN 'title' THEN title LIKE CONCAT('%', #{keyword}, '%')
-                  WHEN 'content' THEN content LIKE CONCAT('%', #{keyword}, '%')
-                  ELSE false
-              END
-          )
-          AND is_deleted = false
+        <if test="title != null">
+            AND title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        AND is_deleted = false
     </select>
 
     <!-- 전체 알고리즘 가이드 수 -->

@@ -1,8 +1,9 @@
 package com.honeyboard.api.common.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class PageInfo {

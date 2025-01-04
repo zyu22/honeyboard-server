@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,26 +22,33 @@ public class AlgorithmGuideServiceImpl implements AlgorithmGuideService {
     @Override
     public PageResponse<AlgorithmGuide> getAlgorithmGuides(int currentPage, int pageSize, int generationId) {
     	int totalElement = algorithmGuideMapper.countAlgorithmGuide(generationId);
-    	int offset = (currentPage - 1) * pageSize;
-    	PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElement);
+        int offset = (currentPage - 1) * pageSize;
+
+        PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElement);
+
+        // 알고리즘 가이드 조회
     	List<AlgorithmGuide> list = algorithmGuideMapper.getAlgorithmGuides(offset, pageSize, generationId);
+
         return new PageResponse<>(list, pageInfo);
     }
 
+    // 상세보기
     @Override
     public AlgorithmGuide getAlgorithmGuideDetail(int id, boolean bookmarkflag) {
         return algorithmGuideMapper.getAlgorithmGuideDetail(id, bookmarkflag);
     }
 
+    // 검색어
     @Override
-    public PageResponse<AlgorithmGuide> searchAlgorithmGuide(int currentPage, int pageSize, int generationId, String searchType, String keyword) {
-    	int totalElement = algorithmGuideMapper.countSearchAlgorithmGuide(generationId, searchType, keyword);
+    public PageResponse<AlgorithmGuide> searchAlgorithmGuide(int currentPage, int pageSize, int generationId, String title) {
+    	int totalElement = algorithmGuideMapper.countSearchAlgorithmGuide(generationId, title);
     	int offset = (currentPage - 1) * pageSize;
     	PageInfo pageInfo = new PageInfo(currentPage, pageSize, totalElement);
-        List<AlgorithmGuide> list = algorithmGuideMapper.searchAlgorithmGuide(offset, pageSize, generationId, searchType, keyword);
+        List<AlgorithmGuide> list = algorithmGuideMapper.searchAlgorithmGuide(offset, pageSize, generationId, title);
         return new PageResponse<>(list, pageInfo);
     }
 
+    // 추가
     @Override
     public boolean addAlgorithmGuide(int generationId, AlgorithmGuide algorithmGuide) {
         validateGuide(algorithmGuide);
@@ -60,6 +68,7 @@ public class AlgorithmGuideServiceImpl implements AlgorithmGuideService {
         }
     }
 
+    // 수정
     @Override
     public boolean updateAlgorithmGuide(int id, AlgorithmGuide algorithmGuide) {
         validateGuide(algorithmGuide);
@@ -79,6 +88,7 @@ public class AlgorithmGuideServiceImpl implements AlgorithmGuideService {
         }
     }
 
+    // 삭제
     @Override
     public boolean softDeleteAlgorithmGuide(int id) {
         if (id <= 0) {

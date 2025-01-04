@@ -15,9 +15,8 @@ public interface AlgorithmGuideMapper {
     AlgorithmGuide getAlgorithmGuideDetail (@Param("id") int id, @Param("bookmarkflag") boolean bookmarkflag);
 
     List<AlgorithmGuide> searchAlgorithmGuide(@Param("offset") int offset, @Param("pageSize") int pageSize, 
-    								@Param("generationId") int generationId, 
-    								@Param("searchType") String searchType, 
-    								@Param("keyword") String keyword);
+    								@Param("generationId") int generationId,
+    								@Param("title") String title);
 
     int addAlgorithmGuide (@Param("generationId") int generationId, @Param("algorithmGuide") AlgorithmGuide algorithmGuide);
 
@@ -27,5 +26,5 @@ public interface AlgorithmGuideMapper {
 
     int countAlgorithmGuide(int generationId);
 
-    int countSearchAlgorithmGuide(@Param("generationId") int generationId, @Param("searchType") String searchType, @Param("keyword") String keyword);
+    int countSearchAlgorithmGuide(@Param("generationId") int generationId, @Param("title") String title);
 }
