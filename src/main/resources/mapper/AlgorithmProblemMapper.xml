@@ -26,6 +26,14 @@
         LIMIT #{offset}, #{pageSize}
     </select>
 
+    <select id="selectAlgorithmProblem" resultMap="AlgorithmProblemWithTags">
+        SELECT ap.*, t.id as tag_id, t.name as tag_name
+        FROM algorithm_problem ap
+                 LEFT JOIN algorithm_problem_tag apt ON ap.id = apt.algorithm_problem_id
+                 LEFT JOIN tag t ON apt.tag_id = t.id
+        WHERE ap.id = #{problemId}
+    </select>
+
     <select id="selectSearchAlgorithmProblem" resultMap="AlgorithmProblemWithTags">
         SELECT ap.*, t.id as tag_id, t.name as tag_name
         FROM algorithm_problem ap

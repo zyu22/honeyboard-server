@@ -14,6 +14,8 @@ public interface AlgorithmProblemMapper {
     List<AlgorithmProblem> selectSearchAlgorithmProblem(@Param("offset") int offset, @Param("pageSize") int pageSize,
                                                         @Param("searchType") String searchType, @Param("keyword") String keyword);
 
+    AlgorithmProblem selectAlgorithmProblem(@Param("problemId") int problemId);
+
     // 문제 CUD
     int insertAlgorithmProblem(AlgorithmProblem algorithmProblem);
 

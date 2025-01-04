@@ -8,6 +8,8 @@ public interface AlgorithmProblemService {
 
     PageResponse<AlgorithmProblem> searchProblem(int currentPage, int pageSize, String searchType, String keyword);
 
+    AlgorithmProblem getProblem(int problemId);
+
     AlgorithmProblem addProblem(AlgorithmProblem algorithmProblem);
 
     AlgorithmProblem updateProblem(int problemId, AlgorithmProblem algorithmProblem);
