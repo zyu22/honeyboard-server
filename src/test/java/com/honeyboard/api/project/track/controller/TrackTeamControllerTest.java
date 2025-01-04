@@ -3,6 +3,7 @@ package com.honeyboard.api.project.track.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.project.track.model.*;
 import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.user.model.UserName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -174,5 +175,36 @@ public class TrackTeamControllerTest {
                         .content(objectMapper.writeValueAsString(team)))  // 요청 본문에 TrackTeam JSON 데이터 첨부
                 .andExpect(status().isOk())  // 상태 코드 200 OK 확인
                 .andDo(print());  // 요청과 응답 출력
+    }
+
+    @Test
+    @WithMockUser
+    void getRemainedUsers_Success() throws Exception {
+        // given
+        int projectId = 2;
+        Integer generationId = 13;
+
+        // when
+        MvcResult result = mockMvc.perform(get("/api/v1/project/track/{projectId}/team/remaining", projectId)
+                        .param("generation", String.valueOf(generationId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        // then
+        String responseBody = result.getResponse().getContentAsString();
+        List<UserName> users = objectMapper.readValue(responseBody,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, UserName.class));
+
+        System.out.println("\n=== 미편성 팀원 조회 결과 ===");
+        System.out.println("프로젝트 ID: " + projectId);
+        System.out.println("기수: " + generationId);
+        System.out.println("미편성 인원: " + users.size());
+        for (UserName user : users) {
+            System.out.println("------------------------");
+            System.out.println("이름: " + user.getName());
+            System.out.println("ID: " + user.getUserId());
+        }
     }
 }

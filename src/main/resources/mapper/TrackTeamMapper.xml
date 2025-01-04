@@ -175,4 +175,20 @@
             #{member.trackMemberId}
         </foreach>
     </update>
+
+    <!-- 남은 유저 조회 -->
+    <select id="selectRemainingUsers" resultType="UserName">
+        SELECT id as userId,
+               name
+        FROM user u
+        WHERE u.generation_id = #{generationId}
+          AND u.is_ssafy = true
+          AND u.id NOT IN (
+            SELECT user_id
+            FROM track_team_member ttm
+                     JOIN track_team tt ON ttm.track_team_id = tt.id
+            WHERE tt.track_project_id = #{projectId}
+        )
+        ORDER BY u.name ASC;
+    </select>
 </mapper>

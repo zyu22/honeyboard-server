@@ -26,6 +26,12 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
 	}
 
 	@Override
+	public boolean addFinaleProjectThumbnail(String thumbnail) {
+
+		return false;
+	}
+
+	@Override
 	public boolean saveFinaleProject(FinaleProject finaleProject) {
 		validateFinaleProject(finaleProject);
 		try {

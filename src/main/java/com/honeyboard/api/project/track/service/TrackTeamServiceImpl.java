@@ -4,6 +4,7 @@ import com.honeyboard.api.project.track.mapper.TrackTeamMapper;
 import com.honeyboard.api.project.track.model.TrackProjectStatus;
 import com.honeyboard.api.project.track.model.TrackTeam;
 import com.honeyboard.api.project.track.model.TrackTeamMember;
+import com.honeyboard.api.user.model.UserName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -81,5 +82,13 @@ public class TrackTeamServiceImpl implements TrackTeamService {
             throw new IllegalArgumentException("팀 삭제에 실패했습니다.");
         }
         log.info("팀 삭제 완료 - ID: {}", teamId);
+    }
+
+    @Override
+    public List<UserName> getRemainedUsers(Integer generationId, int projectId) {
+        if (generationId <= 0) {
+            throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
+        }
+        return trackTeamMapper.selectRemainingUsers(generationId, projectId);
     }
 }

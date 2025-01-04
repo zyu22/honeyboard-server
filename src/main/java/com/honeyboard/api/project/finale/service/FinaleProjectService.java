@@ -8,6 +8,8 @@ public interface FinaleProjectService {
 
 	List<FinaleProject> getAllFinaleProject(int generationId);
 
+	boolean addFinaleProjectThumbnail(String thumbnail);
+
 	boolean saveFinaleProject(FinaleProject finaleProject);
 
 	boolean updateFinaleProject(FinaleProject finaleProject);
