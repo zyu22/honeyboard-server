@@ -5,6 +5,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.honeyboard.api.exception.DuplicateVideoException;
 import com.honeyboard.api.youtube.mapper.YoutubeMapper;
 import com.honeyboard.api.youtube.model.Youtube;
 import com.honeyboard.api.youtube.model.YoutubeSearchResult;
@@ -105,7 +106,7 @@ public class YoutubeServiceImpl implements YoutubeService {
         }
 
         if (youtubeMapper.existsByVideoId(youtube.getVideoId()) > 0) {
-            throw new IllegalStateException("이미 플레이리스트에 저장된 영상입니다.");
+            throw new DuplicateVideoException("이미 플레이리스트에 저장된 영상입니다.");
         }
 
         int result = youtubeMapper.insertYoutubeVideo(youtube);
