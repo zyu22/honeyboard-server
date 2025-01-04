@@ -13,10 +13,8 @@ public class BookmarkedAlgorithmSolution {
 
     // 알고리즘 풀이 ID
     private int solutionId;
-
     // 풀이 제목
     private String solutionTitle;
-
     //작성자
     private String author;
 
@@ -25,7 +23,6 @@ public class BookmarkedAlgorithmSolution {
 
     // 메모리
     private int memory;
-
     // 사용 언어 ID
     private int languageId;
 
