@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class ProgrammingLanguage {
 	
-	private int languageId;
-	private String languageName;
+	private int id;
+	private String name;
 
 }
