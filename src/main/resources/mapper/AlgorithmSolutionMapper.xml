@@ -27,7 +27,7 @@
         	AND b.user_id = #{userId}
 		WHERE s.is_deleted = false
 			AND s.problem_id = #{problemId}
-		<if test="generationId != null">
+		<if test="generationId != 0">
         	AND s.generation_id = #{generationId}
     	</if>
     	<if test="languages != null and languages.size > 0">
