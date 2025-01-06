@@ -26,6 +26,6 @@ public class AlgorithmSolution {
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
 	private boolean isDeleted;
-	private boolean isBookmarked;
+	private boolean bookmark;
 
 }
