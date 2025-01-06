@@ -41,6 +41,7 @@
                  LEFT JOIN tag t ON apt.tag_id = t.id
         WHERE ap.is_deleted = false
           AND (
+            #{keyword} IS NULL OR
             CASE #{searchType}
                 WHEN 'title' THEN ap.title LIKE CONCAT('%', #{keyword}, '%')
                 WHEN 'tag' THEN EXISTS (SELECT 1

@@ -20,7 +20,7 @@ public class AlgorithmProblemController {
     public ResponseEntity<?> getAllAlgorithmProblem(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "16") int size,
-            @RequestParam(required = false) String searchType,
+            @RequestParam(required = true) String searchType,
             @RequestParam(required = false) String keyword) {
         log.info("알고리즘 문제 조회 요청 - 페이지: {}, 사이즈: {}, 검색타입: {}, 키워드: {}",
                 page, size, searchType, keyword);
