@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlgorithmGuideUpdate {
+public class AlgorithmGuideRequest {
     private String title;
     private String content;
     private String thumbnail;
-    private String updatedAt;
 }
