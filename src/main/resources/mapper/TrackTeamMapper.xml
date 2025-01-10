@@ -175,4 +175,29 @@
             #{member.trackMemberId}
         </foreach>
     </update>
+
+    <!-- 남은 유저 조회 -->
+    <select id="selectRemainingUsers" resultType="UserName">
+        SELECT id as userId,
+               name
+        FROM user u
+        WHERE u.generation_id = #{generationId}
+          AND u.is_ssafy = true
+          AND u.role = 'USER'
+          AND u.id NOT IN (
+            -- 이미 팀에 속한 사용자 제외
+            SELECT user_id
+            FROM track_team_member ttm
+                     JOIN track_team tt ON ttm.track_team_id = tt.id
+            WHERE tt.id = #{projectId}
+
+            UNION
+
+            -- 제외 인원으로 설정된 사용자 제외
+            SELECT user_id
+            FROM track_excluded_member
+            WHERE project_id = #{projectId}
+        )
+        ORDER BY u.name ASC;
+    </select>
 </mapper>

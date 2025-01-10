@@ -10,10 +10,12 @@ interface FinaleProjectMapper {
     public
     List<FinaleProject> selectFinaleProject(int generationId);
 
-    public int insertFinaleProject(FinaleProject finaleProject);
+    int insertFinaleProject(FinaleProject finaleProject);
 
-    public int updateFinaleProject(FinaleProject finaleProject);
+    int insertFinaleProjectThumbnail(String thumbnail);
 
-    public boolean updateFinaleProjectDeleteStatus(int finaleProjectId);
+    int updateFinaleProject(FinaleProject finaleProject);
+
+    boolean updateFinaleProjectDeleteStatus(int finaleProjectId);
 
 }

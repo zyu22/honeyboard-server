@@ -4,6 +4,7 @@ import com.honeyboard.api.user.mapper.MyPageMapper;
 import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
 import com.honeyboard.api.user.model.mypage.MyFinaleProject;
 import com.honeyboard.api.user.model.mypage.MyTrackProject;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +12,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MyPageServiceImpl implements MyPageService {
 
     private final MyPageMapper myPageMapper;
-
-    public MyPageServiceImpl(MyPageMapper myPageMapper) {
-        this.myPageMapper = myPageMapper;
-    }
 
     @Override
     public List<MyTrackProject> getAllMyTrackProjects(int userId) {

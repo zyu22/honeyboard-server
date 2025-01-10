@@ -3,11 +3,15 @@ package com.honeyboard.api.project.track.controller;
 import com.honeyboard.api.project.track.model.TrackProjectStatus;
 import com.honeyboard.api.project.track.model.TrackTeam;
 import com.honeyboard.api.project.track.service.TrackTeamService;
+import com.honeyboard.api.user.model.UserName;
+import com.honeyboard.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/project/track")
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class TrackTeamController {
     private final TrackTeamService trackTeamService;
+    private final UserService userService;
 
     @GetMapping("/{projectId}/status")
     public ResponseEntity<?> getTeamStatus(@PathVariable("projectId") int projectId,
@@ -54,5 +59,20 @@ public class TrackTeamController {
         trackTeamService.removeTrackTeam(teamId);
         log.info("관통 팀 삭제 완료 - ID : {}", teamId);
         return ResponseEntity.ok().build();
+    }
+
+
+    @GetMapping("/{projectId}/team/remaining")
+    public ResponseEntity<List<UserName>> getRemainedUsers (
+            @PathVariable int projectId,
+            @RequestParam(required = false) Integer generationId) {
+
+        if (generationId == null) {
+            generationId = userService.getActiveGenerationId();
+        }
+
+        List<UserName> remainedUsers = trackTeamService.getRemainedUsers(generationId, projectId);
+        return remainedUsers.isEmpty() ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(remainedUsers);
     }
 }
