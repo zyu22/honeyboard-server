@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -36,9 +37,12 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final CookieUtil cookieUtil;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final List<String> excludedUrls = Arrays.asList(
             "/api/v1/auth",
-            "/swagger-ui"
+            "/favicon.ico",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
     );
 
     private String extractTokenFromCookies(Cookie[] cookies, String tokenName) {
@@ -132,7 +136,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         boolean shouldNotFilter = excludedUrls.stream()
-                .anyMatch(path::startsWith);
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
         log.debug("JWT 필터 제외 여부 확인 - URI: {}, 제외: {}", path, shouldNotFilter);
         return shouldNotFilter;
     }

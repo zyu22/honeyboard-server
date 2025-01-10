@@ -58,13 +58,14 @@ public class AlgorithmGuideController {
             log.info("알고리즘 개념 상세 조회 완료 - 데이터 없음");
             return ResponseEntity.noContent().build();
         }
-        
+
         log.info("알고리즘 개념 상세 조회 완료 - ID: {}", id);
         return ResponseEntity.ok(algorithmGuideDetail);
     }
 
     // 알고리즘 개념 설명 작성
     @PostMapping
+
     public ResponseEntity<CreateResponse> addAlgorithmGuide(
             @RequestBody AlgorithmGuideRequest algorithmGuideRequest,
             @CurrentUser User user) {
