@@ -26,13 +26,8 @@ class PdfGeneratorServiceImpl implements PdfGeneratorService {
             throw new IllegalArgumentException("문서 정보가 없습니다.");
         }
 
-        try {
-            String html = generateHtml(document);
-            return generatePdfFromHtml(html);
-        } catch (Exception e) {
-            log.error("PDF 생성 실패 - 문서 ID: {}, 오류: {}", document.getId(), e.getMessage());
-            throw new RuntimeException("PDF 생성에 실패했습니다.", e);
-        }
+        String html = generateHtml(document);
+        return generatePdfFromHtml(html);
     }
 
 
@@ -42,13 +37,8 @@ class PdfGeneratorServiceImpl implements PdfGeneratorService {
             throw new IllegalArgumentException("문서 목록이 비어있습니다.");
         }
 
-        try {
-            String html = generateHtmlForMultipleDocuments(documents);
-            return generatePdfFromHtml(html);
-        } catch (Exception e) {
-            log.error("다중 문서 PDF 생성 실패 - 문서 수: {}, 오류: {}", documents.size(), e.getMessage());
-            throw new RuntimeException("다중 문서 PDF 생성에 실패했습니다.", e);
-        }
+        String html = generateHtmlForMultipleDocuments(documents);
+        return generatePdfFromHtml(html);
     }
 
     private byte[] generatePdfFromHtml(String html) {
@@ -64,22 +54,14 @@ class PdfGeneratorServiceImpl implements PdfGeneratorService {
     }
 
     private String generateHtml(Document document) {
-        try {
-            Context context = new Context();
-            context.setVariable("document", document);
-            return templateEngine.process("pdf/document-template", context);
-        } catch (Exception e) {
-            throw new RuntimeException("HTML 템플릿 처리 중 오류가 발생했습니다.", e);
-        }
+        Context context = new Context();
+        context.setVariable("document", document);
+        return templateEngine.process("pdf/document-template", context);
     }
 
     private String generateHtmlForMultipleDocuments(List<Document> documents) {
-        try {
-            Context context = new Context();
-            context.setVariable("documents", documents);
-            return templateEngine.process("pdf/multiple-documents-template", context);
-        } catch (Exception e) {
-            throw new RuntimeException("다중 문서 HTML 템플릿 처리 중 오류가 발생했습니다.", e);
-        }
+        Context context = new Context();
+        context.setVariable("documents", documents);
+        return templateEngine.process("pdf/multiple-documents-template", context);
     }
 }

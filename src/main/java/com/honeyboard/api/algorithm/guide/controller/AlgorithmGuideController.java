@@ -23,22 +23,22 @@ public class AlgorithmGuideController {
 
     @GetMapping
     public ResponseEntity<?> getAllAlgorithmGuide(
-    		@RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "8") int size,
             @RequestParam(required = false) Integer generationId,
             @RequestParam(required = false) String searchType,
             @RequestParam(required = false) String keyword,
             @CurrentUser User user) {
         log.info("알고리즘 개념 전체 조회 요청 - 기수: {}, 검색어: {}", generationId, searchType, keyword);
-        
+
         if(generationId==null) {
-        	generationId = user.getGenerationId();
+            generationId = user.getGenerationId();
         }
         PageResponse<AlgorithmGuide> algorithmGuides;
         if(keyword != null) {
-        	algorithmGuides = algorithmGuideService.searchAlgorithmGuide(page, size, generationId, searchType, keyword);
+            algorithmGuides = algorithmGuideService.searchAlgorithmGuide(page, size, generationId, searchType, keyword);
         }else {
-        	algorithmGuides = algorithmGuideService.getAlgorithmGuides(page, size, generationId);        	
+            algorithmGuides = algorithmGuideService.getAlgorithmGuides(page, size, generationId);
         }
 
         if (algorithmGuides==null) {
@@ -56,12 +56,12 @@ public class AlgorithmGuideController {
             @RequestParam("bookmark") boolean bookmarkflag) {
         log.info("알고리즘 개념 상세 조회 요청 - ID: {}, 북마크: {}", id, bookmarkflag);
         AlgorithmGuide algorithmGuide = algorithmGuideService.getAlgorithmGuideDetail(id, bookmarkflag);
-        
+
         if (algorithmGuide == null) {
             log.info("알고리즘 개념 상세 조회 완료 - 데이터 없음");
             return ResponseEntity.noContent().build();
         }
-        
+
         log.info("알고리즘 개념 상세 조회 완료 - ID: {}", id);
         return ResponseEntity.ok(algorithmGuide);
     }
@@ -69,21 +69,21 @@ public class AlgorithmGuideController {
     @PostMapping
     public ResponseEntity<?> addAlgorithmGuide(
             @RequestParam(required = false) Integer generationId,
-		    @RequestBody AlgorithmGuide algorithmGuide,
+            @RequestBody AlgorithmGuide algorithmGuide,
             @CurrentUser User user) {
         if(generationId==null) {
             generationId = user.getGenerationId();
         }
 
-	    log.info("알고리즘 개념 작성 요청 - 기수: {}, 알고리즘: {}", generationId, algorithmGuide);
-	    boolean result = algorithmGuideService.addAlgorithmGuide(generationId, algorithmGuide);
-	    if (result) {
-	        log.info("알고리즘 개념 작성 완료");
-	        return ResponseEntity.status(HttpStatus.CREATED).build();
-	    } else {
-	        log.error("알고리즘 개념 작성 실패");
-	        return ResponseEntity.badRequest().build();
-	    }
+        log.info("알고리즘 개념 작성 요청 - 기수: {}, 알고리즘: {}", generationId, algorithmGuide);
+        boolean result = algorithmGuideService.addAlgorithmGuide(generationId, algorithmGuide);
+        if (result) {
+            log.info("알고리즘 개념 작성 완료");
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            log.error("알고리즘 개념 작성 실패");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")
