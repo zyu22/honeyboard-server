@@ -1,7 +1,7 @@
 package com.honeyboard.api.algorithm.problem.model.response;
 
 
-import com.honeyboard.api.algorithm.tag.model.Tag;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,5 @@ public class AlgorithmProblemList {
     private String title;
     private String url;
     private String createdAt;
-    private List<Tag> tags;
+    private List<TagResponse> tags;
 }
