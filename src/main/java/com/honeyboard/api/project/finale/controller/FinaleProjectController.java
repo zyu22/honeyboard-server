@@ -1,8 +1,5 @@
 package com.honeyboard.api.project.finale.controller;
 
-import com.honeyboard.api.project.finale.model.FinaleProject;
-import com.honeyboard.api.project.finale.model.FinaleProjectResponse;
-import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.project.finale.service.FinaleProjectService;
 import com.honeyboard.api.project.finale.service.FinaleTeamService;
 import com.honeyboard.api.user.model.User;

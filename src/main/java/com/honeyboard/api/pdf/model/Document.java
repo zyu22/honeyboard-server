@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import com.honeyboard.api.project.track.model.TrackProjectBoard;
 import com.honeyboard.api.user.model.User;
 

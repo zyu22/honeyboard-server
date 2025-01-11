@@ -4,14 +4,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.honeyboard.api.project.finale.model.FinaleProjectResponse;
-import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
 import com.honeyboard.api.project.finale.service.FinaleTeamService;
-import com.honeyboard.api.user.mapper.UserMapper;
 import com.honeyboard.api.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.honeyboard.api.project.finale.model.FinaleProject;
-import com.honeyboard.api.project.finale.model.FinaleTeam;
-import com.honeyboard.api.project.finale.service.FinaleProjectService;
-import com.honeyboard.api.user.model.User;
 import com.honeyboard.api.user.model.UserName;
 
 import lombok.RequiredArgsConstructor;

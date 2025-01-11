@@ -2,12 +2,9 @@ package com.honeyboard.api.pdf.controller;
 
 import com.honeyboard.api.pdf.model.Document;
 import com.honeyboard.api.pdf.service.PdfGeneratorService;
-import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
 import com.honeyboard.api.project.track.model.TrackProjectBoard;
 import com.honeyboard.api.project.track.service.TrackProjectBoardService;
-import com.honeyboard.api.user.model.CurrentUser;
-import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
