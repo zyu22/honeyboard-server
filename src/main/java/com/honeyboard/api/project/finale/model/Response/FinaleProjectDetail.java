@@ -1,4 +1,4 @@
-package com.honeyboard.api.project.finale.model;
+package com.honeyboard.api.project.finale.model.Response;
 
 import com.honeyboard.api.project.model.TeamMemberInfo;
 import lombok.*;
