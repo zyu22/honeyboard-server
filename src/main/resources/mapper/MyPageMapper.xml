@@ -11,11 +11,6 @@
         <!-- trackTeamId 매핑 (ttm.track_team_id) -->
         <result property="trackTeamId" column="trackTeamId"/>
 
-        <!-- User 객체 매핑 -->
-        <association property="user" javaType="com.honeyboard.api.user.model.User">
-            <id property="userId" column="userId"/>
-            <result property="name" column="userName"/>
-        </association>
     </resultMap>
     <!--
         1) 나의 트랙 프로젝트 목록 조회
@@ -27,7 +22,7 @@
     -->
     <select id="selectAllMyTrackProjects"
             parameterType="int"
-            resultType="com.honeyboard.api.user.model.MyTrackProject">
+            resultType="com.honeyboard.api.user.model.mypage.MyTrackProject">
 
         SELECT
             tp.id   AS trackProjectId,
@@ -35,6 +30,7 @@
 
             tpb.id   AS trackProjectBoardId,
             tpb.title AS trackProjectBoardTitle,
+            tpb.thumbnail AS thumbnail,
 
             ttm.track_team_id AS trackTeamId
         FROM track_team_member ttm
@@ -57,12 +53,9 @@
 
     <select id="selectTrackTeamMembers"
             parameterType="int"
-            resultMap="TrackTeamMemberResultMap">
+            resultType="string">
         SELECT
-            ttm.id              AS id,
-            ttm.track_team_id   AS trackTeamId,
-            ttm.user_id         AS userId,
-            u.name              AS userName
+            u.name
         FROM track_team_member ttm
                  JOIN user u ON ttm.user_id = u.id
         WHERE ttm.track_team_id = #{trackTeamId}
@@ -74,10 +67,9 @@
     -->
     <select id="selectAllMyFinaleProjects"
             parameterType="int"
-            resultType="com.honeyboard.api.user.model.MyFinaleProject">
+            resultType="com.honeyboard.api.user.model.mypage.MyFinaleProject">
         SELECT
             fpb.id        AS finaleProjectBoardId,
-            fpb.team_id   AS finaleTeamId,
             fpb.title     AS title,
             fpb.created_at AS createdAt
         FROM finale_team_member ftm
@@ -94,15 +86,13 @@
     -->
     <select id="selectAllMyAlgorithmSolutions"
             parameterType="int"
-            resultType="com.honeyboard.api.user.model.MyAlgorithmSolution">
+            resultType="com.honeyboard.api.user.model.mypage.MyAlgorithmSolution">
         SELECT
-            s.id          AS solutionId,
             s.title       AS solutionTitle,
-            s.problem_id  AS problemId,
+            s.id  AS solutionId,
             s.runtime     AS runtime,
             s.memory      AS memory,
             s.language_id AS languageId,
-
             p.title       AS problemTitle
 
         FROM algorithm_problem_solution s

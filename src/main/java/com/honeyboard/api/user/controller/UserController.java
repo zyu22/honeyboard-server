@@ -1,13 +1,12 @@
 package com.honeyboard.api.user.controller;
 
-import com.honeyboard.api.user.model.BookmarksResponse;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.LogInUserResponse;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.Bookmark;
-import com.honeyboard.api.user.model.MyTrackProject;
-import com.honeyboard.api.user.model.MyFinaleProject;
-import com.honeyboard.api.user.model.MyAlgorithmSolution;
+import com.honeyboard.api.user.model.bookmark.Bookmark;
+import com.honeyboard.api.user.model.mypage.MyTrackProject;
+import com.honeyboard.api.user.model.mypage.MyFinaleProject;
+import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
 
 import com.honeyboard.api.user.service.BookmarkService;
 import com.honeyboard.api.user.service.MyPageService;
@@ -69,27 +68,21 @@ public class UserController {
 
 	// 북마크 목록 조회
 	@GetMapping(("/{userId}/bookmark"))
-	public ResponseEntity<BookmarksResponse> getBookmarks(
+	public ResponseEntity<?> getBookmarks(
 			@PathVariable int userId,
-			@RequestParam(name = "type") String content_type) {
+			@RequestParam(name = "contentType") String content_type) {
 
-		log.info("[GET] /api/v1/user/{}/bookmark?type={} 요청 수신", userId, content_type);
+		log.info("[GET] /api/v1/user/{}/bookmark?contentType={} 요청 수신", userId, content_type);
 
-			List<?> bookmarks = bookmarkService.getAllBookmarks(userId, content_type);
+		List<?> bookmarks = bookmarkService.getAllBookmarks(userId, content_type);
 
-			if (bookmarks.isEmpty()) {
-				log.info("북마크가 없습니다. userId={}, type={}", userId, content_type);
-				return ResponseEntity.noContent().build();
-			}
+		if (bookmarks.isEmpty()) {
+			log.info("북마크가 없습니다. userId={}, contentType={}", userId, content_type);
+			return ResponseEntity.noContent().build();
+		}
 
-				BookmarksResponse response = BookmarksResponse.builder()
-				.contentType(content_type)
-				.bookmarks(bookmarks)
-				.build();
-			// 정상 결과 200
-			log.info("북마크 조회 성공 - userId={}, type={}, count={}", userId, content_type, bookmarks.size());
-			return ResponseEntity.ok(response);
-
+		log.info("북마크 조회 성공 - userId={}, contentType={}, count={}", userId, content_type, bookmarks.size());
+		return ResponseEntity.ok(bookmarks);
 	}
 
 	//북마크 추가
@@ -98,27 +91,27 @@ public class UserController {
 			@PathVariable int userId,
 			@RequestBody Bookmark bookmark
 	) {
-		log.info("[POST] /api/v1/user/{}/bookmark 요청 수신 - bookmark={}", userId, bookmark);
-
-			bookmarkService.addBookmark(userId, bookmark);
-
-			return ResponseEntity.status(HttpStatus.CREATED).build();
-
+		log.info("북마크 추가 요청 - 사용자: {}", userId);
+		bookmarkService.addBookmark(userId, bookmark);
+		log.info("북마크 추가 완료 - 사용자: {}", userId);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 
 	// 북마크 삭제
-	@DeleteMapping("/{userId}/bookmark/{bookmarkId}")
+	@DeleteMapping("/{userId}/bookmark/{contentType}/{contentId}")
 	public ResponseEntity<Void> deleteBookmark(
 			@PathVariable int userId,
-			@PathVariable int bookmarkId
+			@PathVariable String contentType,
+			@PathVariable int contentId
 	) {
-		log.info("[DELETE] /api/v1/user/{}/bookmark/{} 요청 수신", userId, bookmarkId);
+		log.info("북마크 요청 시작 - 유저 ID: {}, contentType: {}, contentId: {}", userId, contentType, contentId);
 
-			bookmarkService.deleteBookmark(userId, bookmarkId);
+		bookmarkService.deleteBookmark(userId, contentType ,contentId);
 
-			return ResponseEntity.ok().build();
+		return ResponseEntity.ok().build();
 	}
+
 
 	@GetMapping("/{userId}/trackproject")
 	public ResponseEntity<List<MyTrackProject>> getMyTrackProjects(@PathVariable int userId) {

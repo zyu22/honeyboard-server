@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -36,9 +37,12 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final CookieUtil cookieUtil;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final List<String> excludedUrls = Arrays.asList(
             "/api/v1/auth",
-            "/swagger-ui"
+            "/favicon.ico",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
     );
 
     private String extractTokenFromCookies(Cookie[] cookies, String tokenName) {
@@ -59,64 +63,17 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         log.debug("JWT 검증 필터 시작 - URI: {}", request.getRequestURI());
 
-        String jwt = extractTokenFromCookies(request.getCookies(), ACCESS_TOKEN);
+        String accessToken = extractTokenFromCookies(request.getCookies(), ACCESS_TOKEN);
+        String refreshToken = extractTokenFromCookies(request.getCookies(), REFRESH_TOKEN);
 
-        if (jwt == null) {
-            log.debug("액세스 토큰이 없음, 필터 체인 계속 진행");
-            filterChain.doFilter(request, response);
-            return;
-        }
+
 
         try {
-            String userEmail = jwtService.extractUserEmail(jwt);
-            log.debug("JWT에서 이메일 추출: {}", userEmail);
-
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-                log.debug("사용자 상세 정보 로드 완료: {}", userEmail);
-
-                if (jwtService.isValid(jwt, userDetails)) {
-                    log.debug("JWT 토큰 유효성 검증 성공");
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                    log.debug("인증 정보 설정 완료");
-                }
+            if (accessToken != null) {
+                processAccessToken(accessToken, response);
             }
         } catch (ExpiredJwtException e) {
-            log.debug("액세스 토큰 만료, 리프레시 토큰으로 갱신 시도");
-            String refreshToken = extractTokenFromCookies(request.getCookies(), REFRESH_TOKEN);
-
-            if (refreshToken != null) {
-                try {
-                    User user = ((CustomUserDetails) userDetailsService.loadUserByUsername(
-                            jwtService.extractUserEmail(refreshToken))).getUser();
-                    log.debug("리프레시 토큰으로 사용자 정보 조회 성공: {}", user.getEmail());
-
-                    Map<String, String> tokens = jwtService.rotateTokens(refreshToken, user);
-
-                    if (tokens != null) {
-                        log.debug("새로운 토큰 발급 성공");
-                        cookieUtil.addCookie(response, ACCESS_TOKEN, tokens.get("accessToken"),
-                                (int) (jwtService.getAccessTokenExpire() / 1000));
-                        cookieUtil.addCookie(response, REFRESH_TOKEN, tokens.get("refreshToken"),
-                                (int) (jwtService.getRefreshTokenExpire() / 1000));
-
-                        doFilterInternal(request, response, filterChain);
-                        return;
-                    }
-                } catch (Exception ex) {
-                    log.error("토큰 갱신 중 오류 발생: {}", ex.getMessage());
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-            }
-            log.debug("리프레시 토큰이 없거나 유효하지 않음");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            handleExpiredToken(refreshToken, response);
             return;
         } catch (JwtException e) {
             log.error("JWT 처리 중 오류 발생: {}", e.getMessage());
@@ -128,11 +85,49 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private void processAccessToken(String accessToken, HttpServletResponse response) {
+        String userEmail = jwtService.extractUserEmail(accessToken);
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+            if (jwtService.isValid(accessToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+    }
+
+    private void handleExpiredToken(String refreshToken, HttpServletResponse response) {
+        if (refreshToken != null) {
+            try {
+                User user = ((CustomUserDetails) userDetailsService.loadUserByUsername(
+                        jwtService.extractUserEmail(refreshToken))).getUser();
+
+                Map<String, String> tokens = jwtService.rotateTokens(refreshToken, user);
+                if (tokens != null) {
+                    cookieUtil.addCookie(response, ACCESS_TOKEN, tokens.get("accessToken"),
+                            (int) (jwtService.getAccessTokenExpire() / 1000));
+                    cookieUtil.addCookie(response, REFRESH_TOKEN, tokens.get("refreshToken"),
+                            (int) (jwtService.getRefreshTokenExpire() / 1000));
+
+                    processAccessToken(tokens.get("accessToken"), response);
+                    return;
+                }
+            } catch (Exception ex) {
+                log.error("토큰 갱신 중 오류 발생: {}", ex.getMessage());
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         boolean shouldNotFilter = excludedUrls.stream()
-                .anyMatch(path::startsWith);
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
         log.debug("JWT 필터 제외 여부 확인 - URI: {}, 제외: {}", path, shouldNotFilter);
         return shouldNotFilter;
     }
