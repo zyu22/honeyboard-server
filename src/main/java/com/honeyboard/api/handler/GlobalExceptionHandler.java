@@ -14,6 +14,20 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    // BusinessException 처리 - 이 핸들러가 모든 비즈니스 예외를 처리
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
+        log.error("BusinessException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(new ErrorResponse(
+                        e.getErrorCode().getStatus().value(),
+                        e.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
     // 유효성 검사 실패 시 (Spring Validation)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
@@ -44,90 +58,6 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 이메일 중복 예외 처리
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateEmailException e) {
-        log.error("DuplicateEmailException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)  // 409 상태코드 사용
-                .body(new ErrorResponse(
-                        HttpStatus.CONFLICT.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<ErrorResponse> handleTokenExpired(TokenExpiredException e) {
-        log.error("TokenExpiredException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(
-                        HttpStatus.UNAUTHORIZED.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException e) {
-        log.error("InvalidTokenException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(
-                        HttpStatus.UNAUTHORIZED.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(RefreshTokenNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleRefreshTokenNotFound(RefreshTokenNotFoundException e) {
-        log.error("RefreshTokenNotFoundException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(
-                        HttpStatus.UNAUTHORIZED.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(VerificationCodeException.class)
-    public ResponseEntity<ErrorResponse> handleVerificationCode(VerificationCodeException e) {
-        log.error("VerificationCodeException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                        HttpStatus.BAD_REQUEST.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(VerificationCodeExpiredException.class)
-    public ResponseEntity<ErrorResponse> handleVerificationCodeExpired(VerificationCodeExpiredException e) {
-        log.error("VerificationCodeExpiredException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.GONE)  // 410 상태코드 사용
-                .body(new ErrorResponse(
-                        HttpStatus.GONE.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(DuplicateTeamMemberException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateTeamMember(DuplicateTeamMemberException e) {
-        log.error("DuplicateTeamMemberException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)  // 409 상태코드 사용
-                .body(new ErrorResponse(
-                        HttpStatus.CONFLICT.value(),
-                        e.getMessage(),
-                        LocalDateTime.now()
-                ));
-    }
 
 
     // NullPointerException 처리
@@ -165,19 +95,6 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "예기치 못한 오류가 발생했습니다.",
-                        LocalDateTime.now()
-                ));
-    }
-
-    //Youtube 영상 중복 저장
-    @ExceptionHandler(DuplicateVideoException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateVideo(DuplicateVideoException e) {
-        log.error("DuplicateVideoException: {}", e.getMessage(), e);
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)  // 409 상태코드 사용
-                .body(new ErrorResponse(
-                        HttpStatus.CONFLICT.value(),
-                        e.getMessage(),
                         LocalDateTime.now()
                 ));
     }

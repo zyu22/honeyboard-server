@@ -8,9 +8,7 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
-import com.honeyboard.api.exception.InvalidTokenException;
-import com.honeyboard.api.exception.RefreshTokenNotFoundException;
-import com.honeyboard.api.exception.TokenExpiredException;
+import com.honeyboard.api.exception.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,7 +46,10 @@ public class JwtServiceImpl implements JwtService {
         try {
             return extractClaim(token, Claims::getSubject);
         } catch (Exception e) {
-            throw new InvalidTokenException("유효하지 않은 토큰입니다.");
+            throw new BusinessException(
+                    ErrorCode.INVALID_TOKEN,
+                    "유효하지 않은 토큰입니다."
+            );
         }
     }
 
@@ -57,16 +58,24 @@ public class JwtServiceImpl implements JwtService {
         try {
             String userEmail = extractUserEmail(token);
             if (!userEmail.equals(user.getUsername())) {
-                throw new InvalidTokenException("토큰의 사용자 정보가 일치하지 않습니다.");
+                throw new BusinessException(
+                        ErrorCode.INVALID_TOKEN,
+                        "토큰의 사용자 정보가 일치하지 않습니다."
+                );
             }
             if (isTokenExpired(token)) {
-                throw new TokenExpiredException("만료된 토큰입니다.");
+                throw new BusinessException(
+                        ErrorCode.TOKEN_EXPIRED
+                );
             }
             return true;
-        } catch (TokenExpiredException | InvalidTokenException e) {
+        } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw new InvalidTokenException("토큰 검증 중 오류가 발생했습니다.");
+            throw new BusinessException(
+                    ErrorCode.INVALID_TOKEN,
+                    "토큰 검증 중 오류가 발생했습니다."
+            );
         }
     }
 
@@ -75,24 +84,39 @@ public class JwtServiceImpl implements JwtService {
         try {
             String userEmail = extractUserEmail(token);
             if (!userEmail.equals(user.getEmail())) {
-                throw new InvalidTokenException("리프레시 토큰의 사용자 정보가 일치하지 않습니다.");
+                throw new BusinessException(
+                        ErrorCode.INVALID_TOKEN,
+                        "리프레시 토큰의 사용자 정보가 일치하지 않습니다."
+                );
             }
             if (isTokenExpired(token)) {
-                throw new TokenExpiredException("만료된 리프레시 토큰입니다.");
+                throw new BusinessException(
+                        ErrorCode.TOKEN_EXPIRED,
+                        "만료된 리프레시 토큰입니다."
+                );
             }
 
             String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + user.getEmail());
             if (storedToken == null) {
-                throw new RefreshTokenNotFoundException("저장된 리프레시 토큰을 찾을 수 없습니다.");
+                throw new BusinessException(
+                        ErrorCode.REFRESH_TOKEN_NOT_FOUND,
+                        "저장된 리프레시 토큰을 찾을 수 없습니다."
+                );
             }
             if (!token.equals(storedToken)) {
-                throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+                throw new BusinessException(
+                        ErrorCode.INVALID_TOKEN,
+                        "유효하지 않은 리프레시 토큰입니다."
+                );
             }
             return true;
-        } catch (TokenExpiredException | InvalidTokenException | RefreshTokenNotFoundException e) {
+        } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
-            throw new InvalidTokenException("리프레시 토큰 검증 중 오류가 발생했습니다.");
+            throw new BusinessException(
+                    ErrorCode.INVALID_TOKEN,
+                    "리프레시 토큰 검증 중 오류가 발생했습니다."
+            );
         }
     }
 
@@ -175,7 +199,10 @@ public class JwtServiceImpl implements JwtService {
     public Map<String, String> rotateTokens(String oldRefreshToken, User user) {
         try {
             if (!isValidRefreshToken(oldRefreshToken, user)) {
-                throw new InvalidTokenException("유효하지 않은 리프레시 토큰입니다.");
+                throw new BusinessException(
+                        ErrorCode.INVALID_TOKEN,
+                        "유효하지 않은 리프레시 토큰입니다."
+                );
             }
 
             String newAccessToken = generateAccessToken(user);
@@ -233,7 +260,10 @@ public class JwtServiceImpl implements JwtService {
                     .generationId(claims.get("generationId", Integer.class))
                     .build();
         } catch (Exception e) {
-            throw new InvalidTokenException("토큰에서 사용자 정보를 추출할 수 없습니다.");
+            throw new BusinessException(
+                    ErrorCode.INVALID_TOKEN,
+                    "토큰에서 사용자 정보를 추출할 수 없습니다."
+            );
         }
     }
 }
