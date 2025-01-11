@@ -3,8 +3,6 @@ package com.honeyboard.api.project.finale.mapper;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.honeyboard.api.project.finale.model.FinaleMember;
-import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
 import org.apache.ibatis.annotations.Param;
 

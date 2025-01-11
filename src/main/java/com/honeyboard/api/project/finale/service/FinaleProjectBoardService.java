@@ -2,8 +2,6 @@ package com.honeyboard.api.project.finale.service;
 
 import java.util.List;
 
-import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
-
 public interface FinaleProjectBoardService {
 
 	List<FinaleProjectBoard> getAllFinaleBoards(int finaleId);

@@ -1,7 +1,5 @@
 package com.honeyboard.api.project.finale.service;
 
-import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
-import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
 
 import java.time.LocalDate;

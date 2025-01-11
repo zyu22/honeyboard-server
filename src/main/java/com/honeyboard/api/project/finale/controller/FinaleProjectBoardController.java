@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
 
 import lombok.RequiredArgsConstructor;

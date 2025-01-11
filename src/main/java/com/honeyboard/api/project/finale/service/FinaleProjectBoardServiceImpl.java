@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.honeyboard.api.project.finale.mapper.FinaleProjectBoardMapper;
-import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 
 import lombok.RequiredArgsConstructor;
 

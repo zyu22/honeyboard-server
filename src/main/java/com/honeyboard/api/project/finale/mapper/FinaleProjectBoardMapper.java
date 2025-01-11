@@ -2,8 +2,6 @@ package com.honeyboard.api.project.finale.mapper;
 
 import java.util.List;
 
-import com.honeyboard.api.project.finale.model.FinaleMember;
-import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import org.apache.ibatis.annotations.Param;
 
 public interface FinaleProjectBoardMapper {

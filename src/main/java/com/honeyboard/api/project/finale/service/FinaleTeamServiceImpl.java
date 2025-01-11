@@ -3,8 +3,6 @@ package com.honeyboard.api.project.finale.service;
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.project.finale.mapper.FinaleTeamMapper;
-import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
-import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
 
 import lombok.RequiredArgsConstructor;
