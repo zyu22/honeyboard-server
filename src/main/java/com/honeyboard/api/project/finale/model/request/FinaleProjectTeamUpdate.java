@@ -1,4 +1,4 @@
-package com.honeyboard.api.project.finale.model.Request;
+package com.honeyboard.api.project.finale.model.request;
 
 import lombok.*;
 

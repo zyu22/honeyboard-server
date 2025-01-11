@@ -1,4 +1,4 @@
-package com.honeyboard.api.project.finale.model.Response;
+package com.honeyboard.api.project.finale.model.response;
 
 import com.honeyboard.api.project.model.TeamMemberInfo;
 import lombok.*;
@@ -11,13 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public
-class FinaleProjectBoardDetail {
+class FinaleTeamList {
 
-    int id;
-    String title;
-    String summary;
-    String content;
-    String createdAt;
     List<TeamMemberInfo> members;
+    boolean submitted;
+    Integer projectBoardId; // null || 숫자 값 보내줘야해서 객체
 
 }
