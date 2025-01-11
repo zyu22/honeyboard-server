@@ -1,8 +1,8 @@
 package com.honeyboard.api.project.finale.service;
 
-import com.honeyboard.api.exception.DuplicateTeamMemberException;
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.project.finale.mapper.FinaleTeamMapper;
-import com.honeyboard.api.project.finale.model.FinaleMember;
 import com.honeyboard.api.project.finale.model.FinaleTeamRequest;
 import com.honeyboard.api.project.finale.model.FinaleTeam;
 import com.honeyboard.api.user.model.UserName;
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +56,8 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
             String memberIds = existingMembers.stream()
                     .map(String::valueOf)
                     .collect(Collectors.joining(", "));
-            throw new DuplicateTeamMemberException(
+            throw new BusinessException(
+                    ErrorCode.DUPLICATE_TEAM_MEMBER,
                     "이미 팀에 속해있는 멤버가 있습니다. (사용자 ID: " + memberIds + ")"
             );
         }
@@ -97,8 +97,9 @@ class FinaleTeamServiceImpl implements FinaleTeamService {
             String memberIds = existingMembers.stream()
                     .map(String::valueOf)
                     .collect(Collectors.joining(", "));
-            throw new DuplicateTeamMemberException(
-                    "다른 팀에 이미 속해있는 멤버가 있습니다. (사용자 ID: " + memberIds + ")"
+            throw new BusinessException(
+                    ErrorCode.DUPLICATE_TEAM_MEMBER,
+                    "이미 팀에 속해있는 멤버가 있습니다. (사용자 ID: " + memberIds + ")"
             );
         }
 

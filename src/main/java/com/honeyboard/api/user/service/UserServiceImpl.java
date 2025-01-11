@@ -1,6 +1,7 @@
 package com.honeyboard.api.user.service;
 
-import com.honeyboard.api.exception.DuplicateEmailException;
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import com.honeyboard.api.user.model.User;
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
 	private void checkDuplicateEmail(String email) {
 		if (userMapper.selectExistedEmail(email) > 0) {
-			throw new DuplicateEmailException("이미 사용 중인 이메일입니다.");
+			throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
 		}
 	}
 
