@@ -1,4 +1,4 @@
-package com.honeyboard.api.project.finale.model;
+package com.honeyboard.api.project.finale.model.request;
 
 import lombok.*;
 
@@ -8,11 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public
-class FinaleProjectBoardList {
+class FinaleProjectBoardRequest {
 
-    int id;
     String title;
-    String createdAt;
+    String summary;
+    String content;
     String thumbnail;
 
 }

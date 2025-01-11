@@ -1,4 +1,4 @@
-package com.honeyboard.api.project.finale.model;
+package com.honeyboard.api.project.finale.model.request;
 
 import lombok.*;
 
@@ -8,11 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public
-class FinaleProjectCreate {
+class FinaleProjectUpdate {
 
     String title;
     String description;
     String url;
-    TeamRequest teams;
 
 }
