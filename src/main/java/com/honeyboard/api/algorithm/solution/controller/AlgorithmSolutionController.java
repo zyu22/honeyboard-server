@@ -50,7 +50,7 @@ public class AlgorithmSolutionController {
 	@GetMapping("/{problemId}/solution")
 	public ResponseEntity<?> getAllAlgorithmSolution(
 			@PathVariable int problemId,
-			@RequestParam(value = "generationId", required = false) Integer generationId,
+			@RequestParam(value = "generationId", defaultValue = "0") int generationId,
 			@RequestParam(value = "language", required = false) List<String> language,
 			@RequestParam(value = "sortType", defaultValue = "latest") String sortType,
 			@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,

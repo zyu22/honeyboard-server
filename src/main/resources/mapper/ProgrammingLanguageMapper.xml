@@ -8,10 +8,10 @@
 	<!-- 언어 전체 조회  -->
 	<select id="selectAllProgrammingLanguage" resultType="ProgrammingLanguage">
 		SELECT
-			id AS languageId,
-			name AS languageName
+			id,
+			name
 		FROM programming_language
-		ORDER BY languageId
+		ORDER BY id
 	</select>
 </mapper>
 
