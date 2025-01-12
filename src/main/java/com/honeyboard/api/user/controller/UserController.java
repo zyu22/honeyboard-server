@@ -8,7 +8,7 @@ import com.honeyboard.api.user.model.mypage.MyTrackProject;
 import com.honeyboard.api.user.model.mypage.MyFinaleProject;
 import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
 
-import com.honeyboard.api.user.service.BookmarkService;
+import com.honeyboard.api.user.service.BookmarkService2;
 import com.honeyboard.api.user.service.MyPageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class UserController {
 
 	private final JwtService jwtService;
 	private final UserService userService;
-	private final BookmarkService bookmarkService;
+	private final BookmarkService2 bookmarkService;
 	private final MyPageService myPageService;
 
 

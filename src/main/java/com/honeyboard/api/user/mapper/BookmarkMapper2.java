@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface BookmarkMapper {
+public interface BookmarkMapper2 {
 
 
     // 1) 알고리즘 가이드 북마크 조회
