@@ -1,6 +1,6 @@
 package com.honeyboard.api.generation.controller;
 
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import com.honeyboard.api.generation.service.GenerationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class GenerationController {
     @GetMapping
     public ResponseEntity<?> getAllGenerations() {
         log.info("기수 전체 조회 요청");
-        List<Generation> generations = generationService.getAllGenerations();
+        List<GenerationList> generations = generationService.getAllGenerations();
         if(generations.isEmpty() || generations.size() == 0) {
             log.info("기수 전체 조회 완료, 값 없음");
             return ResponseEntity.noContent().build();

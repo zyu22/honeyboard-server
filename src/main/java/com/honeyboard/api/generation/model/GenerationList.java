@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Generation {
+public class GenerationList {
     private int id;
     private String name;
     private boolean active;

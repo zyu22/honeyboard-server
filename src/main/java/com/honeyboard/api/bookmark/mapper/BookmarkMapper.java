@@ -1,5 +1,6 @@
 package com.honeyboard.api.bookmark.mapper;
 
+import com.honeyboard.api.algorithm.guide.model.response.AlgorithmGuideList;
 import com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmGuide;
 import com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmSolution;
 import com.honeyboard.api.user.model.bookmark.BookmarkedWebGuide;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface BookmarkMapper {
 
     // 알고리즘 가이드 북마크 조회
-    List<BookmarkedAlgorithmGuide> selectAllAlgorithmGuideBookmarks(@Param("userId") int userId);
+    List<AlgorithmGuideList> selectAllAlgorithmGuideBookmarks(@Param("userId") int userId);
 
     // 알고리즘 문제풀이 북마크 조회
     List<BookmarkedAlgorithmSolution> selectAllAlgorithmSolutionBookmarks(@Param("userId") int userId);

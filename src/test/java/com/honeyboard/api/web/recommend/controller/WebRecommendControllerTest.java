@@ -2,7 +2,7 @@ package com.honeyboard.api.web.recommend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.honeyboard.api.common.response.PageResponse;
-import com.honeyboard.api.web.recommend.model.WebRecommend;
+import com.honeyboard.api.web.recommend.model.response.WebRecommendList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -46,7 +46,7 @@ public class WebRecommendControllerTest {
 
         PageResponse<WebRecommend> response = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructParametricType(PageResponse.class, WebRecommend.class)
+                objectMapper.getTypeFactory().constructParametricType(PageResponse.class, WebRecommendList.class)
         );
 
         System.out.println("\n=== 웹 학습사이트 전체 조회 결과 ===");
