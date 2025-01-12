@@ -1,6 +1,6 @@
 package com.honeyboard.api.algorithm.tag.mapper;
 
-import com.honeyboard.api.algorithm.tag.model.Tag;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -8,9 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface TagMapper {
-    List<Tag> selectAllTag();
+    List<TagResponse> selectAllTag();
 
-    List<Tag> selectSearchTag(@Param("name") String input);
+    List<TagResponse> selectSearchTag(@Param("name") String input);
 
-    int insertTag(Tag tag);
+    int insertTag(TagResponse tag);
 }
