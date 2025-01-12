@@ -1,6 +1,6 @@
 package com.honeyboard.api.user.mapper;
 
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import com.honeyboard.api.user.model.UserInfo;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +13,7 @@ public interface AdminMapper {
 
     int updateUserInfo(@Param("UserInfo") UserInfo userInfo, @Param("userId") int userId);
 
-    int insertGeneration(Generation generation);
+    int insertGeneration(GenerationList generation);
 
     int updateGenerationIsActive(int generationId);
 
