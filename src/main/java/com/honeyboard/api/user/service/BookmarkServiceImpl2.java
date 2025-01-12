@@ -1,6 +1,6 @@
 package com.honeyboard.api.user.service;
 
-import com.honeyboard.api.user.mapper.BookmarkMapper;
+import com.honeyboard.api.user.mapper.BookmarkMapper2;
 import com.honeyboard.api.user.model.bookmark.Bookmark;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,9 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BookmarkServiceImpl implements BookmarkService {
+public class BookmarkServiceImpl2 implements BookmarkService2 {
 
-    private final BookmarkMapper bookmarkMapper;
+    private final BookmarkMapper2 bookmarkMapper;
 
     @Override
     public List<?> getAllBookmarks(int userId, String contentType) {

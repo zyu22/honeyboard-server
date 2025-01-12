@@ -3,7 +3,7 @@ package com.honeyboard.api.user.service;
 import com.honeyboard.api.user.model.bookmark.Bookmark;
 import java.util.List;
 
-public interface BookmarkService {
+public interface BookmarkService2 {
 
     //타입별 북마크 조회 contentType null이면 전체 조회
     List<?> getAllBookmarks(int userId, String contentType);
