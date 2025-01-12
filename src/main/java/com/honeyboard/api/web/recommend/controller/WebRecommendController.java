@@ -1,7 +1,9 @@
 package com.honeyboard.api.web.recommend.controller;
 
 import com.honeyboard.api.common.response.PageResponse;
-import com.honeyboard.api.web.recommend.model.WebRecommend;
+import com.honeyboard.api.web.recommend.model.request.WebRecommendRequest;
+import com.honeyboard.api.web.recommend.model.response.WebRecommendDetail;
+import com.honeyboard.api.web.recommend.model.response.WebRecommendList;
 import com.honeyboard.api.web.recommend.service.WebRecommendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,7 @@ public class WebRecommendController {
             @RequestParam(defaultValue = "1") int currentPage,
             @RequestParam(defaultValue = "16") int pageSize) {
         log.info("웹 추천 전체 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}", generationId, currentPage, pageSize);
-        PageResponse<WebRecommend> pageResponse = webRecommendService.getAllWebRecommend(generationId, currentPage, pageSize);
+        PageResponse<WebRecommendList> pageResponse = webRecommendService.getAllWebRecommend(generationId, currentPage, pageSize);
 
         if (pageResponse.getContent().isEmpty()) {
             log.info("웹 추천 전체 조회 완료 - 데이터 없음");
@@ -40,7 +42,7 @@ public class WebRecommendController {
             @RequestParam(defaultValue = "1") int currentPage,
             @RequestParam(defaultValue = "16") int pageSize) {
         log.info("웹 추천 검색 요청 - 기수: {}, 검색어: {}", generationId, title);
-        PageResponse<WebRecommend> pageResponse = webRecommendService.searchWebRecommend(title, generationId, currentPage, pageSize);
+        PageResponse<WebRecommendList> pageResponse = webRecommendService.searchWebRecommend(title, generationId, currentPage, pageSize);
 
         if (pageResponse.getContent().isEmpty()) {
             log.info("웹 추천 검색 완료 - 검색 결과 없음");
@@ -54,23 +56,23 @@ public class WebRecommendController {
     @GetMapping("/{recommendId}")
     public ResponseEntity<?> getWebRecommend(@PathVariable int recommendId) {
         log.info("웹 추천 상세 조회 요청 - ID: {}", recommendId);
-        WebRecommend webRecommend = webRecommendService.getWebRecommend(recommendId);
+        WebRecommendDetail webRecommend = webRecommendService.getWebRecommend(recommendId);
         log.info("웹 추천 상세 조회 완료 - ID: {}", recommendId);
         return ResponseEntity.ok(webRecommend);
     }
 
     @PostMapping
-    public ResponseEntity<?> addWebRecommend(@RequestBody WebRecommend webRecommend) {
+    public ResponseEntity<?> addWebRecommend(@RequestBody WebRecommendRequest webRecommend) {
         log.info("웹 추천 작성 요청");
         webRecommendService.addWebRecommend(webRecommend);
-        log.info("웹 추천 작성 완료 - ID: {}", webRecommend.getId());
+        log.info("웹 추천 작성 완료");
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{recommendId}")
     public ResponseEntity<?> updateWebRecommend(
             @PathVariable int recommendId,
-            @RequestBody WebRecommend webRecommend) {
+            @RequestBody WebRecommendRequest webRecommend) {
         log.info("웹 추천 수정 요청 - ID: {}", recommendId);
         webRecommendService.updateWebRecommend(recommendId, webRecommend);
         log.info("웹 추천 수정 완료 - ID: {}", recommendId);
