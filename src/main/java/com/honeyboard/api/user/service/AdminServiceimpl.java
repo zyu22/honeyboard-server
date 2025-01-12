@@ -1,6 +1,6 @@
 package com.honeyboard.api.user.service;
 
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import com.honeyboard.api.user.mapper.AdminMapper;
 import com.honeyboard.api.user.model.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class AdminServiceimpl implements AdminService {
     }
 
     @Override
-    public int addGeneration(Generation generation) {
+    public int addGeneration(GenerationList generation) {
         log.info("기수 등록 시작 - 기수 번호: {}", generation.getName());
         int result = adminMapper.insertGeneration(generation);
 

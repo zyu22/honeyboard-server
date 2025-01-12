@@ -9,7 +9,7 @@ import com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmSolution;
 import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
 import com.honeyboard.api.user.model.mypage.MyFinaleProject;
 import com.honeyboard.api.user.model.mypage.MyTrackProject;
-import com.honeyboard.api.user.service.BookmarkService;
+import com.honeyboard.api.user.service.BookmarkService2;
 import com.honeyboard.api.user.service.MyPageService;
 import com.honeyboard.api.user.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class UserControllerUnitTest {
     private UserService userService;
 
     @Mock
-    private BookmarkService bookmarkService;
+    private BookmarkService2 bookmarkService;
 
     @Mock
     private MyPageService myPageService;

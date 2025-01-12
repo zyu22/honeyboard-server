@@ -1,6 +1,6 @@
 package com.honeyboard.api.user.controller;
 
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import com.honeyboard.api.user.model.UserInfo;
 import com.honeyboard.api.user.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class AdminController {
     }
 
     @PostMapping("/generation")
-    public ResponseEntity<?> createGeneration(@RequestBody Generation generation) {  // 제네릭 타입 추가
+    public ResponseEntity<?> createGeneration(@RequestBody GenerationList generation) {  // 제네릭 타입 추가
         log.info("기수 등록 요청 - 기수 번호 : {}", generation.getName());
         int generationId = adminService.addGeneration(generation);  // ID 받기
         log.info("기수 등록 완료 - 기수 번호 : {}, ID: {}", generation.getName(), generationId);

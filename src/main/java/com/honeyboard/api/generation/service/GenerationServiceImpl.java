@@ -1,7 +1,7 @@
 package com.honeyboard.api.generation.service;
 
 import com.honeyboard.api.generation.mapper.GenerationMapper;
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,9 @@ public class GenerationServiceImpl implements GenerationService {
     private final GenerationMapper generationMapper;
 
     @Override
-    public List<Generation> getAllGenerations() {
+    public List<GenerationList> getAllGenerations() {
         log.info("전체 기수 조회 시작");
-        List<Generation> generations = generationMapper.selectGenerations();
+        List<GenerationList> generations = generationMapper.selectGenerations();
         log.info("전체 기수 조회 완료");
         return generations;
     }

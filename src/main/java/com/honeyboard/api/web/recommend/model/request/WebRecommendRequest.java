@@ -1,4 +1,4 @@
-package com.honeyboard.api.web.recommend.model;
+package com.honeyboard.api.web.recommend.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,14 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WebRecommend {
-    private  int id;
+public class WebRecommendRequest {
     private String title;
     private String url;
     private String content;
-    private int userId;
-    private int generationId;
-    private String createdAt;
-    private String updatedAt;
-    private boolean isDeleted;
 }

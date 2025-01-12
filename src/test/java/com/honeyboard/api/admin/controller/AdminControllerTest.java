@@ -1,7 +1,7 @@
 package com.honeyboard.api.admin.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import com.honeyboard.api.user.model.UserInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class AdminControllerTest {
     @WithMockUser
     void createGeneration_Success() throws Exception {
         // given
-        Generation generation = new Generation();
+        GenerationList generation = new GenerationList();
         generation.setName("14");
 
         // when

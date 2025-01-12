@@ -1,7 +1,7 @@
 package com.honeyboard.api.generation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.honeyboard.api.generation.model.Generation;
+import com.honeyboard.api.generation.model.GenerationList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,11 +39,11 @@ public class GenerationControllerTest {
 
         // then
         String responseBody = result.getResponse().getContentAsString();
-        List<Generation> generations = objectMapper.readValue(responseBody,
-                objectMapper.getTypeFactory().constructCollectionType(List.class, Generation.class));
+        List<GenerationList> generations = objectMapper.readValue(responseBody,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, GenerationList.class));
 
         System.out.println("\n=== 전체 기수 조회 결과 ===");
-        for (Generation generation : generations) {
+        for (GenerationList generation : generations) {
             System.out.println("기수 ID: " + generation.getId());
             System.out.println("기수 이름: " + generation.getName());
             System.out.println("활성화 여부: " + generation.isActive());
