@@ -21,4 +21,10 @@
         VALUES (#{name})
     </insert>
 
+    <select id="selectTagByName" resultType="com.honeyboard.api.algorithm.tag.model.Tag">
+        SELECT id, name
+        FROM tag
+        WHERE name = #{name}
+    </select>
+
 </mapper>

@@ -96,7 +96,7 @@
 
 
     <!--  Algorithm Problem 작성  -->
-    <insert id="insertAlgorithmProblem" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertAlgorithmProblem" useGeneratedKeys="true" keyProperty="createResponse.id">
         INSERT INTO algorithm_problem (title, url, user_id)
         VALUES (#{request.title}, #{request.url}, #{userId})
     </insert>
@@ -104,7 +104,7 @@
     <select id="existsByUrl" resultType="int">
         SELECT EXISTS (SELECT 1
                        FROM algorithm_problem
-                       WHERE url = #{request.url}
+                       WHERE url = #{url}
                          AND is_deleted = false)
     </select>
 
