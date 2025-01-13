@@ -60,8 +60,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         }
 
         log.info("프로젝트 생성 완료");
-        // create 부분 id 반환하게 수정하기
-        return 0;
+        return finaleProjectMapper.selectLastInsertedId();
     }
 
     @Override
@@ -100,7 +99,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         }
 
         log.info("프로젝트 삭제 완료 - finaleProjectId: {}", finaleProjectId);
-        return true;
+        return result > 0;
     }
 
     @Override
@@ -140,7 +139,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         }
 
         log.info("팀 프로젝트 수정 완료 - finaleProjectId: {}, finaleTeamId: {}", finaleProjectId, finaleTeamId);
-        return true;
+        return result > 0;
     }
 
     @Override
@@ -172,8 +171,26 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         }
 
         log.info("게시글 작성 완료 - finaleProjectId: {}", finaleProjectId);
-        // create 부분 id 반환하게 수정하기
-        return 0;
+        return finaleProjectMapper.selectLastInsertedBoardId();
+    }
+
+    @Override
+    @Transactional
+    public boolean updateFinaleProjectBoard(int finaleProjectId, int finaleProjectBoardId,
+                                         FinaleProjectBoardRequest request, User currentUser) {
+        log.info("게시글 수정 시작 - finaleProjectId: {}, boardId: {}, userId: {}",
+                finaleProjectId, finaleProjectBoardId, currentUser.getUserId());
+
+        validateBoardUpdate(finaleProjectId, finaleProjectBoardId, request, currentUser);
+
+        int result = finaleProjectMapper.updateFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, request);
+
+        if (result <= 0) {
+            throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
+        }
+
+        log.info("게시글 수정 완료 - finaleProjectId: {}, boardId: {}", finaleProjectId, finaleProjectBoardId);
+        return result > 0;
     }
 
     // FinaleProjectList를 반환하는 메서드
@@ -297,6 +314,28 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         if (!finaleProjectMapper.checkTeamMember(teamId, currentUser.getUserId())) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED_TEAM_MEMBER,
                     "해당 팀의 멤버만 게시글을 작성할 수 있습니다.");
+        }
+
+        // 필수 필드 검증
+        if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.BOARD_TITLE_REQUIRED);
+        }
+
+        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            throw new BusinessException(ErrorCode.BOARD_CONTENT_REQUIRED);
+        }
+    }
+
+    private void validateBoardUpdate(int finaleProjectId, int finaleProjectBoardId,
+                                     FinaleProjectBoardRequest request, User currentUser) {
+        // 프로젝트 존재 여부 확인
+        if (!finaleProjectMapper.checkFinaleProject(finaleProjectId)) {
+            throw new BusinessException(ErrorCode.PROJECT_NOT_FOUND);
+        }
+
+        // 게시글 작성자(팀 멤버) 확인
+        if (!finaleProjectMapper.checkBoardTeamMember(finaleProjectId, finaleProjectBoardId, currentUser.getUserId())) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED_BOARD_UPDATE);
         }
 
         // 필수 필드 검증

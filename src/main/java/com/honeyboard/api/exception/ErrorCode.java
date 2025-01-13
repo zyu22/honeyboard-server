@@ -34,7 +34,9 @@ public enum ErrorCode {
     UNAUTHORIZED_TEAM_MEMBER(HttpStatus.FORBIDDEN, "해당 팀의 멤버가 아닙니다."),
     BOARD_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 작성에 실패했습니다."),
     BOARD_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 제목은 필수입니다."),
-    BOARD_CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 내용은 필수입니다.");
+    BOARD_CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 내용은 필수입니다."),
+    BOARD_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 수정에 실패했습니다."),
+    UNAUTHORIZED_BOARD_UPDATE(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다.");
 
     private final HttpStatus status;
     private final String message;

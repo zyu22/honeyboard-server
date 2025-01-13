@@ -245,6 +245,29 @@
 		)
 	</select>
 
+	<!-- 게시글 작성자 확인을 위한 팀 멤버 체크 -->
+	<select id="checkBoardTeamMember" resultType="boolean">
+		SELECT EXISTS (
+			SELECT 1
+			FROM finale_project_board fpb
+					 JOIN finale_project fp ON fpb.finale_project_id = fp.id
+					 JOIN finale_team_member ftm ON fp.team_id = ftm.finale_team_id
+			WHERE fpb.id = #{finaleProjectBoardId}
+			  AND fp.id = #{finaleProjectId}
+			  AND ftm.user_id = #{userId}
+		)
+	</select>
+
+	<!-- 마지막에 추가된 id 확인 -->
+	<select id="selectLastInsertedBoardId">
+		SELECT MAX(id) FROM finale_project_board;
+	</select>
+
+	<!-- 마지막에 추가된 id 확인 -->
+	<select id="selectLastInsertedId">
+		SELECT MAX(id) FROM finale_project;
+	</select>
+
 	<!-- 프로젝트 생성 -->
 	<insert id="insertFinaleProjectWithTeam" parameterType="FinaleProjectCreate" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO finale_project (
@@ -327,6 +350,18 @@
 		WHERE id = #{finaleProjectId}
 		  AND team_id = #{finaleTeamId}
 		  AND is_deleted = 0
+	</update>
+
+	<!-- 게시글 수정 -->
+	<update id="updateFinaleProjectBoard">
+		UPDATE finale_project_board
+		SET
+			title = #{request.title},
+			summary = #{request.summary},
+			content = #{request.content},
+			thumbnail = #{request.thumbnail}
+		WHERE id = #{finaleProjectBoardId}
+		  AND finale_project_id = #{finaleProjectId}
 	</update>
 
 	<update id="updateFinaleProjectDeleteStatus" parameterType="int">

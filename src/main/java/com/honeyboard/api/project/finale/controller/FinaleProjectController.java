@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.finale.controller;
 
+import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectBoardRequest;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectCreate;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectTeamUpdate;
@@ -67,21 +68,23 @@ public class FinaleProjectController {
     @PostMapping
     public ResponseEntity<?> createFinaleProject(@RequestBody FinaleProjectCreate req) {
         log.info("피날레 팀 + 프로젝트 생성 시작");
-        finaleProjectService.createFinaleProject(req);
+        CreateResponse res = new CreateResponse();
+        res.setId(finaleProjectService.createFinaleProject(req));
         log.info("피날레 팀 + 프로젝트 생성 성공");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(res);
     }
 
     // 피날레 게시글 작성
     @PostMapping("/api/v1/project/finale/{finaleProjectId}/board")
-    public ResponseEntity<Void> createFinaleProjectBoard(
+    public ResponseEntity<?> createFinaleProjectBoard(
             @PathVariable int finaleProjectId,
             @RequestBody FinaleProjectBoardRequest request,
             @CurrentUser User currentUser) {
         log.info("피날레 게시글 작성 요청 - finaleProjectId: {}, userId: {}", finaleProjectId, currentUser.getUserId());
-        finaleProjectService.createFinaleProjectBoard(finaleProjectId, request, currentUser);
+        CreateResponse res = new CreateResponse();
+        res.setId(finaleProjectService.createFinaleProjectBoard(finaleProjectId, request, currentUser));
         log.info("피날레 게시글 작성 성공");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(res);
     }
 
     // 피날레 프로젝트 수정
@@ -105,6 +108,20 @@ public class FinaleProjectController {
                 finaleProjectId, finaleTeamId, request);
         finaleProjectService.updateFinaleProjectTeam(finaleProjectId, finaleTeamId, request);
         log.info("피날레 프로젝트 팀 수정 성공");
+        return ResponseEntity.ok().build();
+    }
+
+    // 피날레 프로젝트 게시글 수정
+    @PutMapping("/api/v1/project/finale/{finaleProjectId}/board/{finaleProjectBoardId}")
+    public ResponseEntity<Void> updateFinaleProjectBoard(
+            @PathVariable int finaleProjectId,
+            @PathVariable int finaleProjectBoardId,
+            @RequestBody FinaleProjectBoardRequest request,
+            @CurrentUser User currentUser) {
+        log.info("게시글 수정 요청 - finaleProjectId: {}, boardId: {}, userId: {}",
+                finaleProjectId, finaleProjectBoardId, currentUser.getUserId());
+
+        finaleProjectService.updateFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, request, currentUser);
         return ResponseEntity.ok().build();
     }
 

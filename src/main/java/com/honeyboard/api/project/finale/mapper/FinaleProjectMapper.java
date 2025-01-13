@@ -65,4 +65,16 @@ interface FinaleProjectMapper {
     int insertFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
                                  @Param("request") FinaleProjectBoardRequest request);
 
+    int updateFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
+                                 @Param("finaleProjectBoardId") int finaleProjectBoardId,
+                                 @Param("request") FinaleProjectBoardRequest request);
+
+    boolean checkBoardTeamMember(@Param("finaleProjectId") int finaleProjectId,
+                                 @Param("finaleProjectBoardId") int finaleProjectBoardId,
+                                 @Param("userId") int userId);
+
+    int selectLastInsertedBoardId();
+
+    int selectLastInsertedId();
+
 }
