@@ -1,15 +1,10 @@
-//package com.honeyboard.api.algorithm.solution.mapper;
-//
-//import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
-//import com.honeyboard.api.algorithm.solution.model.AlgorithmSolutionResponse;
-//import org.apache.ibatis.annotations.Mapper;
-//import org.apache.ibatis.annotations.Param;
-//
-//import java.util.List;
-//
-//@Mapper
-//public interface AlgorithmSolutionMapper {
-//
+package com.honeyboard.api.algorithm.solution.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AlgorithmSolutionMapper {
+
 //	int insertAlgorithmSolution(AlgorithmSolution algorithmSolution);
 //	List<AlgorithmSolutionResponse> selectAllAlgorithmSolution(@Param("problemId") int problemId,
 //															   @Param("generationId") Integer generationId,
@@ -26,5 +21,5 @@
 //								@Param("generationId") Integer generationId,
 //								@Param("languages") List<String> languages,
 //								@Param("userId") int userId);
-//
-//}
+	
+}

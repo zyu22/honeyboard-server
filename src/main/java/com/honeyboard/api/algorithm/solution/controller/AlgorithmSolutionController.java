@@ -1,29 +1,20 @@
-//package com.honeyboard.api.algorithm.solution.controller;
-//
-//import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
-//import com.honeyboard.api.algorithm.solution.model.AlgorithmSolutionResponse;
-//import com.honeyboard.api.algorithm.solution.service.AlgorithmSolutionService;
-//import com.honeyboard.api.common.response.PageResponse;
-//import com.honeyboard.api.user.model.CurrentUser;
-//import com.honeyboard.api.user.model.User;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Map;
-//
-//
-//@RestController
-//@RequestMapping("/api/v1/algorithm/problem")
-//@RequiredArgsConstructor
-//@Slf4j
-//public class AlgorithmSolutionController {
-//
-//	private final AlgorithmSolutionService algorithmSolutionService;
-//
+package com.honeyboard.api.algorithm.solution.controller;
+
+import com.honeyboard.api.algorithm.solution.service.AlgorithmSolutionService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+
+@RestController
+@RequestMapping("/api/v1/algorithm/problem")
+@RequiredArgsConstructor
+@Slf4j
+public class AlgorithmSolutionController {
+
+	private final AlgorithmSolutionService algorithmSolutionService;
+
 //	//알고리즘 풀이 작성 POST /api/v1/algorithm/problem/{problemId}/solution..
 //	@PostMapping("/{problemId}/solution")
 //	public ResponseEntity<?> createAlgorithmSolution(
@@ -111,4 +102,4 @@
 //		log.info("알고리즘 풀이 삭제 완료");
 //		return ResponseEntity.ok().build();
 //	}
-//}
+}

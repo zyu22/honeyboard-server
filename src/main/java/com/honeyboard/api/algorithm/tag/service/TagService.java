@@ -1,13 +1,9 @@
-//package com.honeyboard.api.algorithm.tag.service;
+package com.honeyboard.api.algorithm.tag.service;
+
+public interface TagService {
+//    List<TagResponse> getAllTag();
 //
-//import com.honeyboard.api.algorithm.tag.model.Tag;
+//    List<TagResponse> searchTag(String input);
 //
-//import java.util.List;
-//
-//public interface TagService {
-//    List<Tag> getAllTag();
-//
-//    List<Tag> searchTag(String input);
-//
-//    Tag addTag(Tag tag);
-//}
+//    TagResponse addTag(TagResponse tag);
+}

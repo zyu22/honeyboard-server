@@ -1,23 +1,17 @@
-//package com.honeyboard.api.algorithm.solution.service;
-//
-//import com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper;
-//import com.honeyboard.api.algorithm.solution.model.AlgorithmSolution;
-//import com.honeyboard.api.algorithm.solution.model.AlgorithmSolutionResponse;
-//import com.honeyboard.api.common.model.PageInfo;
-//import com.honeyboard.api.common.response.PageResponse;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.List;
-//
-//@Service
-//@RequiredArgsConstructor
-//@Slf4j
-//public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
-//
-//	private final AlgorithmSolutionMapper algorithmSolutionMapper;
-//
+package com.honeyboard.api.algorithm.solution.service;
+
+import com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
+
+	private final AlgorithmSolutionMapper algorithmSolutionMapper;
+
 //	@Override
 //	public void addAlgorithmSolution(AlgorithmSolution algorithmSolution) {
 //		log.info("알고리즘 솔루션 추가 시작 - 문제 ID: {}", algorithmSolution.getProblemId());
@@ -99,5 +93,5 @@
 //
 //		log.info("알고리즘 솔루션 삭제 완료");
 //	}
-//
-//}
+
+}

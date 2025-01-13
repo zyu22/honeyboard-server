@@ -5,6 +5,7 @@ import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetai
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
 import com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionList;
 import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
+import com.honeyboard.api.common.model.CreateResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,7 +30,8 @@ public interface AlgorithmProblemMapper {
 
     // AlgorithmProblem 작성
     int insertAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,
-                               @Param("userId") int userId);
+                               @Param("userId") int userId,
+                               @Param("createResponse") CreateResponse response);
     int existsByUrl(@Param("request") AlgorithmProblemRequest request);
 
     // AlgorithmProblem 수정

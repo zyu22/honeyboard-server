@@ -2,14 +2,10 @@ package com.honeyboard.api.project.track.service;
 
 import com.honeyboard.api.project.model.TeamRequest;
 import com.honeyboard.api.project.track.mapper.TrackTeamMapper;
-import com.honeyboard.api.project.track.model.response.TrackTeamList;
-import com.honeyboard.api.user.model.UserName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +18,7 @@ public class TrackTeamServiceImpl implements TrackTeamService {
     public void addTrackTeam(int trackProjectId, TeamRequest trackTeam) {
         // 입력값 검증
         if (trackProjectId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 프로젝트 ID입니다.");
+            throw new IllegalArgumentException("유효하지 않은 프로젝트 ID 입니다.");
         }
         if (trackTeam == null || trackTeam.getLeaderId() <= 0) {
             throw new IllegalArgumentException("팀장 정보가 유효하지 않습니다.");
