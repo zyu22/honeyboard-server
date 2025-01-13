@@ -1,10 +1,18 @@
 package com.honeyboard.api.algorithm.problem.controller;
 
+import com.honeyboard.api.algorithm.problem.model.request.AlgorithmProblemRequest;
+import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail;
+import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
 import com.honeyboard.api.algorithm.problem.service.AlgorithmProblemService;
+import com.honeyboard.api.common.model.CreateResponse;
+import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/algorithm/problem")
@@ -13,61 +21,62 @@ import org.springframework.web.bind.annotation.RestController;
 public class AlgorithmProblemController {
     private final AlgorithmProblemService as;
 
-//    @GetMapping
-//    public ResponseEntity<?> getAllAlgorithmProblem(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "16") int size,
-//            @RequestParam(required = true) String searchType,
-//            @RequestParam(required = false) String keyword) {
-//        log.info("알고리즘 문제 조회 요청 - 페이지: {}, 사이즈: {}, 검색타입: {}, 키워드: {}",
-//                page, size, searchType, keyword);
-//
-//        PageResponse<AlgorithmProblem> list = (searchType != null && !searchType.isEmpty())
-//                ? as.searchProblem(page, size, searchType, keyword)
-//                : as.getAllProblem(page, size);
-//
-//        return list.getContent().isEmpty()
-//                ? ResponseEntity.noContent().build()
-//                : ResponseEntity.ok(list);
-//    }
-//
-//    @GetMapping("/{problemId}")
-//    public ResponseEntity<?> getAlgorithmProblem(@PathVariable int problemId) {
-//        AlgorithmProblem problem = as.getProblem(problemId);
-//        return problem == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(problem);
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<?> createAlgorithmProblem(@RequestBody AlgorithmProblem ap) {
-//        log.info("알고리즘 문제 생성 요청 - 제목: {}", ap.getTitle());
-//
-//        AlgorithmProblem createdProblem = as.addProblem(ap);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdProblem);
-//    }
-//
-//    @PutMapping("/{problemId}")
-//    public ResponseEntity<?> updateAlgorithmProblem(@PathVariable int problemId, @RequestBody AlgorithmProblem ap) {
-//        log.info("알고리즘 문제 수정 요청 - ID: {}", problemId);
-//
-//        AlgorithmProblem updatedProblem = as.updateProblem(problemId, ap);
-//        return ResponseEntity.ok(updatedProblem);
-//    }
-//
-//    @DeleteMapping("/{problemId}")
-//    public ResponseEntity<?> deleteAlgorithmProblem(@PathVariable int problemId) {
-//        log.info("알고리즘 문제 삭제 요청 - ID: {}", problemId);
-//
-//        as.softDeleteProblem(problemId);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("/check-url")
-//    public ResponseEntity<?> checkAlgorithmProblemUrl(@RequestParam String url) {
-//        log.info("URL 중복 체크 요청: {}", url);
-//
-//        boolean res = as.existsByUrl(url);
-//        return ResponseEntity.ok().body(res);
-//    }
+    // AlgorithmProblem 전체조회
+    @GetMapping
+    public ResponseEntity<?> getAllAlgorithmProblem(
+            @RequestParam(defaultValue = "1") int currentPage,
+            @RequestParam(defaultValue = "16") int pageSize,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+        log.info("알고리즘 문제 조회 요청 - 페이지: {}, 사이즈: {}, 검색타입: {}, 키워드: {}",
+                currentPage, pageSize, searchType, keyword);
 
+        PageResponse<AlgorithmProblemList> response = as.getAllProblem(currentPage, pageSize, searchType, keyword);
 
+        return response.getContent().isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(response);
+    }
+
+    // AlgorithmProblem 상세조회
+    @GetMapping("/{problemId}")
+    public ResponseEntity<?> getAlgorithmProblem(@PathVariable int problemId) {
+        log.info("알고리즘 문제 상세 조회 요청 - 문제ID: {}", problemId);
+
+        AlgorithmProblemDetail problemDetail = as.getProblem(problemId);
+
+        log.info("알고리즘 문제 상세 조회 완료 - 문제ID: {}", problemId);
+
+        return ResponseEntity.ok(problemDetail);
+    }
+
+    // AlgorithmProblem 문제 작성
+    @PostMapping
+    public ResponseEntity<?> createAlgorithmProblem(@RequestBody AlgorithmProblemRequest request,
+                                                    @CurrentUser User user) {
+        log.info("알고리즘 문제 생성 요청 - 제목: {}", request.getTitle());
+
+        CreateResponse createResponse = as.addProblem(request, user.getUserId());
+        log.info("알고리즘 문제 작성 완료 - ID: {}", createResponse.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
+    }
+
+    // AlgorithmProblem 문제 수정
+    @PutMapping("/{problemId}")
+    public ResponseEntity<?> updateAlgorithmProblem(@PathVariable int problemId,
+                                                    @RequestBody AlgorithmProblemRequest request) {
+        log.info("알고리즘 문제 수정 요청 - ID: {}", problemId);
+
+        as.updateProblem(problemId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    // AlgorithmProblem 문제 삭제
+    @DeleteMapping("/{problemId}")
+    public ResponseEntity<?> deleteAlgorithmProblem(@PathVariable int problemId) {
+        log.info("알고리즘 문제 삭제 요청 - ID: {}", problemId);
+
+        as.softDeleteProblem(problemId);
+        return ResponseEntity.ok().build();
+    }
 }
