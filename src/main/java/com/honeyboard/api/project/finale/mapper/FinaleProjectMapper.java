@@ -24,7 +24,7 @@ interface FinaleProjectMapper {
     List<FinaleTeamList> selectFinaleTeamList(int finaleProjectId);
 
     // 프로젝트 생성
-    int insertFinaleProject(FinaleProjectCreate project);
+    int insertFinaleProject(@Param("finaleProjectCreate")FinaleProjectCreate project);
 
     // 프로젝트 수정
     int updateFinaleProject(@Param("finaleProjectId") int finaleProjectId,

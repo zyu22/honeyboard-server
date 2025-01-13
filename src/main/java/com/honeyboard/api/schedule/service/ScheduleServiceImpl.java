@@ -1,23 +1,23 @@
-//package com.honeyboard.api.schedule.service;
-//
-//import com.honeyboard.api.schedule.mapper.ScheduleMapper;
-//import com.honeyboard.api.schedule.model.Schedule;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.LocalDate;
-//import java.time.format.DateTimeFormatter;
-//import java.time.format.DateTimeParseException;
-//import java.util.Collections;
-//import java.util.List;
-//
-//@Service
-//@RequiredArgsConstructor
-//@Slf4j
-//public class ScheduleServiceImpl implements ScheduleService {
-//
-//	private final ScheduleMapper scheduleMapper;
+package com.honeyboard.api.schedule.service;
+
+import com.honeyboard.api.schedule.mapper.ScheduleMapper;
+import com.honeyboard.api.schedule.model.Schedule;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Collections;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class ScheduleServiceImpl implements ScheduleService {
+
+	private final ScheduleMapper scheduleMapper;
 //
 //	@Override
 //	public void addSchedule(Schedule schedule) {
@@ -113,5 +113,5 @@
 //
 //		log.info("일정 삭제 완료 - 일정 ID: {}", scheduleId);
 //	}
-//
-//}
+
+}

@@ -1,11 +1,11 @@
-//package com.honeyboard.api.project.finale.mapper;
-//
-//import java.util.List;
-//
-//import org.apache.ibatis.annotations.Param;
-//
-//public interface FinaleProjectBoardMapper {
-//
+package com.honeyboard.api.project.finale.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+public interface FinaleProjectBoardMapper {
+
 //	List<FinaleProjectBoard> selectAllFinaleBoards(
 //			@Param("finaleId") int finaleId
 //	);
@@ -24,4 +24,4 @@
 //	void updateFinaleBoardSubmitStatus(int boardId);
 //
 //	int deleteFinaleBoard(int boardId);
-//}
+}

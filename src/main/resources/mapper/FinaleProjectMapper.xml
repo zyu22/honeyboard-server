@@ -277,9 +277,9 @@
 			created_at,
 			is_deleted
 		) VALUES (
-					 #{title},
-					 #{description},
-					 #{url},
+					 #{finaleProjectCreate.title},
+					 #{finaleProjectCreate.description},
+					 #{finaleProjectCreate.url},
 					 NOW(),
 					 0
 				 );
@@ -296,15 +296,15 @@
 			@project_id,
 			user_id,
 			CASE
-				WHEN user_id = #{teams.leaderId} THEN 'LEADER'
+				WHEN user_id = #{finaleProjectCreate.teams.leaderId} THEN 'LEADER'
 				ELSE 'MEMBER'
 				END,
 			NOW()
 		FROM (
-				 SELECT #{teams.leaderId} as user_id
+				 SELECT #{finaleProjectCreate.teams.leaderId} as user_id
 				 UNION ALL
 				 SELECT id FROM JSON_TABLE(
-										#{teams.memberIds},
+										#{finaleProjectCreate.teams.leaderId},
 										'$[*]' COLUMNS (id INT PATH '$.id')
 								) as members
 			 ) users;

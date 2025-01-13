@@ -4,7 +4,7 @@ import com.honeyboard.api.algorithm.problem.model.request.AlgorithmProblemReques
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
 import com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionList;
-import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
+import com.honeyboard.api.algorithm.tag.model.TagResponse;
 import com.honeyboard.api.common.model.CreateResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

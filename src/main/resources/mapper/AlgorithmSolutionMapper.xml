@@ -6,7 +6,7 @@
 <mapper namespace="com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper">
 
 	<!-- 전체 조회 + 정렬 + 삭제 여부 + 내 기수만 + 페이지네이션 -->
-	<select id="selectAllAlgorithmSolution" resultType="AlgorithmSolutionResponse">
+	<select id="selectAllAlgorithmSolution" resultType="AlgorithmSolutionList">
 		SELECT
 			s.id as solutionId,
 			s.title,
@@ -52,7 +52,7 @@
 	</select>
 	
 	<!-- 알고리즘 풀이 상세 조회	 -->
-	<select id="selectAlgorithmSolution" resultType="AlgorithmSolutionResponse">
+	<select id="selectAlgorithmSolution" resultType="AlgorithmSolutionDetail">
 		SELECT
 			s.id AS solutionId,
 			s.title,
@@ -76,7 +76,7 @@
 	</select>
 	
 	<!-- 알고리즘 풀이 작성 -->
-	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolution" useGeneratedKeys="true" keyProperty="solutionId">
+	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolutionRequest" useGeneratedKeys="true" keyProperty="solutionId">
 		INSERT INTO algorithm_problem_solution (
 			problem_id,
 			title,
@@ -108,7 +108,7 @@
 	</insert>
 	
 	<!-- 알고리즘 풀이 수정 -->
-	<update id="updateAlgorithmSolution" parameterType="AlgorithmSolution">
+	<update id="updateAlgorithmSolution" parameterType="AlgorithmSolutionRequest">
 		UPDATE algorithm_problem_solution
 		SET
 			title = #{title},

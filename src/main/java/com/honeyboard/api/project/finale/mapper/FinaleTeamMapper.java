@@ -1,12 +1,12 @@
-//package com.honeyboard.api.project.finale.mapper;
-//
-//import java.time.LocalDate;
-//import java.util.List;
-//
-//import com.honeyboard.api.user.model.UserName;
-//import org.apache.ibatis.annotations.Param;
-//
-//public interface FinaleTeamMapper {
+package com.honeyboard.api.project.finale.mapper;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import com.honeyboard.api.user.model.UserName;
+import org.apache.ibatis.annotations.Param;
+
+public interface FinaleTeamMapper {
 //
 //	List<FinaleTeam> selectSubmitStatusByDate(LocalDate targetDate);
 //
@@ -41,5 +41,5 @@
 //			@Param("userIds") List<Integer> userIds,
 //			@Param("excludeTeamId") Integer excludeTeamId
 //	);
-//
-//}
+
+}
