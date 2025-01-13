@@ -13,4 +13,6 @@ public interface TagMapper {
     List<TagResponse> selectSearchTag(@Param("name") String input);
 
     int insertTag(TagResponse tag);
+
+    TagResponse selectTagByName(String name);
 }
