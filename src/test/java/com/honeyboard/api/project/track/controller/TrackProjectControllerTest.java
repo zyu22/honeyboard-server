@@ -1,7 +1,7 @@
 package com.honeyboard.api.project.track.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.honeyboard.api.project.track.model.TrackProject;
+import com.honeyboard.api.project.track.model.request.TrackProjectRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,18 +9,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-public class TrackProjectControllerTest {
+@Transactional
+class TrackProjectControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,12 +37,12 @@ public class TrackProjectControllerTest {
         Integer generationId = 13;
 
         // when & then
-        MvcResult result = mockMvc.perform(get("/api/v1/project/track")
-                        .param("generation", String.valueOf(generationId))
+        mockMvc.perform(get("/api/v1/project/track")
+                        .param("generationId", String.valueOf(generationId))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
+                .andExpect(jsonPath("$").isArray())
+                .andDo(print());
     }
 
     @Test
@@ -48,59 +50,50 @@ public class TrackProjectControllerTest {
     void getTrackProject_Success() throws Exception {
         // given
         int trackId = 2;
+        int trackProjectId = 1;
 
         // when & then
-        MvcResult result = mockMvc.perform(get("/api/v1/project/track/{trackId}", trackId)
+        mockMvc.perform(get("/api/v1/project/track/{trackId}/{trackProjectId}", trackId, trackProjectId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
-
-        String responseBody = result.getResponse().getContentAsString();
-        TrackProject response = objectMapper.readValue(responseBody, TrackProject.class);
-
-        System.out.println("\n=== 프로젝트 상세 조회 결과 ===");
-        System.out.println("프로젝트 ID: " + response.getId());
-        System.out.println("프로젝트 제목: " + response.getTitle());
-        System.out.println("프로젝트 내용: " + response.getContent());
+                .andExpect(jsonPath("$.id").exists())
+                .andDo(print());
     }
 
     @Test
     @WithMockUser
     void getTrackProjectMembers_Success() throws Exception {
         // given
-        Integer generationId = 13;
+        int trackProjectId = 1;
 
         // when & then
-        MvcResult result = mockMvc.perform(get("/api/v1/project/track/member")
-                        .param("generation", String.valueOf(generationId))
+        mockMvc.perform(get("/api/v1/project/track/{trackProjectId}/available-user", trackProjectId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn();
+                .andExpect(jsonPath("$").isArray())
+                .andDo(print());
     }
 
     @Test
     @WithMockUser
     void createTrackProject_Success() throws Exception {
         // given
-        TrackProject request = new TrackProject();
-        request.setGenerationId(13);
+        TrackProjectRequest request = new TrackProjectRequest();
         request.setTitle("테스트 프로젝트");
-        request.setContent("테스트 입니다!!!!");
+        request.setDescription("테스트 입니다!!!!");
         request.setObjective("이건 테스트 프로젝트입니다.");
-        request.setUserId(5);
 
         List<Integer> excludedMemberIds = new ArrayList<>();
         excludedMemberIds.add(10);
         excludedMemberIds.add(15);
-        request.setExcludedMemberIds(excludedMemberIds);
+        request.setExcludedMembers(excludedMemberIds);
 
         // when & then
         mockMvc.perform(post("/api/v1/project/track")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
                 .andDo(print());
     }
 
@@ -108,16 +101,14 @@ public class TrackProjectControllerTest {
     @WithMockUser
     void updateTrackProject_Success() throws Exception {
         // given
-        int trackId = 10;
-        TrackProject request = new TrackProject();
-        request.setGenerationId(13);
+        int trackProjectId = 10;
+        TrackProjectRequest request = new TrackProjectRequest();
         request.setTitle("수정된 프로젝트");
         request.setObjective("수정되었는데요?");
-        request.setContent("수정수정수정데스네");
-
+        request.setDescription("수정수정수정데스네");
 
         // when & then
-        mockMvc.perform(put("/api/v1/project/track/{trackId}", trackId)
+        mockMvc.perform(put("/api/v1/project/track/{trackProjectId}", trackProjectId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -128,10 +119,10 @@ public class TrackProjectControllerTest {
     @WithMockUser
     void deleteTrackProject_Success() throws Exception {
         // given
-        int trackId = 10;
+        int trackProjectId = 10;
 
         // when & then
-        mockMvc.perform(delete("/api/v1/project/track/{trackId}", trackId))
+        mockMvc.perform(delete("/api/v1/project/track/{trackProjectId}", trackProjectId))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -140,7 +131,7 @@ public class TrackProjectControllerTest {
     @WithMockUser
     void createTrackProject_Fail_InvalidRequest() throws Exception {
         // given
-        TrackProject request = new TrackProject();
+        TrackProjectRequest request = new TrackProjectRequest();
         // 필수 값을 비워둠
 
         // when & then

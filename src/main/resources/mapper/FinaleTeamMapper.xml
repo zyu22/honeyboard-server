@@ -1,142 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-    
+
+
 <mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleTeamMapper">
-	
-	<select id="selectSubmitStatusByDate" parameterType="java.time.LocalDate" resultType="FinaleTeam">
-	    SELECT 
-	        fp.team_id AS teamId,
-	        CASE 
-	            WHEN fpb.id IS NOT NULL THEN true 
-	            ELSE false 
-	        END AS hasSubmitted
-	    FROM finale_project fp
-	    LEFT JOIN finale_project_board fpb 
-	        ON fp.team_id = fpb.team_id 
-	        AND DATE(fpb.created_at) = #{targetDate}
-	        AND fpb.is_deleted = false
-	</select>
-	
-	<select id="selectRemainedUsers" parameterType="int" resultType="UserName">
-		SELECT DISTINCT u.id AS userId, u.name
-		FROM user u
-		WHERE u.generation_id = #{generationId}
-		AND u.id NOT IN (
-			SELECT ftm.user_id
-			FROM finale_team_member ftm
-			JOIN finale_team ft ON ftm.finale_team_id = ft.id
-			WHERE ft.generation_id = #{generationId}
-		)
-	</select>
 
-	<select id="selectTeamMembers" parameterType="int" resultType="FinaleMember">
-		SELECT
-			ftm.id as finaleMemberId,
-			ftm.finale_team_id as finaleTeamId,
-			ftm.user_id as userId,
-			u.name as name,
-			ftm.role as role,
-			ftm.created_at as createdAt
-		FROM finale_team_member ftm
-				 JOIN user u ON ftm.user_id = u.id
-		WHERE ftm.finale_team_id = #{teamId}
-		ORDER BY
-			CASE ftm.role
-				WHEN 'leader' THEN 1
-				WHEN 'member' THEN 2
-				END
-	</select>
+<!--	<select id="selectSubmitStatusByDate" parameterType="java.time.LocalDate" resultType="FinaleTeam">-->
+<!--	    SELECT-->
+<!--	        fp.team_id AS teamId,-->
+<!--	        CASE-->
+<!--	            WHEN fpb.id IS NOT NULL THEN true-->
+<!--	            ELSE false-->
+<!--	        END AS hasSubmitted-->
+<!--	    FROM finale_project fp-->
+<!--	    LEFT JOIN finale_project_board fpb-->
+<!--	        ON fp.team_id = fpb.team_id-->
+<!--	        AND DATE(fpb.created_at) = #{targetDate}-->
+<!--	        AND fpb.is_deleted = false-->
+<!--	</select>-->
 
-	<select id="selectTeamById" parameterType="int" resultType="FinaleTeam">
-		SELECT
-			id as teamId,
-			generation_id as generationId,
-			submitted_at as submittedAt,
-			created_at as createdAt
-		FROM finale_team
-		WHERE id = #{teamId}
-	</select>
+<!--	<select id="selectRemainedUsers" parameterType="int" resultType="UserName">-->
+<!--		SELECT DISTINCT u.id AS userId, u.name-->
+<!--		FROM user u-->
+<!--		WHERE u.generation_id = #{generationId}-->
+<!--		AND u.id NOT IN (-->
+<!--			SELECT ftm.user_id-->
+<!--			FROM finale_team_member ftm-->
+<!--			JOIN finale_team ft ON ftm.finale_team_id = ft.id-->
+<!--			WHERE ft.generation_id = #{generationId}-->
+<!--		)-->
+<!--	</select>-->
 
-	<select id="existsTeamById" parameterType="int" resultType="boolean">
-		SELECT EXISTS (
-			SELECT 1
-			FROM finale_team
-			WHERE id = #{teamId}
-		)
-	</select>
+<!--	<select id="selectTeamMembers" parameterType="int" resultType="FinaleMember">-->
+<!--		SELECT-->
+<!--			ftm.id as finaleMemberId,-->
+<!--			ftm.finale_team_id as finaleTeamId,-->
+<!--			ftm.user_id as userId,-->
+<!--			u.name as name,-->
+<!--			ftm.role as role,-->
+<!--			ftm.created_at as createdAt-->
+<!--		FROM finale_team_member ftm-->
+<!--				 JOIN user u ON ftm.user_id = u.id-->
+<!--		WHERE ftm.finale_team_id = #{teamId}-->
+<!--		ORDER BY-->
+<!--			CASE ftm.role-->
+<!--				WHEN 'leader' THEN 1-->
+<!--				WHEN 'member' THEN 2-->
+<!--				END-->
+<!--	</select>-->
 
-	<select id="findExistingTeamMembers" resultType="Integer">
-		SELECT DISTINCT user_id
-		FROM finale_team_member ftm
-		JOIN finale_team ft ON ftm.finale_team_id = ft.id
-		WHERE ftm.user_id IN
-		<foreach item="userId" collection="userIds" open="(" separator="," close=")">
-			#{userId}
-		</foreach>
-		<if test="excludeTeamId != null">
-			AND ftm.finale_team_id != #{excludeTeamId}
-		</if>
-	</select>
+<!--	<select id="selectTeamById" parameterType="int" resultType="FinaleTeam">-->
+<!--		SELECT-->
+<!--			id as teamId,-->
+<!--			generation_id as generationId,-->
+<!--			submitted_at as submittedAt,-->
+<!--			created_at as createdAt-->
+<!--		FROM finale_team-->
+<!--		WHERE id = #{teamId}-->
+<!--	</select>-->
 
-	<insert id="insertFinaleTeamWithMembers" parameterType="map" useGeneratedKeys="true" keyProperty="team.teamId">
-		INSERT INTO finale_team (
-		project_name,
-		summary,
-		generation_id,
-		is_completed,
-		created_at,
-		updated_at
-		) VALUES (
-		#{team.projectName},
-		#{team.summary},
-		#{team.generationId},
-		false,
-		CURRENT_DATE,
-		CURRENT_DATE
-		);
+<!--	<select id="existsTeamById" parameterType="int" resultType="boolean">-->
+<!--		SELECT EXISTS (-->
+<!--			SELECT 1-->
+<!--			FROM finale_team-->
+<!--			WHERE id = #{teamId}-->
+<!--		)-->
+<!--	</select>-->
 
-		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
-		VALUES
-		(#{team.teamId}, #{leaderId}, 'leader', CURRENT_DATE)
-		<if test="memberIds != null and memberIds.size > 0">
-			<foreach collection="memberIds" item="memberId" separator=",">
-				,(#{team.teamId}, #{memberId}, 'member', CURRENT_DATE)
-			</foreach>
-		</if>
-	</insert>
+<!--	<select id="findExistingTeamMembers" resultType="Integer">-->
+<!--		SELECT DISTINCT user_id-->
+<!--		FROM finale_team_member ftm-->
+<!--		JOIN finale_team ft ON ftm.finale_team_id = ft.id-->
+<!--		WHERE ftm.user_id IN-->
+<!--		<foreach item="userId" collection="userIds" open="(" separator="," close=")">-->
+<!--			#{userId}-->
+<!--		</foreach>-->
+<!--		<if test="excludeTeamId != null">-->
+<!--			AND ftm.finale_team_id != #{excludeTeamId}-->
+<!--		</if>-->
+<!--	</select>-->
 
-	<update id="updateTeamMembers">
-		UPDATE finale_team
-		SET
-		project_name = #{team.projectName},
-		summary = #{team.summary},
-		updated_at = CURRENT_DATE
-		WHERE id = #{team.teamId};
+<!--	<insert id="insertFinaleTeamWithMembers" parameterType="map" useGeneratedKeys="true" keyProperty="team.teamId">-->
+<!--		INSERT INTO finale_team (-->
+<!--		project_name,-->
+<!--		summary,-->
+<!--		generation_id,-->
+<!--		is_completed,-->
+<!--		created_at,-->
+<!--		updated_at-->
+<!--		) VALUES (-->
+<!--		#{team.projectName},-->
+<!--		#{team.summary},-->
+<!--		#{team.generationId},-->
+<!--		false,-->
+<!--		CURRENT_DATE,-->
+<!--		CURRENT_DATE-->
+<!--		);-->
 
-		DELETE FROM finale_team_member
-		WHERE finale_team_id = #{team.teamId};
+<!--		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)-->
+<!--		VALUES-->
+<!--		(#{team.teamId}, #{leaderId}, 'leader', CURRENT_DATE)-->
+<!--		<if test="memberIds != null and memberIds.size > 0">-->
+<!--			<foreach collection="memberIds" item="memberId" separator=",">-->
+<!--				,(#{team.teamId}, #{memberId}, 'member', CURRENT_DATE)-->
+<!--			</foreach>-->
+<!--		</if>-->
+<!--	</insert>-->
 
-		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)
-		VALUES
-		(#{team.teamId}, #{leaderId}, 'leader', CURRENT_DATE)
-		<if test="memberIds != null and memberIds.size > 0">
-			<foreach collection="memberIds" item="memberId" separator=",">
-				,(#{team.teamId}, #{memberId}, 'member', CURRENT_DATE)
-			</foreach>
-		</if>
-	</update>
+<!--	<update id="updateTeamMembers">-->
+<!--		UPDATE finale_team-->
+<!--		SET-->
+<!--		project_name = #{team.projectName},-->
+<!--		summary = #{team.summary},-->
+<!--		updated_at = CURRENT_DATE-->
+<!--		WHERE id = #{team.teamId};-->
 
-	<delete id="deleteTeamMembers" parameterType="int">
-		DELETE FROM finale_team_member
-		WHERE finale_team_id = #{teamId}
-	</delete>
+<!--		DELETE FROM finale_team_member-->
+<!--		WHERE finale_team_id = #{team.teamId};-->
 
-	<delete id="deleteTeamMember">
-		DELETE FROM finale_team_member
-		WHERE finale_team_id = #{teamId}
-		  AND user_id = #{userId}
-	</delete>
+<!--		INSERT INTO finale_team_member (finale_team_id, user_id, role, created_at)-->
+<!--		VALUES-->
+<!--		(#{team.teamId}, #{leaderId}, 'leader', CURRENT_DATE)-->
+<!--		<if test="memberIds != null and memberIds.size > 0">-->
+<!--			<foreach collection="memberIds" item="memberId" separator=",">-->
+<!--				,(#{team.teamId}, #{memberId}, 'member', CURRENT_DATE)-->
+<!--			</foreach>-->
+<!--		</if>-->
+<!--	</update>-->
+
+<!--	<delete id="deleteTeamMembers" parameterType="int">-->
+<!--		DELETE FROM finale_team_member-->
+<!--		WHERE finale_team_id = #{teamId}-->
+<!--	</delete>-->
+
+<!--	<delete id="deleteTeamMember">-->
+<!--		DELETE FROM finale_team_member-->
+<!--		WHERE finale_team_id = #{teamId}-->
+<!--		  AND user_id = #{userId}-->
+<!--	</delete>-->
 
 </mapper>

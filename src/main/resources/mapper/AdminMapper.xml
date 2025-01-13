@@ -34,7 +34,7 @@
         WHERE id = #{userId}
     </update>
 
-    <insert id="insertGeneration" parameterType="Generation" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGeneration" parameterType="GenerationList" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO generation(name,
                                is_active)
         VALUES (#{name},

@@ -73,7 +73,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
             throw new IllegalArgumentException("웹 추천 등록에 실패했습니다.");
         }
 
-        log.info("웹 추천 등록 완료 - ID: {}", webRecommend.getId());
+        log.info("웹 추천 등록 완료");
     }
 
     @Override

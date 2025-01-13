@@ -1,8 +1,6 @@
 package com.honeyboard.api.project.track.mapper;
 
-import com.honeyboard.api.project.track.model.TrackProjectStatus;
-import com.honeyboard.api.project.track.model.TrackTeam;
-import com.honeyboard.api.project.track.model.TrackTeamMember;
+import com.honeyboard.api.project.track.model.response.TrackTeamList;
 import com.honeyboard.api.user.model.UserName;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,15 +8,21 @@ import java.util.List;
 
 public interface TrackTeamMapper {
 
-    TrackProjectStatus selectTrackProjectStatus(int generationId, int projectId);
+    int insertTrackTeam(@Param("trackProjectId") int trackProjectId);
 
-    int insertTrackTeam(TrackTeam trackTeam);
+    int insertTeamLeader(@Param("teamId") int teamId, @Param("leaderId") int leaderId);
 
-    int insertTrackTeamMember(TrackTeam trackTeam);
+    int insertTeamMembers(@Param("teamId") int teamId, @Param("memberIds") List<Integer> memberIds);
 
-    int updateTrackTeamMembers(List<TrackTeamMember> members);
+    boolean existsByProjectIdAndUserId(@Param("trackProjectId") int trackProjectId, @Param("userId") int userId);
 
-    int deleteTrackTeam(int teamId);
+    int getTeamLeaderId(@Param("teamId") int teamId);
 
-    List<UserName> selectRemainingUsers(@Param("generationId")Integer generationId, @Param("projectId") int projectId);
+    int deleteAllTeamMembers(@Param("teamId") int teamId);
+
+    int updateTeamLeader(@Param("teamId") int teamId, @Param("oldLeaderId") int oldLeaderId, @Param("newLeaderId") int newLeaderId);
+
+    int updateTeamCompleted(@Param("teamId") int teamId, @Param("isCompleted") boolean isCompleted);
+
+
 }

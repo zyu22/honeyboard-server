@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
-	
+
 	private final AlgorithmSolutionMapper algorithmSolutionMapper;
 
 //	@Override

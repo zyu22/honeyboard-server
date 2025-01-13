@@ -1,126 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-    
+
 <mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectBoardMapper">
 
-	<resultMap id="FinaleProjectBoardMap" type="FinaleProjectBoard">
-	    <id property="boardId" column="boardId"/>
-	    <result property="summary" column="summary"/>
-	    <result property="title" column="title"/>
-	    <result property="content" column="content"/>
-        <result property="thumbnail" column="thumbnail"/>
-	    <result property="authorName" column="authorName"/>
-	    <result property="createdAt" column="createdAt"/>
-	    <collection property="finaleTeam" ofType="FinaleMember">
-	        <result property="userId" column="memberId"/>
-	        <result property="userName" column="memberName"/>
-	        <result property="memberRole" column="memberRole"/>
-	    </collection>
-	</resultMap>
+<!--	<resultMap id="FinaleProjectBoardMap" type="FinaleProjectBoard">-->
+<!--	    <id property="boardId" column="boardId"/>-->
+<!--	    <result property="summary" column="summary"/>-->
+<!--	    <result property="title" column="title"/>-->
+<!--	    <result property="content" column="content"/>-->
+<!--        <result property="thumbnail" column="thumbnail"/>-->
+<!--	    <result property="authorName" column="authorName"/>-->
+<!--	    <result property="createdAt" column="createdAt"/>-->
+<!--	    <collection property="finaleTeam" ofType="FinaleMember">-->
+<!--	        <result property="userId" column="memberId"/>-->
+<!--	        <result property="userName" column="memberName"/>-->
+<!--	        <result property="memberRole" column="memberRole"/>-->
+<!--	    </collection>-->
+<!--	</resultMap>-->
 
-	
-	<select id="selectAllFinaleBoards" parameterType="int" resultType="FinaleProjectBoard">
-        SELECT 
-            fpb.id AS boardId,
-            fpb.summary,
-            fpb.title,
-            fpb.content,
-            fpb.thumbnail,
-            u.name AS authorName,
-            fpb.created_at AS createdAt
-        FROM finale_project_board fpb
-        JOIN user u ON fpb.user_id = u.id
-        WHERE fpb.project_id = #{finaleId}
-        AND fpb.is_deleted = false
-        ORDER BY fpb.created_at DESC
-    </select>
-    
-    <select id="selectFinaleBoard" parameterType="int" resultMap="FinaleProjectBoardMap">
-	    SELECT 
-	        fpb.id AS boardId,
-	        fpb.summary,
-	        fpb.title,
-	        fpb.content,
-	        fpb.thumbnail,
-	        u.name AS authorName,
-	        fpb.created_at AS createdAt,
-	        ftm.user_id AS memberId,
-	        mu.name AS memberName,
-	        ftm.role AS memberRole
-	    FROM finale_project_board fpb
-	    JOIN user u ON fpb.user_id = u.id
-	    LEFT JOIN finale_team_member ftm ON ftm.finale_team_id = fpb.team_id
-	    LEFT JOIN user mu ON ftm.user_id = mu.id
-	    WHERE fpb.id = #{boardId}
-	    AND fpb.is_deleted = false
-	</select>
-	
-	<insert id="insertFinaleBoard" parameterType="FinaleProjectBoard">
-        INSERT INTO finale_project_board (
-            project_id,
-            team_id,
-            summary,
-            title,
-            content,
-            thumbnail,
-            user_id,
-            created_at
-        ) VALUES (
-            #{projectId},
-            #{teamId},
-            #{summary},
-            #{title},
-            #{content},
-            #{thumbnail},
-            #{userId},
-            CURRENT_DATE
-        )
-    </insert>
-    
-    <update id="updateFinaleBoard">
-        UPDATE finale_project_board
-        SET 
-            summary = #{board.summary},
-            title = #{board.title},
-            content = #{board.content},
-            thumbnail = #{board.thumbnail},
-            updated_at = CURRENT_DATE
-        WHERE id = #{boardId}
-        AND is_deleted = false
-    </update>
-    
-    <update id="updateFinaleBoardSubmitStatus" parameterType="int">
-        UPDATE finale_team
-        SET submitted_at = CURRENT_DATE
-        WHERE id = (
-            SELECT team_id 
-            FROM finale_project_board 
-            WHERE id = #{boardId}
-        )
-    </update>
-    
-    <update id="deleteFinaleBoard" parameterType="int">
-        UPDATE finale_project_board
-        SET 
-            is_deleted = true,
-            updated_at = CURRENT_DATE
-        WHERE id = #{boardId}
-        AND is_deleted = false
-    </update>
-    
-    <select id="selectAllFinaleMembers" parameterType="int" resultType="FinaleMember">
-        SELECT 
-            u.id AS userId,
-            u.name AS userName,
-            ftm.role AS memberRole
-        FROM finale_team_member ftm
-        JOIN user u ON ftm.user_id = u.id
-        WHERE ftm.finale_team_id = (
-            SELECT team_id 
-            FROM finale_project_board 
-            WHERE id = #{boardId}
-        )
-    </select>
-	
+
+<!--	<select id="selectAllFinaleBoards" parameterType="int" resultType="FinaleProjectBoard">-->
+<!--        SELECT-->
+<!--            fpb.id AS boardId,-->
+<!--            fpb.summary,-->
+<!--            fpb.title,-->
+<!--            fpb.content,-->
+<!--            fpb.thumbnail,-->
+<!--            u.name AS authorName,-->
+<!--            fpb.created_at AS createdAt-->
+<!--        FROM finale_project_board fpb-->
+<!--        JOIN user u ON fpb.user_id = u.id-->
+<!--        WHERE fpb.project_id = #{finaleId}-->
+<!--        AND fpb.is_deleted = false-->
+<!--        ORDER BY fpb.created_at DESC-->
+<!--    </select>-->
+
+<!--    <select id="selectFinaleBoard" parameterType="int" resultMap="FinaleProjectBoardMap">-->
+<!--	    SELECT-->
+<!--	        fpb.id AS boardId,-->
+<!--	        fpb.summary,-->
+<!--	        fpb.title,-->
+<!--	        fpb.content,-->
+<!--	        fpb.thumbnail,-->
+<!--	        u.name AS authorName,-->
+<!--	        fpb.created_at AS createdAt,-->
+<!--	        ftm.user_id AS memberId,-->
+<!--	        mu.name AS memberName,-->
+<!--	        ftm.role AS memberRole-->
+<!--	    FROM finale_project_board fpb-->
+<!--	    JOIN user u ON fpb.user_id = u.id-->
+<!--	    LEFT JOIN finale_team_member ftm ON ftm.finale_team_id = fpb.team_id-->
+<!--	    LEFT JOIN user mu ON ftm.user_id = mu.id-->
+<!--	    WHERE fpb.id = #{boardId}-->
+<!--	    AND fpb.is_deleted = false-->
+<!--	</select>-->
+
+<!--	<insert id="insertFinaleBoard" parameterType="FinaleProjectBoard">-->
+<!--        INSERT INTO finale_project_board (-->
+<!--            project_id,-->
+<!--            team_id,-->
+<!--            summary,-->
+<!--            title,-->
+<!--            content,-->
+<!--            thumbnail,-->
+<!--            user_id,-->
+<!--            created_at-->
+<!--        ) VALUES (-->
+<!--            #{projectId},-->
+<!--            #{teamId},-->
+<!--            #{summary},-->
+<!--            #{title},-->
+<!--            #{content},-->
+<!--            #{thumbnail},-->
+<!--            #{userId},-->
+<!--            CURRENT_DATE-->
+<!--        )-->
+<!--    </insert>-->
+
+<!--    <update id="updateFinaleBoard">-->
+<!--        UPDATE finale_project_board-->
+<!--        SET-->
+<!--            summary = #{board.summary},-->
+<!--            title = #{board.title},-->
+<!--            content = #{board.content},-->
+<!--            thumbnail = #{board.thumbnail},-->
+<!--            updated_at = CURRENT_DATE-->
+<!--        WHERE id = #{boardId}-->
+<!--        AND is_deleted = false-->
+<!--    </update>-->
+
+<!--    <update id="updateFinaleBoardSubmitStatus" parameterType="int">-->
+<!--        UPDATE finale_team-->
+<!--        SET submitted_at = CURRENT_DATE-->
+<!--        WHERE id = (-->
+<!--            SELECT team_id-->
+<!--            FROM finale_project_board-->
+<!--            WHERE id = #{boardId}-->
+<!--        )-->
+<!--    </update>-->
+
+<!--    <update id="deleteFinaleBoard" parameterType="int">-->
+<!--        UPDATE finale_project_board-->
+<!--        SET-->
+<!--            is_deleted = true,-->
+<!--            updated_at = CURRENT_DATE-->
+<!--        WHERE id = #{boardId}-->
+<!--        AND is_deleted = false-->
+<!--    </update>-->
+
+<!--    <select id="selectAllFinaleMembers" parameterType="int" resultType="FinaleMember">-->
+<!--        SELECT-->
+<!--            u.id AS userId,-->
+<!--            u.name AS userName,-->
+<!--            ftm.role AS memberRole-->
+<!--        FROM finale_team_member ftm-->
+<!--        JOIN user u ON ftm.user_id = u.id-->
+<!--        WHERE ftm.finale_team_id = (-->
+<!--            SELECT team_id-->
+<!--            FROM finale_project_board-->
+<!--            WHERE id = #{boardId}-->
+<!--        )-->
+<!--    </select>-->
+
 </mapper>

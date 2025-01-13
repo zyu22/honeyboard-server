@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper">
 
-    <resultMap id="AlgorithmProblemWithTags" type="com.honeyboard.api.algorithm.problem.model.AlgorithmProblemList">
+    <resultMap id="AlgorithmProblemWithTags" type="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="url" column="url"/>
         <result property="createdAt" column="created_at"/>
-        <collection property="tags" ofType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
+        <collection property="tags" ofType="com.honeyboard.api.algorithm.tag.model.TagResponse">
             <id property="id" column="tag_id"/>
             <result property="name" column="tag_name"/>
         </collection>
@@ -73,7 +73,7 @@
         WHERE id = #{problemId}
     </select>
 
-    <select id="selectProblemSolutions" resultType="com.honeyboard.api.algorithm.problem.model.AlgorithmSolutionList">
+    <select id="selectProblemSolutions" resultType="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList">
         SELECT s.id,
                s.title,
                s.created_at as subtitle,
