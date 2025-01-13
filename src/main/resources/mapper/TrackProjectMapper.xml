@@ -2,86 +2,186 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectMapper">
-    <!-- 전체 조회 -->
-    <select id="selectAllTrackProjects" parameterType="Integer" resultType="TrackProject">
+    <!-- TeamMemberInfo resultMap -->
+    <resultMap id="teamMemberInfoMap" type="com.honeyboard.api.project.track.model.response.TeamMemberInfo">
+        <id property="id" column="member_id"/>
+        <result property="name" column="member_name"/>
+        <result property="role" column="member_role"/>
+    </resultMap>
+
+    <!-- TrackTeamList resultMap -->
+    <resultMap id="trackTeamListMap" type="com.honeyboard.api.project.track.model.response.TrackTeamList">
+        <id property="id" column="team_id"/>
+        <result property="submitted" column="is_completed"/>
+        <result property="projectBoardId" column="board_id"/>
+        <collection property="members" resultMap="teamMemberInfoMap"/>
+    </resultMap>
+
+    <!-- TrackProjectBoardList resultMap -->
+    <resultMap id="trackProjectBoardMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardList">
+        <id property="id" column="board_id"/>
+        <result property="title" column="board_title"/>
+        <result property="createdAt" column="board_created_at"/>
+        <result property="thumbnail" column="board_thumbnail"/>
+    </resultMap>
+
+    <!-- TrackProjectDetail resultMap -->
+    <resultMap id="trackProjectDetailMap" type="com.honeyboard.api.project.track.model.response.TrackProjectDetail">
+        <id property="id" column="project_id"/>
+        <result property="title" column="project_title"/>
+        <result property="objective" column="project_objective"/>
+        <result property="description" column="project_description"/>
+        <result property="createdAt" column="project_created_at"/>
+        <collection property="noTeamUsers" ofType="com.honeyboard.api.project.model.ProjectUserInfo">
+            <id property="id" column="no_team_user_id"/>
+            <result property="name" column="no_team_user_name"/>
+            <result property="role" column="no_team_user_role"/>
+        </collection>
+        <collection property="teams" resultMap="trackTeamListMap"/>
+        <collection property="trackProjectBoardList" resultMap="trackProjectBoardMap"/>
+    </resultMap>
+
+    <!-- 관통 프로젝트 전체 조회 -->
+    <select id="selectAllTrackProjects" parameterType="Integer" resultType="TrackProjectList">
         SELECT 
             id,
             title,
             thumbnail,
-            user_id,
-            generation_id,
-            created_at,
-            updated_at,
-            is_deleted
+            created_at
         FROM track_project
         WHERE is_deleted = false
-        <if test="generationId != null">
+        <if test="generationId != 0">
             AND generation_id = #{generationId}
         </if>
     </select>
     
-    <!-- 상세 조회 -->
-    <select id="selectTrackProjectById" parameterType="int" resultType="TrackProject">
-        SELECT 
-            id,
-            title,
-            objective,
-            content,
-            thumbnail,
-            user_id AS userId,
-            generation_id AS generationId,
-            created_at AS createdAt,
-            updated_at AS updatedAt,
-            is_deleted AS isDeleted
-        FROM track_project
-        WHERE id = #{trackId}
-        AND is_deleted = false
+    <!-- 관통 프로젝트 상세 조회 -->
+    <select id="selectTrackProjectById" resultMap="trackProjectDetailMap">
+        WITH NoTeamUsers AS (
+            SELECT u.id, u.name, u.role
+            FROM user u
+            WHERE u.generation_id = (
+                SELECT generation_id FROM track_project WHERE id = #{trackProjectId}
+            )
+              AND u.id NOT IN (
+                SELECT tm.user_id
+                FROM track_team_member tm
+                         JOIN track_team t ON tm.track_team_id = t.id
+                WHERE t.track_project_id = #{trackProjectId}
+            )
+              AND u.id NOT IN (
+                SELECT user_id FROM track_excluded_member
+                WHERE project_id = #{trackProjectId}
+            )
+        )
+        SELECT
+            /* 프로젝트 정보 */
+            tp.id AS project_id,
+            tp.title AS project_title,
+            tp.objective AS project_objective,
+            tp.description AS project_description,
+            tp.created_at AS project_created_at,
+
+            /* 팀이 없는 사용자 */
+            ntu.id AS no_team_user_id,
+            ntu.name AS no_team_user_name,
+            ntu.role AS no_team_user_role,
+
+            /* 팀 정보 */
+            tt.id AS team_id,
+            tt.is_completed,
+
+            /* 팀 멤버 정보 */
+            u.id AS member_id,
+            u.name AS member_name,
+            tm.role AS member_role,
+
+            /* 게시글 정보 */
+            pb.id AS board_id,
+            pb.title AS board_title,
+            pb.created_at AS board_created_at,
+            pb.thumbnail AS board_thumbnail
+
+        FROM track_project tp
+                 LEFT JOIN NoTeamUsers ntu ON 1=1
+                 LEFT JOIN track_team tt ON tp.id = tt.track_project_id
+                 LEFT JOIN track_team_member tm ON tt.id = tm.track_team_id
+                 LEFT JOIN user u ON tm.user_id = u.id
+                 LEFT JOIN track_project_board pb ON tt.id = pb.track_team_id
+        WHERE tp.id = #{trackProjectId}
+          AND tp.is_deleted = 0
+        ORDER BY tt.id, tm.id, pb.created_at DESC
     </select>
     
-    <!-- 프로젝트 멤버 조회 -->
-    <select id="selectTrackProjectMembers" parameterType="Integer" resultType="User">
+    <!-- 관통 프로젝트 가능한 인원 조회 -->
+    <select id="selectTrackProjectMembers" parameterType="Integer" resultType="ProjectUserInfo">
         SELECT DISTINCT u.*
         FROM user u
         WHERE u.generation_id = #{generationId}
         AND u.is_ssafy = true
     </select>
-    
-    <!-- 프로젝트 생성 -->
-    <insert id="insertTrackProject" parameterType="TrackProject" useGeneratedKeys="true" keyProperty="id">
+
+    <!-- 관통 프로젝트 생성 -->
+    <insert id="insertTrackProject" parameterType="com.honeyboard.api.project.track.model.request.TrackProjectRequest"
+            useGeneratedKeys="true" keyProperty="int">
         INSERT INTO track_project (
             title,
             objective,
-            content,
-            thumbnail,
+            description,
             user_id,
             generation_id,
             created_at,
             updated_at,
             is_deleted
         ) VALUES (
-            #{title},
-            #{objective},
-            #{content},
-            #{thumbnail},
-            #{userId},
-            #{generationId},
-            CURRENT_DATE,
-            CURRENT_DATE,
-            false
-        )
+                     #{title},
+                     #{objective},
+                     #{description},
+                     #{userId},
+                     (SELECT id FROM generation WHERE is_active = 1),
+                     NOW(),
+                     NOW(),
+                     0
+                 )
     </insert>
-    
+
+    <!-- 제외 인원 추가 -->
+    <insert id="insertExcludedMembers">
+        INSERT INTO track_excluded_member (
+            project_id,
+            user_id
+        ) VALUES
+        <foreach collection="excludedMembers" item="memberId" separator=",">
+            (#{trackProjectId}, #{excludedMemberId})
+        </foreach>
+    </insert>
+
+    <!-- 제외 인원 삭제 -->
+    <delete id="deleteSelectedExcludedMembers">
+        DELETE FROM track_excluded_member
+        WHERE project_id = #{trackProjectId}
+        AND user_id IN
+        <foreach collection="memberIds" item="memberId" open="(" separator="," close=")">
+            #{excludedMemberId}
+        </foreach>
+    </delete>
+
+    <!-- 제외 인원 조회 -->
+    <select id="selectExcludedMembers" resultType="integer">
+        SELECT user_id
+        FROM track_excluded_member
+        WHERE project_id = #{trackProjectId}
+    </select>
+
     <!-- 프로젝트 수정 -->
     <update id="updateTrackProject">
         UPDATE track_project
         SET 
             title = #{trackProject.title},
             objective = #{trackProject.objective},
-            content = #{trackProject.content},
-            thumbnail = #{trackProject.thumbnail},
-            generation_id = #{trackProject.generationId},
-            updated_at = CURRENT_DATE
-        WHERE id = #{trackId}
+            description = #{trackProject.description},
+            updated_at = NOW()
+        WHERE id = #{trackProjectId}
         AND is_deleted = false
     </update>
     
@@ -89,7 +189,7 @@
     <update id="deleteTrackProject" parameterType="int">
         UPDATE track_project
         SET is_deleted = true
-        WHERE id = #{trackId}
+        WHERE id = #{trackProjectId}
     </update>
     
     <!-- 존재 여부 확인 -->
@@ -101,20 +201,5 @@
             AND is_deleted = false
         )
     </select>
-    
-    <!-- 제외 멤버 조회 -->
-    <select id="selectExcludedMembers" parameterType="int" resultType="Integer">
-        SELECT user_id
-        FROM track_excluded_member
-        WHERE project_id = #{projectId}
-    </select>
 
-    <!-- 제외 멤버 추가-->
-    <insert id="insertExcludedMembers">
-        INSERT INTO track_excluded_member (project_id, user_id)
-        VALUES
-        <foreach collection="excludedMemberIds" item="userId" separator=",">
-            (#{trackProjectId}, #{userId})
-        </foreach>
-    </insert>
 </mapper>

@@ -1,20 +1,14 @@
 package com.honeyboard.api.project.track.service;
 
-import com.honeyboard.api.project.track.model.TrackProjectStatus;
-import com.honeyboard.api.project.track.model.TrackTeam;
+import com.honeyboard.api.project.model.TeamRequest;
+import com.honeyboard.api.project.track.model.response.TrackTeamList;
 import com.honeyboard.api.user.model.UserName;
 
 import java.util.List;
 
 public interface TrackTeamService {
 
-    TrackProjectStatus getProjectStatus(int generationId, int projectId);
+    void addTrackTeam(int trackProjectId, TeamRequest trackTeam);
 
-    void addTrackTeam(TrackTeam trackTeam);
-
-    void updateTrackTeam(TrackTeam trackTeam);
-
-    void removeTrackTeam(int teamId);
-
-    List<UserName> getRemainedUsers(Integer generationId, int projectId);
+    void updateTrackTeam(int trackProjectId, int trackTeamId, TeamRequest trackTeam);
 }
