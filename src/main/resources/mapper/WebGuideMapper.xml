@@ -3,113 +3,113 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.honeyboard.api.web.guide.mapper.WebGuideMapper">
-<!--    &lt;!&ndash; 웹 개념 전체/기수별 조회 &ndash;&gt;-->
-<!--    <select id="selectAllWebGuide" parameterType="int" resultType="WebGuide">-->
-<!--        SELECT-->
-<!--        id,-->
-<!--        title,-->
-<!--        thumbnail,-->
-<!--        user_id,-->
-<!--        generation_id,-->
-<!--        created_at,-->
-<!--        updated_at,-->
-<!--        is_deleted-->
-<!--        FROM web_guide-->
-<!--        WHERE is_deleted = false-->
-<!--        <if test="generationId != null">-->
-<!--            AND generation_id = #{generationId}-->
-<!--        </if>-->
-<!--        ORDER BY created_at DESC-->
-<!--        LIMIT #{offset}, #{pageSize}-->
-<!--    </select>-->
+<!--    &lt;!&ndash; 웹 개념 전체/기수별 조회 &ndash;&gt; -->
+   <select id="selectAllWebGuide" resultType="WebGuideList">
+       SELECT
+	       id,
+	       title,
+	       thumbnail,
+	       created_at
+       FROM web_guide
+       WHERE is_deleted = false
+       <if test="generationId > 0">
+           AND generation_id = #{generationId}
+       </if>
+       ORDER BY created_at DESC
+       LIMIT #{offset}, #{pageSize}
+   </select>
 
 <!--    &lt;!&ndash; 웹 개념 상세 조회 &ndash;&gt;-->
-<!--    <select id="selectWebGuideById" parameterType="int" resultType="WebGuide">-->
-<!--        SELECT id,-->
-<!--               title,-->
-<!--               content,-->
-<!--               user_id,-->
-<!--               generation_id,-->
-<!--               created_at,-->
-<!--               updated_at,-->
-<!--               is_deleted-->
-<!--        FROM web_guide-->
-<!--        WHERE id = #{guideId}-->
-<!--          AND is_deleted = false-->
-<!--    </select>-->
+   <select id="selectWebGuideById" parameterType="int" resultType="WebGuideDetail">
+       SELECT 
+		    w.id, 
+		    w.title, 
+		    w.content, 
+		    w.user_id as authorId, 
+		    u.name as authorName,  
+		    CASE
+		        WHEN b.content_id IS NOT NULL THEN true
+		        ELSE false
+		    END as bookmarked,
+		    w.created_at
+		FROM web_guide w
+		JOIN user u ON w.user_id = u.id
+		LEFT JOIN bookmark b ON w.id = b.content_id
+		    AND b.content_type = "WEB_GUIDE"
+		WHERE b.user_id = #{userId}
+		ORDER BY w.created_at DESC;
+   </select>
 
 <!--    &lt;!&ndash; 웹 개념 제목 기반 검색 &ndash;&gt;-->
-<!--    <select id="searchWebGuideByTitle" resultType="WebGuide">-->
-<!--        SELECT id,-->
-<!--               title,-->
-<!--               thumbnail,-->
-<!--               user_id,-->
-<!--               generation_id,-->
-<!--               created_at,-->
-<!--               updated_at,-->
-<!--               is_deleted-->
-<!--        FROM web_guide-->
-<!--        WHERE generation_id = #{generationId}-->
-<!--          AND title LIKE CONCAT('%', #{title}, '%')-->
-<!--          AND is_deleted = false-->
-<!--        ORDER BY created_at DESC-->
-<!--        LIMIT #{offset}, #{pageSize}-->
-<!--    </select>-->
+   <select id="searchWebGuideByTitle" resultType="WebGuide">
+   
+   		SELECT
+	       id,
+	       title,
+	       thumbnail,
+	       created_at
+       FROM web_guide
+       WHERE is_deleted = false
+       		AND title LIKE CONCAT("%", #{title}, "%")
+       <if test="generationId > 0">
+           AND generation_id = #{generationId}
+       </if>
+       ORDER BY created_at DESC
+       LIMIT #{offset}, #{pageSize}
+   </select>
 
 <!--    &lt;!&ndash; 웹 개념 작성 &ndash;&gt;-->
-<!--    <insert id="insertWebGuide" parameterType="WebGuide">-->
-<!--        INSERT INTO web_guide (title,-->
-<!--                               content,-->
-<!--                               thumbnail,-->
-<!--                               user_id,-->
-<!--                               generation_id,-->
-<!--                               created_at,-->
-<!--                               updated_at,-->
-<!--                               is_deleted)-->
-<!--        VALUES (#{title},-->
-<!--                #{content},-->
-<!--                #{thumbnail},-->
-<!--                #{userId},-->
-<!--                #{generationId},-->
-<!--                NOW(),-->
-<!--                NOW(),-->
-<!--                false)-->
-<!--    </insert>-->
+   <insert id="createWebGuide">
+       INSERT INTO web_guide (title,
+                              content,
+                              thumbnail,
+                              user_id,
+                              generation_id,
+                              created_at,
+                              is_deleted)
+       VALUES (#{title},
+               #{content},
+               #{thumbnail},
+               #{userId},
+               #{generationId},
+               NOW(),
+               false)
+   </insert>
 
 <!--    &lt;!&ndash; 웹 개념 수정 &ndash;&gt;-->
-<!--    <update id="updateWebGuide" parameterType="WebGuide">-->
-<!--        UPDATE web_guide-->
-<!--        SET title      = #{webGuide.title},-->
-<!--            content    = #{webGuide.content},-->
-<!--            thumbnail  = #{webGuide.thumbnail},-->
-<!--            updated_at = NOW()-->
-<!--        WHERE id = #{guideId}-->
-<!--          AND is_deleted = false-->
-<!--    </update>-->
+   <update id="updateWebGuide">
+       UPDATE web_guide
+       SET title      = #{webGuideRequest.title},
+           content    = #{webGuideRequest.content},
+           thumbnail  = #{webGuideRequest.thumbnail},
+           updated_at = NOW()
+       WHERE id = #{guideId}
+         AND is_deleted = false
+   </update>
 
 <!--    &lt;!&ndash; 웹 개념 삭제 &ndash;&gt;-->
-<!--    <update id="deleteWebGuide" parameterType="int">-->
-<!--        UPDATE web_guide-->
-<!--        SET is_deleted = true,-->
-<!--            updated_at = NOW()-->
-<!--        WHERE id = #{guideId}-->
-<!--          AND is_deleted = false-->
-<!--    </update>-->
+   <update id="softDeleteWebGuide" parameterType="int">
+       UPDATE web_guide
+       SET is_deleted = true,
+           updated_at = NOW()
+       WHERE id = #{guideId}
+         AND is_deleted = false
+   </update>
 
 <!--    &lt;!&ndash; 웹 개념 전체 개수 조회 &ndash;&gt;-->
-<!--    <select id="countWebGuide" resultType="int">-->
-<!--        SELECT COUNT(*)-->
-<!--        FROM web_guide-->
-<!--        WHERE generation_id = #{generationId}-->
-<!--          AND is_deleted = false-->
-<!--    </select>-->
+   <select id="countWebGuide" resultType="int">
+       SELECT COUNT(*)
+       FROM web_guide
+       WHERE generation_id = #{generationId}
+         AND is_deleted = false
+   </select>
 
 <!--    &lt;!&ndash; 웹 개념 검색 개수 조회 &ndash;&gt;-->
-<!--    <select id="countSearchWebGuide" resultType="int">-->
-<!--        SELECT COUNT(*)-->
-<!--        FROM web_guide-->
-<!--        WHERE generation_id = #{generationId}-->
-<!--          AND title LIKE CONCAT('%', #{title}, '%')-->
-<!--          AND is_deleted = false-->
-<!--    </select>-->
+   <select id="countSearchWebGuide" resultType="int">
+       SELECT COUNT(*)
+       FROM web_guide
+       WHERE generation_id = #{generationId}
+         AND title LIKE CONCAT('%', #{title}, '%')
+         AND is_deleted = false
+   </select>
 </mapper>

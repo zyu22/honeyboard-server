@@ -39,17 +39,17 @@ public class WebGuideController {
             @RequestParam(required = false) String title) {
         
     	log.info("웹 개념 전체 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}, 검색: {}", generationId, currentPage, pageSize, title);
-        PageResponse<WebGuideList> WebGuideList;
-        if(title != null) WebGuideList = webGuideService.searchWebGuide(generationId, currentPage, pageSize, title);
-        else WebGuideList = webGuideService.getAllWebGuide(generationId, currentPage, pageSize);
+        PageResponse<WebGuideList> response;
+        if(title != null) response = webGuideService.searchWebGuide(generationId, currentPage, pageSize, title);
+        else response = webGuideService.getAllWebGuide(generationId, currentPage, pageSize);
         
-        if (WebGuideList==null) {
+        if (response==null) {
             log.info("웹 개념 전체 조회 완료 - 데이터 없음");
             return ResponseEntity.noContent().build();
         }
 
-        log.info("웹 개념 전체 조회 완료 - 조회된 개수: {}", WebGuideList.getContent().size());
-        return ResponseEntity.ok(WebGuideList);
+        log.info("웹 개념 전체 조회 완료 - 조회된 개수: {}", response.getContent().size());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{guideId}")
