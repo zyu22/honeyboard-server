@@ -78,16 +78,17 @@ public class WebRecommendServiceImpl implements WebRecommendService {
             throw new BusinessException(DUPLICATE_URL);
         }
 
-        int result = webRecommendMapper.insertWebRecommend(webRecommend, userId);
+        CreateResponse response = new CreateResponse();
+        int result = webRecommendMapper.insertWebRecommend(webRecommend, userId, response);
 
         if (result <= 0) {
             log.error("웹 추천 등록 실패 - 제목: {}", webRecommend.getTitle());
             throw new IllegalArgumentException("웹 추천 등록에 실패했습니다.");
         }
 
-        log.info("웹 추천 등록 완료 - ID: {}", webRecommend.getId());
+        log.info("웹 추천 등록 완료 - ID: {}", response.getId());
 
-        return new CreateResponse(webRecommend.getId());
+        return response;
     }
 
     @Override

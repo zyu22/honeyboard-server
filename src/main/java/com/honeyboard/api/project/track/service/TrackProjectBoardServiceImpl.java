@@ -43,15 +43,16 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
         validateBoard(board);
 
         log.info("게시글 생성 시작 - 제목: {}", board.getTitle());
-        int boardId = trackProjectBoardMapper.insertTrackProjectBoard(trackProjectId, trackTeamId, userId, board);
+        CreateResponse createResponse = new CreateResponse();
+        int result = trackProjectBoardMapper.insertTrackProjectBoard(trackProjectId, trackTeamId, userId, board, createResponse);
 
-        if (boardId == 0) {
+        if (result == 0) {
             throw new RuntimeException("게시글 생성에 실패했습니다.");
         }
 
-        log.info("게시글 생성 완료 - 게시글 번호: {}", boardId);
+        log.info("게시글 생성 완료 - 게시글 번호: {}", createResponse.getId());
 
-        return new CreateResponse(board.getId());
+        return createResponse;
     }
 
     // 관통 게시글 수정

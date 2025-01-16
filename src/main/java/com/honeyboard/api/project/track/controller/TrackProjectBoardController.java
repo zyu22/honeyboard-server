@@ -41,8 +41,7 @@ public class TrackProjectBoardController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        int userId = user.getUserId();
-        CreateResponse createResponse = trackProjectBoardService.addBoard(trackProjectId, trackTeamId, userId, board);
+        CreateResponse createResponse = trackProjectBoardService.addBoard(trackProjectId, trackTeamId, user.getUserId(), board);
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
     }
 

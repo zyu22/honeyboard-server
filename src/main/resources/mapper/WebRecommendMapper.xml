@@ -59,7 +59,7 @@
     </select>
 
     <!-- 웹 추천 작성 -->
-    <insert id="insertWebRecommend" useGeneratedKeys="true" keyProperty="webRecommend.id">
+    <insert id="insertWebRecommend" useGeneratedKeys="true" keyProperty="createResponse.id">
         INSERT INTO web_recommend (
             title,
             url,

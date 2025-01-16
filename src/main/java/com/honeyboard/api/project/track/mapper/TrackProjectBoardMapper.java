@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.track.mapper;
 
+import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.project.track.model.request.TrackProjectBoardRequest;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardList;
@@ -14,7 +15,8 @@ public interface TrackProjectBoardMapper {
 
     int insertTrackProjectBoard(@Param("trackProjectId") int trackProjectId, @Param("trackTeamId") int trackTeamId,
                                 @Param("userId") int userId,
-                                @Param("board") TrackProjectBoardRequest board);
+                                @Param("board") TrackProjectBoardRequest board,
+                                @Param("createResponse") CreateResponse createResponse);
 
     int updateTrackProjectBoard(@Param("trackProjectId") int trackProjectId, @Param("trackTeamId") int trackTeamId,
                                 @Param("boardId") int boardId, @Param("board") TrackProjectBoardRequest board

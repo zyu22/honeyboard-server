@@ -119,7 +119,7 @@
 
     <!-- 관통 프로젝트 생성 -->
     <insert id="insertTrackProject" parameterType="TrackProjectRequest"
-            useGeneratedKeys="true" keyProperty="trackProject.id">
+            useGeneratedKeys="true" keyProperty="createResponse.id">
         INSERT INTO track_project (
         title,
         objective,

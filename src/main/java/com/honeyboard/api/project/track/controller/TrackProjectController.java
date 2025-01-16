@@ -53,11 +53,17 @@ public class TrackProjectController {
                 : ResponseEntity.ok(members);
     }
 
+    // 관통프로젝트 생성
     @PostMapping
     public ResponseEntity<CreateResponse> createTrackProject(
             @RequestBody TrackProjectRequest trackProject,
             @CurrentUser User user) {
-       // log.info("관통 프로젝트 생성 요청 - 유저 ID: {}", user.getUserId());
+        // 사용자 ID가 null인 경우 처리
+        if (user == null || user.getUserId() == 0) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        log.info("관통 프로젝트 생성 요청 - 유저 ID: {}", user.getUserId());
         CreateResponse createResponse = trackProjectService.createTrackProject(trackProject, user.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
     }

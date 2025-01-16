@@ -65,8 +65,14 @@ public class WebRecommendController {
 
     @PostMapping
     public ResponseEntity<?> addWebRecommend(@RequestBody WebRecommendRequest webRecommend,
-                                             @CurrentUser User user) {
-        log.info("웹 추천 작성 요청");
+                                             @CurrentUser User user,
+                                             @RequestParam() int userId) {
+        // 사용자 ID가 null인 경우 처리
+        if (user == null || user.getUserId() == 0) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        log.info("웹 추천 작성 요청 ID: {}", user.getUserId());
 
         CreateResponse createResponse = webRecommendService.addWebRecommend(webRecommend, user.getUserId());
         log.info("웹 추천 작성 완료");
