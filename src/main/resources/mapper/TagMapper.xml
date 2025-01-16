@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.algorithm.tag.mapper.TagMapper">
-    <select id="selectAllTag" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
+    <select id="selectAllTag" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT id, name
         FROM tag
         ORDER BY name ASC
         LIMIT 20
     </select>
-    <select id="selectSearchTag" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
+    <select id="selectSearchTag" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT id, name
         FROM tag
         WHERE name LIKE CONCAT('%', #{name}, '%')
@@ -15,24 +15,24 @@
         LIMIT 20
     </select>
 
-    <insert id="insertTag" parameterType="com.honeyboard.api.algorithm.tag.model.TagResponse"
+    <insert id="insertTag" parameterType="com.honeyboard.api.algorithm.tag.model.response.TagResponse"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tag (name)
         VALUES (#{name})
     </insert>
 
-    <select id="selectTagByName" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
+    <select id="selectTagByName" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT id, name
         FROM tag
         WHERE name = #{name}
     </select>
 
-    <select id="selectProblemTags" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
+    <select id="selectProblemTags" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT t.id,
                t.name
         FROM tag t
                  JOIN algorithm_problem_tag apt ON t.id = apt.tag_id
-        WHERE apt.algorithm_problem_id = #{id}
+        WHERE apt.algorithm_problem_id = #{problemId}
     </select>
 
     <!-- Algorithm Problem의 Tag 관리  -->
@@ -41,7 +41,7 @@
         INSERT INTO algorithm_problem_tag (algorithm_problem_id, tag_id)
         VALUES
         <foreach collection="tagIds" item="tagId" separator=",">
-            (#{id}, #{tagId})
+            (#{problemId}, #{tagId})
         </foreach>
     </insert>
 
@@ -49,13 +49,13 @@
     <select id="getTagIdsByProblemId" resultType="int">
         SELECT tag_id
         FROM algorithm_problem_tag
-        WHERE algorithm_problem_id = #{id}
+        WHERE algorithm_problem_id = #{problemId}
     </select>
 
     <!--  AlgorithmProblemTags 삭제  -->
     <delete id="deleteSpecificAlgorithmProblemTags">
         DELETE FROM algorithm_problem_tag
-        WHERE algorithm_problem_id = #{id}
+        WHERE algorithm_problem_id = #{problemId}
         AND tag_id IN
         <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">
             #{tagId}

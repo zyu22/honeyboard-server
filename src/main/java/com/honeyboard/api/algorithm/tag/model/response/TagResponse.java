@@ -1,4 +1,4 @@
-package com.honeyboard.api.algorithm.tag.model;
+package com.honeyboard.api.algorithm.tag.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
