@@ -126,7 +126,7 @@
     </select>
 
     <!-- URl 중복체크 -->
-    <select id="existByUrl" resultType="WebRecommend">
+    <select id="existByUrl" resultType="WebRecommendRequest">
         SELECT * FROM web_recommend
         WHERE url = #{url}
           AND is_deleted = false
