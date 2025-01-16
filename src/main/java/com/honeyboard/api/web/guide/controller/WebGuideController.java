@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebGuideController {
     private final WebGuideService webGuideService;
 
+//    웹 개념 전체 조회
     @GetMapping
     public ResponseEntity<?> getAllWebGuide(
             @RequestParam(value = "generationId", defaultValue = "0") int generationId,
@@ -52,6 +53,7 @@ public class WebGuideController {
         return ResponseEntity.ok(response);
     }
 
+//    웹 개념 상세 조회
     @GetMapping("/{guideId}")
     public ResponseEntity<?> getWebGuideDetail(@PathVariable("guideId") int guideId,
     											@CurrentUser User user) {
@@ -61,6 +63,7 @@ public class WebGuideController {
         return ResponseEntity.ok(webGuideDetail);
     }
 
+//    웹 개념 작성
     @PostMapping
     public ResponseEntity<?> createWebGuide(@RequestBody WebGuideRequest webGuideRequest) {
         log.info("웹 개념 작성 요청 - 제목:{}", webGuideRequest.getTitle());
@@ -69,6 +72,7 @@ public class WebGuideController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse.getId());
     }
 
+//    웹 개념 상세 수정
     @PutMapping("/{guideId}")
     public ResponseEntity<?> updateWebGuide(
             @PathVariable int guideId,
@@ -79,6 +83,7 @@ public class WebGuideController {
         return ResponseEntity.ok().build();
     }
 
+//    웹 개념 상세 삭제
     @DeleteMapping("/{guideId}")
     public ResponseEntity<?> softDeleteWebGuide(@PathVariable("guideId") int guideId) {
         log.info("웹 개념 삭제 요청 - ID: {}", guideId);
