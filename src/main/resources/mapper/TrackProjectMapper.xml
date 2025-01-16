@@ -47,7 +47,7 @@
         FROM track_project
         WHERE is_deleted = false
         <if test="generationId != 0">
-            AND generation_id = #{generationId}
+            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
         </if>
     </select>
     
