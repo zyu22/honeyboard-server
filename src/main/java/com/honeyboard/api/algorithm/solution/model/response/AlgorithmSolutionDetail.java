@@ -15,6 +15,7 @@ public class AlgorithmSolutionDetail {
     private String title;
     private String summary;
     private String content;
+    private int authorId;
     private String name;
     private int runtime;
     private int memory;

@@ -14,7 +14,7 @@ public interface AlgorithmProblemService {
     // AlgorithmProblem 상세조회
     AlgorithmProblemDetail getProblem(int problemId);
 
-    // AlgorithmProblem 추가
+    // AlgorithmProblem 추가s
     CreateResponse addProblem(AlgorithmProblemRequest request, int userId);
 
     // AlgorithmProblem 수정
@@ -22,8 +22,5 @@ public interface AlgorithmProblemService {
 
     // AlgorithmProblem 삭제
     void softDeleteProblem(int problemId);
-
-    // url로 중복 조회
-    boolean existsByUrl(String url);
 
 }
