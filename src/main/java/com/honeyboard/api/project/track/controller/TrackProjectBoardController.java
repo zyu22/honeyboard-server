@@ -19,7 +19,7 @@ public class TrackProjectBoardController {
     private final TrackProjectBoardService trackProjectBoardService;
 
     // 관통 게시글 조회
-    @GetMapping("{trackProjectId}/track/{trackTeamId}/board/{boardId}")
+    @GetMapping("{trackProjectId}/team/{trackTeamId}/board/{boardId}")
     public ResponseEntity<TrackProjectBoardDetail> getTrackBoard(
             @PathVariable int trackProjectId,
             @PathVariable int trackTeamId,
