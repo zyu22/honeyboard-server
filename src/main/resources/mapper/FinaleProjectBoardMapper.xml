@@ -1,126 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleProjectBoardMapper">
+    <!-- 게시글 상세 조회를 위한 ResultMap -->
+    <resultMap id="finaleProjectBoardDetailMap" type="FinaleProjectBoardDetail">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="createdAt"/>
+        <collection property="members" ofType="TeamMemberInfo">
+            <id property="id" column="memberId"/>
+            <result property="name" column="memberName"/>
+            <result property="role" column="memberRole"/>
+        </collection>
+    </resultMap>
 
-<!--	<resultMap id="FinaleProjectBoardMap" type="FinaleProjectBoard">-->
-<!--	    <id property="boardId" column="boardId"/>-->
-<!--	    <result property="summary" column="summary"/>-->
-<!--	    <result property="title" column="title"/>-->
-<!--	    <result property="content" column="content"/>-->
-<!--        <result property="thumbnail" column="thumbnail"/>-->
-<!--	    <result property="authorName" column="authorName"/>-->
-<!--	    <result property="createdAt" column="createdAt"/>-->
-<!--	    <collection property="finaleTeam" ofType="FinaleMember">-->
-<!--	        <result property="userId" column="memberId"/>-->
-<!--	        <result property="userName" column="memberName"/>-->
-<!--	        <result property="memberRole" column="memberRole"/>-->
-<!--	    </collection>-->
-<!--	</resultMap>-->
+    <!-- 프로젝트 게시판 목록 조회 -->
+    <select id="selectFinaleProjectDetailBoards" parameterType="int" resultType="FinaleProjectBoardList">
+        SELECT
+            id,
+            title,
+            DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as createdAt,
+            thumbnail
+        FROM finale_project_board
+        WHERE finale_project_id = #{finaleProjectId}
+        ORDER BY created_at DESC
+    </select>
 
+    <!-- 게시글 상세 조회 -->
+    <select id="selectFinaleProjectBoardDetail" resultMap="finaleProjectBoardDetailMap">
+        SELECT
+            fpb.id,
+            fpb.title,
+            fpb.summary,
+            fpb.content,
+            DATE_FORMAT(fpb.created_at, '%Y-%m-%d %H:%i:%s') as createdAt,
+            u.id as memberId,
+            u.name as memberName,
+            ftm.role as memberRole
+        FROM finale_project_board fpb
+                 JOIN finale_project fp ON fpb.finale_project_id = fp.id
+                 JOIN finale_team_member ftm ON fp.team_id = ftm.finale_team_id
+                 JOIN user u ON ftm.user_id = u.id
+        WHERE fpb.id = #{boardId}
+          AND fp.id = #{finaleProjectId}
+          AND fp.is_deleted = 0
+        ORDER BY
+            CASE ftm.role
+                WHEN 'LEADER' THEN 1
+                WHEN 'MEMBER' THEN 2
+                END
+    </select>
 
-<!--	<select id="selectAllFinaleBoards" parameterType="int" resultType="FinaleProjectBoard">-->
-<!--        SELECT-->
-<!--            fpb.id AS boardId,-->
-<!--            fpb.summary,-->
-<!--            fpb.title,-->
-<!--            fpb.content,-->
-<!--            fpb.thumbnail,-->
-<!--            u.name AS authorName,-->
-<!--            fpb.created_at AS createdAt-->
-<!--        FROM finale_project_board fpb-->
-<!--        JOIN user u ON fpb.user_id = u.id-->
-<!--        WHERE fpb.project_id = #{finaleId}-->
-<!--        AND fpb.is_deleted = false-->
-<!--        ORDER BY fpb.created_at DESC-->
-<!--    </select>-->
+    <!-- 게시글 존재 여부 확인 -->
+    <select id="checkFinaleProjectBoard" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM finale_project_board fpb
+                     JOIN finale_project fp ON fpb.finale_project_id = fp.id
+            WHERE fp.id = #{finaleProjectId}
+              AND fpb.id = #{boardId}
+              AND fp.is_deleted = 0
+        )
+    </select>
 
-<!--    <select id="selectFinaleBoard" parameterType="int" resultMap="FinaleProjectBoardMap">-->
-<!--	    SELECT-->
-<!--	        fpb.id AS boardId,-->
-<!--	        fpb.summary,-->
-<!--	        fpb.title,-->
-<!--	        fpb.content,-->
-<!--	        fpb.thumbnail,-->
-<!--	        u.name AS authorName,-->
-<!--	        fpb.created_at AS createdAt,-->
-<!--	        ftm.user_id AS memberId,-->
-<!--	        mu.name AS memberName,-->
-<!--	        ftm.role AS memberRole-->
-<!--	    FROM finale_project_board fpb-->
-<!--	    JOIN user u ON fpb.user_id = u.id-->
-<!--	    LEFT JOIN finale_team_member ftm ON ftm.finale_team_id = fpb.team_id-->
-<!--	    LEFT JOIN user mu ON ftm.user_id = mu.id-->
-<!--	    WHERE fpb.id = #{boardId}-->
-<!--	    AND fpb.is_deleted = false-->
-<!--	</select>-->
+    <!-- 게시글 작성 -->
+    <insert id="insertFinaleProjectBoard" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO finale_project_board (
+            finale_project_id,
+            title,
+            summary,
+            content,
+            thumbnail,
+            created_at
+        ) VALUES (
+                     #{finaleProjectId},
+                     #{request.title},
+                     #{request.summary},
+                     #{request.content},
+                     #{request.thumbnail},
+                     NOW()
+                 )
+    </insert>
 
-<!--	<insert id="insertFinaleBoard" parameterType="FinaleProjectBoard">-->
-<!--        INSERT INTO finale_project_board (-->
-<!--            project_id,-->
-<!--            team_id,-->
-<!--            summary,-->
-<!--            title,-->
-<!--            content,-->
-<!--            thumbnail,-->
-<!--            user_id,-->
-<!--            created_at-->
-<!--        ) VALUES (-->
-<!--            #{projectId},-->
-<!--            #{teamId},-->
-<!--            #{summary},-->
-<!--            #{title},-->
-<!--            #{content},-->
-<!--            #{thumbnail},-->
-<!--            #{userId},-->
-<!--            CURRENT_DATE-->
-<!--        )-->
-<!--    </insert>-->
+    <!-- 게시글 수정 -->
+    <update id="updateFinaleProjectBoard">
+        UPDATE finale_project_board
+        SET
+            title = #{request.title},
+            summary = #{request.summary},
+            content = #{request.content},
+            thumbnail = #{request.thumbnail}
+        WHERE id = #{finaleProjectBoardId}
+          AND finale_project_id = #{finaleProjectId}
+    </update>
 
-<!--    <update id="updateFinaleBoard">-->
-<!--        UPDATE finale_project_board-->
-<!--        SET-->
-<!--            summary = #{board.summary},-->
-<!--            title = #{board.title},-->
-<!--            content = #{board.content},-->
-<!--            thumbnail = #{board.thumbnail},-->
-<!--            updated_at = CURRENT_DATE-->
-<!--        WHERE id = #{boardId}-->
-<!--        AND is_deleted = false-->
-<!--    </update>-->
-
-<!--    <update id="updateFinaleBoardSubmitStatus" parameterType="int">-->
-<!--        UPDATE finale_team-->
-<!--        SET submitted_at = CURRENT_DATE-->
-<!--        WHERE id = (-->
-<!--            SELECT team_id-->
-<!--            FROM finale_project_board-->
-<!--            WHERE id = #{boardId}-->
-<!--        )-->
-<!--    </update>-->
-
-<!--    <update id="deleteFinaleBoard" parameterType="int">-->
-<!--        UPDATE finale_project_board-->
-<!--        SET-->
-<!--            is_deleted = true,-->
-<!--            updated_at = CURRENT_DATE-->
-<!--        WHERE id = #{boardId}-->
-<!--        AND is_deleted = false-->
-<!--    </update>-->
-
-<!--    <select id="selectAllFinaleMembers" parameterType="int" resultType="FinaleMember">-->
-<!--        SELECT-->
-<!--            u.id AS userId,-->
-<!--            u.name AS userName,-->
-<!--            ftm.role AS memberRole-->
-<!--        FROM finale_team_member ftm-->
-<!--        JOIN user u ON ftm.user_id = u.id-->
-<!--        WHERE ftm.finale_team_id = (-->
-<!--            SELECT team_id-->
-<!--            FROM finale_project_board-->
-<!--            WHERE id = #{boardId}-->
-<!--        )-->
-<!--    </select>-->
-
+    <!-- 마지막 생성된 게시글 ID 조회 -->
+    <select id="selectLastInsertedBoardId" resultType="int">
+        SELECT LAST_INSERT_ID()
+    </select>
 </mapper>

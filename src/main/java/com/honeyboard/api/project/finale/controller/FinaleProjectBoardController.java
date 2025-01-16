@@ -1,62 +1,68 @@
-//package com.honeyboard.api.project.finale.controller;
-//
-//import java.util.List;
-//
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.DeleteMapping;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
-//
-//import lombok.RequiredArgsConstructor;
-//
-//@RestController
-//@RequestMapping("/api/v1/project/finale")
-//@RequiredArgsConstructor
-//public class FinaleProjectBoardController {
-//
-//	private final FinaleProjectBoardService finaleProjectBoardService;
-//
-//	@GetMapping("/{finaleId}/board")
-//	public ResponseEntity<List<FinaleProjectBoard>> getAllFinaleBoards(@PathVariable int finaleId) {
-//		List<FinaleProjectBoard> boards = finaleProjectBoardService.getAllFinaleBoards(finaleId);
-//		return boards.isEmpty() ? ResponseEntity.noContent().build()
-//				: ResponseEntity.ok(boards);
-//	}
-//
-//	@GetMapping("/{finaleId}/board/{boardId}")
-//	public ResponseEntity<FinaleProjectBoard> getFinaleBoard(@PathVariable int boardId) {
-//		FinaleProjectBoard board = finaleProjectBoardService.getFinaleBoard(boardId);
-//		return board == null ? ResponseEntity.noContent().build()
-//				: ResponseEntity.ok(board);
-//	}
-//
-//	@PostMapping("/{finaleId}/board")
-//	public ResponseEntity<FinaleProjectBoard> createFinaleBoard(@RequestBody FinaleProjectBoard board) {
-//		finaleProjectBoardService.addFinaleBoard(board);
-//		return ResponseEntity.status(HttpStatus.CREATED).body(board);
-//	}
-//
-//	@PutMapping("/{finaleId}/board/{boardId}")
-//	public ResponseEntity<FinaleProjectBoard> updateFinaleBoard(
-//			@PathVariable int boardId,
-//			@RequestBody FinaleProjectBoard board) {
-//		finaleProjectBoardService.updateFinaleBoard(boardId, board);
-//		board.setBoardId(boardId);
-//		return ResponseEntity.ok(board);
-//	}
-//
-//	@DeleteMapping("/{finaleId}/board/{boardId}")
-//	public ResponseEntity<Void> deleteFinaleBoard(@PathVariable int boardId) {
-//		finaleProjectBoardService.softDeleteFinaleBoard(boardId);
-//		return ResponseEntity.ok().build();
-//	}
-//
-//}
+package com.honeyboard.api.project.finale.controller;
+
+import com.honeyboard.api.common.model.CreateResponse;
+import com.honeyboard.api.project.finale.model.request.FinaleProjectBoardRequest;
+import com.honeyboard.api.project.finale.model.response.FinaleProjectBoardDetail;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/api/v1/project/finale")
+@RequiredArgsConstructor
+@Slf4j
+public class FinaleProjectBoardController {
+
+	private final FinaleProjectBoardService finaleProjectBoardService;
+
+    // 피날레 게시글 상세 조회
+    @GetMapping("/{finaleProjectId}/board/{boardId}")
+    public ResponseEntity<FinaleProjectBoardDetail> getFinaleProjectBoardDetail(
+            @PathVariable int finaleProjectId,
+            @PathVariable int boardId) {
+        log.info("피날레 게시글 상세 조회 요청 - finaleProjectId: {}, boardId: {}", finaleProjectId, boardId);
+        FinaleProjectBoardDetail boardDetail = finaleProjectBoardService.getFinaleProjectBoardDetail(finaleProjectId, boardId);
+        log.info("피날레 게시글 상세 조회 성공");
+        return ResponseEntity.ok(boardDetail);
+    }
+
+    // 피날레 게시글 작성
+    @PostMapping("/{finaleProjectId}/board")
+    public ResponseEntity<?> createFinaleProjectBoard(
+            @PathVariable int finaleProjectId,
+            @RequestBody FinaleProjectBoardRequest request,
+            @CurrentUser User currentUser) {
+        log.info("피날레 게시글 작성 요청 - finaleProjectId: {}, userId: {}", finaleProjectId, currentUser.getUserId());
+        CreateResponse res = new CreateResponse();
+        res.setId(finaleProjectBoardService.createFinaleProjectBoard(finaleProjectId, request, currentUser));
+        log.info("피날레 게시글 작성 성공");
+        return ResponseEntity.ok().body(res);
+    }
+
+    // 피날레 프로젝트 게시글 수정
+    @PutMapping("/{finaleProjectId}/board/{finaleProjectBoardId}")
+    public ResponseEntity<Void> updateFinaleProjectBoard(
+            @PathVariable int finaleProjectId,
+            @PathVariable int finaleProjectBoardId,
+            @RequestBody FinaleProjectBoardRequest request,
+            @CurrentUser User currentUser) {
+        log.info("게시글 수정 요청 - finaleProjectId: {}, boardId: {}, userId: {}",
+                finaleProjectId, finaleProjectBoardId, currentUser.getUserId());
+
+        finaleProjectBoardService.updateFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, request, currentUser);
+        return ResponseEntity.ok().build();
+    }
+
+}
