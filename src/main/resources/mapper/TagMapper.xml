@@ -27,4 +27,38 @@
         WHERE name = #{name}
     </select>
 
+    <select id="selectProblemTags" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
+        SELECT t.id,
+               t.name
+        FROM tag t
+                 JOIN algorithm_problem_tag apt ON t.id = apt.tag_id
+        WHERE apt.algorithm_problem_id = #{id}
+    </select>
+
+    <!-- Algorithm Problem의 Tag 관리  -->
+    <!--  AlgorithmProblemTags 추가  -->
+    <insert id="insertAlgorithmProblemTags">
+        INSERT INTO algorithm_problem_tag (algorithm_problem_id, tag_id)
+        VALUES
+        <foreach collection="tagIds" item="tagId" separator=",">
+            (#{id}, #{tagId})
+        </foreach>
+    </insert>
+
+    <!--  태그 id 반환  -->
+    <select id="getTagIdsByProblemId" resultType="int">
+        SELECT tag_id
+        FROM algorithm_problem_tag
+        WHERE algorithm_problem_id = #{id}
+    </select>
+
+    <!--  AlgorithmProblemTags 삭제  -->
+    <delete id="deleteSpecificAlgorithmProblemTags">
+        DELETE FROM algorithm_problem_tag
+        WHERE algorithm_problem_id = #{id}
+        AND tag_id IN
+        <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">
+            #{tagId}
+        </foreach>
+    </delete>
 </mapper>
