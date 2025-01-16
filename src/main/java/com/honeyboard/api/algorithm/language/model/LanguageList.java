@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProgrammingLanguage {
+public class LanguageList {
 	
 	private int id;
 	private String name;
