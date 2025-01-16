@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
 import com.honeyboard.api.web.guide.model.request.WebGuideRequest;
@@ -65,29 +66,37 @@ public class WebGuideController {
 
 //    웹 개념 작성
     @PostMapping
-    public ResponseEntity<?> createWebGuide(@RequestBody WebGuideRequest webGuideRequest) {
-        log.info("웹 개념 작성 요청 - 제목:{}", webGuideRequest.getTitle());
-        CreateResponse createResponse = webGuideService.createWebGuide(webGuideRequest);
+    public ResponseEntity<?> createWebGuide(@RequestBody WebGuideRequest webGuideRequest,
+    										@CurrentUser User user) {
+        log.info("웹 개념 작성 요청 - 제목:{}, 아이디:{}", webGuideRequest.getTitle(), user.getUserId());
+        if(!user.getRole().equals("ADMIN")) {
+        	log.info("관리자 권한이 없습니다");
+        	return ResponseEntity
+                    .status(ErrorCode.UNAUTHORIZED_WEB_GUIDE_UPDATE.getStatus())
+                    .body(ErrorCode.UNAUTHORIZED_WEB_GUIDE_UPDATE.getMessage());
+        }
+        CreateResponse createResponse = webGuideService.createWebGuide(webGuideRequest, user.getUserId(), user.getGenerationId());
         log.info("웹 개념 작성 완료 - ID: {}", createResponse.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse.getId());
     }
 
 //    웹 개념 상세 수정
     @PutMapping("/{guideId}")
-    public ResponseEntity<?> updateWebGuide(
-            @PathVariable int guideId,
-            @RequestBody WebGuideRequest webGuideRequest) {
+    public ResponseEntity<?> updateWebGuide(@PathVariable int guideId,
+    										@RequestBody WebGuideRequest webGuideRequest,
+    										@CurrentUser User user) {
         log.info("웹 개념 수정 요청 - ID: {}", guideId);
-        webGuideService.updateWebGuide(guideId, webGuideRequest);
+        webGuideService.updateWebGuide(guideId, webGuideRequest, user.getUserId());
         log.info("웹 개념 수정 완료 - ID: {}", guideId);
         return ResponseEntity.ok().build();
     }
 
 //    웹 개념 상세 삭제
     @DeleteMapping("/{guideId}")
-    public ResponseEntity<?> softDeleteWebGuide(@PathVariable("guideId") int guideId) {
+    public ResponseEntity<?> softDeleteWebGuide(@PathVariable("guideId") int guideId,
+    											@CurrentUser User user) {
         log.info("웹 개념 삭제 요청 - ID: {}", guideId);
-        webGuideService.softDeleteWebGuide(guideId);
+        webGuideService.softDeleteWebGuide(guideId, user.getUserId());
         log.info("웹 개념 삭제 완료 - ID: {}", guideId);
         return ResponseEntity.ok().build();
     }
