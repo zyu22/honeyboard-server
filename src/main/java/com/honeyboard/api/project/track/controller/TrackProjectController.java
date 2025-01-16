@@ -26,7 +26,7 @@ public class TrackProjectController {
     // 관통프로젝트 전체 조회
     @GetMapping
     public ResponseEntity<?> getAllTrackProjects(
-            @RequestParam(required = false) int generationId) {
+            @RequestParam(required = false, defaultValue = "0") int generationId) {
         log.info("관통 프로젝트 전체 조회 요청 - 기수: {}", generationId);
         List<TrackProjectList> projects = trackProjectService.getAllTrackProjects(generationId);
         log.info("관통 프로젝트 전체 조회 완료 - 기수: {}", generationId);
