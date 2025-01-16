@@ -7,7 +7,6 @@ import com.honeyboard.api.config.WithMockCustomUser;
 import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.user.model.User;
 import com.honeyboard.api.user.service.UserService;
-import com.honeyboard.api.web.guide.model.WebGuide;
 import com.honeyboard.api.web.guide.model.request.WebGuideRequest;
 import com.honeyboard.api.web.guide.model.response.WebGuideDetail;
 import com.honeyboard.api.web.guide.model.response.WebGuideList;
