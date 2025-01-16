@@ -44,7 +44,7 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
         int result = finaleProjectBoardMapper.insertFinaleProjectBoard(finaleProjectId, request);
 
         if (result <= 0) {
-            throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
+            throw new IllegalArgumentException("요청 정보가 잘못되었습니다.");
         }
 
         log.info("게시글 작성 완료 - finaleProjectId: {}", finaleProjectId);
@@ -62,7 +62,7 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
         int result = finaleProjectBoardMapper.updateFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, request);
 
         if (result <= 0) {
-            throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
+            throw new IllegalArgumentException("요청 정보가 잘못되었습니다.");
         }
 
         log.info("게시글 수정 완료 - finaleProjectId: {}, boardId: {}", finaleProjectId, finaleProjectBoardId);

@@ -38,7 +38,10 @@ public class UserController {
 			@RequestBody User requestUser) {
 		log.debug("비밀번호 재설정 요청");
 
-		requestUser.setUserId(jwtService.getUserIdFromToken(temporaryToken));
+		requestUser.setUserId(
+				userService.getUserByEmail(
+						jwtService.extractUserEmail(temporaryToken))
+						.getUserId());
 		userService.updatePassword(requestUser);
 
 		return ResponseEntity.ok().build();
