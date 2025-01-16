@@ -53,18 +53,18 @@ public class WebGuideController {
     }
 
     @GetMapping("/{guideId}")
-    public ResponseEntity<?> getWebGuideDetail(@PathVariable("guideId") int guideId) {
+    public ResponseEntity<?> getWebGuideDetail(@PathVariable("guideId") int guideId,
+    											@CurrentUser User user) {
         log.info("웹 개념 상세 조회 요청 - ID: {}", guideId);
-        WebGuideDetail webGuideDetail = webGuideService.getWebGuideDetail(guideId);
+        WebGuideDetail webGuideDetail = webGuideService.getWebGuideDetail(guideId, user.getUserId());
         log.info("웹 개념 상세 조회 완료 - ID: {}", guideId);
         return ResponseEntity.ok(webGuideDetail);
     }
 
     @PostMapping
-    public ResponseEntity<?> createWebGuide(@RequestBody WebGuideRequest webGuideRequest,
-    										@CurrentUser User user) {
+    public ResponseEntity<?> createWebGuide(@RequestBody WebGuideRequest webGuideRequest) {
         log.info("웹 개념 작성 요청 - 제목:{}", webGuideRequest.getTitle());
-        CreateResponse createResponse = webGuideService.createWebGuide(webGuideRequest, user.getUserId());
+        CreateResponse createResponse = webGuideService.createWebGuide(webGuideRequest);
         log.info("웹 개념 작성 완료 - ID: {}", createResponse.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse.getId());
     }

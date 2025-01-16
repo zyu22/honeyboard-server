@@ -9,8 +9,8 @@ import com.honeyboard.api.web.guide.model.response.WebGuideList;
 public interface WebGuideService {
     PageResponse<WebGuideList> getAllWebGuide(int generationId, int currentPage, int pageSize);
     PageResponse<WebGuideList> searchWebGuide(int generationId, int currentPage, int pageSize, String title);
-    WebGuideDetail getWebGuideDetail(int guideId);
-    CreateResponse createWebGuide(WebGuideRequest webGuideRequest, int userId);
+    WebGuideDetail getWebGuideDetail(int guideId, int userId);
+    CreateResponse createWebGuide(WebGuideRequest webGuideRequest);
     void updateWebGuide(int guideId, WebGuideRequest webGuideRequest);
     void softDeleteWebGuide(int guideId);
 }

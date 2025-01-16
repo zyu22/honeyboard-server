@@ -50,10 +50,10 @@ public class WebGuideServiceImpl implements WebGuideService {
     }
 
     @Override
-    public WebGuideDetail getWebGuideDetail(int guideId) {
+    public WebGuideDetail getWebGuideDetail(int guideId, int userId) {
         log.info("웹 개념 상세 조회 시작 - ID: {}", guideId);
 
-        WebGuideDetail webGuideDetail = webGuideMapper.selectWebGuideById(guideId);
+        WebGuideDetail webGuideDetail = webGuideMapper.selectWebGuideById(guideId, userId);
 
         if (webGuideDetail == null) {
             log.error("웹 개념 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", guideId);
@@ -65,11 +65,11 @@ public class WebGuideServiceImpl implements WebGuideService {
     }
 
     @Override
-    public CreateResponse createWebGuide(WebGuideRequest webGuideRequest, int userId) {
+    public CreateResponse createWebGuide(WebGuideRequest webGuideRequest) {
         log.info("웹 개념 등록 시작 - 제목: {}", webGuideRequest.getTitle());
         
         CreateResponse createResponse = new CreateResponse();
-        webGuideMapper.createWebGuide(webGuideRequest, userId, createResponse);
+        webGuideMapper.createWebGuide(webGuideRequest, createResponse);
 
         if (createResponse.getId() <= 0) {
             log.error("웹 개념 등록 실패 - 제목: {}", webGuideRequest.getTitle());

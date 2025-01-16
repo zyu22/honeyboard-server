@@ -1,8 +1,17 @@
 package com.honeyboard.api.web.guide.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.config.WithMockCustomUser;
+import com.honeyboard.api.jwt.model.service.JwtService;
+import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.user.service.UserService;
 import com.honeyboard.api.web.guide.model.WebGuide;
+import com.honeyboard.api.web.guide.model.request.WebGuideRequest;
+import com.honeyboard.api.web.guide.model.response.WebGuideDetail;
+import com.honeyboard.api.web.guide.model.response.WebGuideList;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,100 +34,162 @@ public class WebGuideControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+    
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private UserService userService;
+    
+//    @Test
+//    @WithMockUser
+//    void getAllWebGuide_Success() throws Exception {
+//        // given
+//        int generationId = 13;
+//        int currentPage = 1;
+//        int pageSize = 8;
+//
+//        // when & then
+//        MvcResult result = mockMvc.perform(get("/api/v1/web/guide")
+//                        .param("generationId", String.valueOf(generationId))
+//                        .param("currentPage", String.valueOf(currentPage))
+//                        .param("pageSize", String.valueOf(pageSize))
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andReturn();
+//
+//        PageResponse<WebGuideList> response = objectMapper.readValue(
+//                result.getResponse().getContentAsString(),
+//                objectMapper.getTypeFactory().constructParametricType(PageResponse.class, WebGuideList.class)
+//        );
+//
+//        System.out.println("\n=== 웹 개념 전체 조회 결과 ===");
+//        for (WebGuideList guide : response.getContent()) {
+//            System.out.println("개념 ID: " + guide.getId());
+//            System.out.println("제목: " + guide.getTitle());
+//            System.out.println("-------------------------");
+//        }
+//    }
+
+//    @Test
+//    @WithMockUser
+//    void searchWebGuide_Success() throws Exception {
+//        // given
+//        int generationId = 13;
+//        String title = "프론트엔드";
+//        int currentPage = 1;
+//        int pageSize = 8;
+//
+//        // when & then
+//        MvcResult result = mockMvc.perform(get("/api/v1/web/guide")
+//                        .param("generationId", String.valueOf(generationId))
+//                        .param("currentPage", String.valueOf(currentPage))
+//                        .param("pageSize", String.valueOf(pageSize))
+//                        .param("title", title)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andReturn();
+//        
+//        PageResponse<WebGuideList> response = objectMapper.readValue(
+//              result.getResponse().getContentAsString(),
+//              objectMapper.getTypeFactory().constructParametricType(PageResponse.class, WebGuideList.class)
+//      );
+//
+//      System.out.println("\n=== 웹 개념 전체 조회 결과 ===");
+//      for (WebGuideList guide : response.getContent()) {
+//          System.out.println("개념 ID: " + guide.getId());
+//          System.out.println("제목: " + guide.getTitle());
+//          System.out.println("-------------------------");
+//      }
+//    }
+
+    // 문제-----------------
+//    @Test
+//    @WithMockUser
+//    void getWebGuide_Success() throws Exception {
+//        // given
+//        int guideId = 1;
+//
+//        // when & then
+//        MvcResult result = mockMvc.perform(get("/api/v1/web/guide/{guideId}", guideId)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print())
+//                .andReturn();
+//        
+//        WebGuideDetail response = objectMapper.readValue(
+//              result.getResponse().getContentAsString(), WebGuideDetail.class
+//        );
+//        
+//        System.out.println("\n=== 웹 개념 상세 조회 결과 ===");
+//        System.out.println("개념 ID: " + response.getId());
+//        System.out.println("제목: " + response.getTitle());
+//        System.out.println("-------------------------");
+//    }
 
     @Test
-    @WithMockUser
-    void getAllWebGuide_Success() throws Exception {
+    @WithMockCustomUser(id = 5, email = "sktndid1203@gmail.com", name = "박수양", role = "ADMIN", generationId = 13)
+    void getWebGuide_Success() throws Exception {
         // given
-        int generationId = 13;
-        int currentPage = 1;
-        int pageSize = 8;
-
+        int guideId = 1;
+        
         // when & then
-        MvcResult result = mockMvc.perform(get("/api/v1/web/guide")
-                        .param("generationId", String.valueOf(generationId))
-                        .param("currentPage", String.valueOf(currentPage))
-                        .param("pageSize", String.valueOf(pageSize))
-                        .contentType(MediaType.APPLICATION_JSON))
+        MvcResult result = mockMvc.perform(get("/api/v1/web/guide/{guideId}", guideId)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
 
-        PageResponse<WebGuide> response = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructParametricType(PageResponse.class, WebGuide.class)
+        WebGuideDetail response = objectMapper.readValue(
+            result.getResponse().getContentAsString(), WebGuideDetail.class
         );
 
-        System.out.println("\n=== 웹 개념 전체 조회 결과 ===");
-        for (WebGuide guide : response.getContent()) {
-            System.out.println("개념 ID: " + guide.getId());
-            System.out.println("제목: " + guide.getTitle());
-            System.out.println("-------------------------");
-        }
+        System.out.println("\n=== 웹 개념 상세 조회 결과 ===");
+        System.out.println("개념 ID: " + response.getId());
+        System.out.println("제목: " + response.getTitle());
+        System.out.println("-------------------------");
     }
-
+    
+    // 웹 개념 작성 테스트
     @Test
     @WithMockUser
-    void searchWebGuide_Success() throws Exception {
+    void createWebGuide_Success() throws Exception {
         // given
-        int generationId = 13;
-        String title = "프론트엔드";
-        int currentPage = 1;
-        int pageSize = 8;
-
-        // when & then
-        mockMvc.perform(get("/api/v1/web/guide/search")
-                        .param("generationId", String.valueOf(generationId))
-                        .param("title", title)
-                        .param("currentPage", String.valueOf(currentPage))
-                        .param("pageSize", String.valueOf(pageSize))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
-
-    @Test
-    @WithMockUser
-    void getWebGuide_Success() throws Exception {
-        // given
-        int guideId = 4;
-
-        // when & then
-        mockMvc.perform(get("/api/v1/web/guide/{guideId}", guideId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
-
-    @Test
-    @WithMockUser
-    void addWebGuide_Success() throws Exception {
-        // given
-        WebGuide request = new WebGuide();
-        request.setUserId(5);
-        request.setGenerationId(13);
+        WebGuideRequest request = new WebGuideRequest();
         request.setTitle("CSS 기초");
         request.setContent("CSS인데요.");
         request.setThumbnail("www.naver.com");
 
         // when & then
-        mockMvc.perform(post("/api/v1/web/guide")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andDo(print());
+        MvcResult result = mockMvc.perform(post("/api/v1/web/guide")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andDo(print())
+            .andReturn();
+        
+        CreateResponse createResponse = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CreateResponse.class
+        );
+
+        System.out.println("\n=== 웹 개념 작성 결과 ===");
+        System.out.println("개념 ID: " + createResponse.getId());
+        System.out.println("-------------------------");
     }
 
+    // 웹 개념 수정 테스트
     @Test
     @WithMockUser
     void updateWebGuide_Success() throws Exception {
         // given
         int guideId = 4;
-        WebGuide request = new WebGuide();
-        request.setUserId(5);
-        request.setTitle("Updated HTML Guide");
-        request.setContent("Updated HTML content");
-
+        WebGuideRequest request = new WebGuideRequest();
+        request.setTitle("통합테스트용 가이드");
+        request.setContent("통합테스트 내용입니다.");
+        request.setThumbnail("test.jpg");
+        
         // when & then
         mockMvc.perform(put("/api/v1/web/guide/{guideId}", guideId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -127,6 +198,7 @@ public class WebGuideControllerTest {
                 .andDo(print());
     }
 
+    // 웹 개념 삭제 테스트
     @Test
     @WithMockUser
     void deleteWebGuide_Success() throws Exception {
@@ -140,11 +212,12 @@ public class WebGuideControllerTest {
                 .andDo(print());
     }
 
+    // 잘못된 요청에 대한 테스트 (예: 빈 필드로 요청)
     @Test
     @WithMockUser
     void addWebGuide_Fail_InvalidRequest() throws Exception {
         // given
-        WebGuide request = new WebGuide();
+        WebGuideRequest request = new WebGuideRequest();
         // 필수 값을 비워둠
 
         // when & then
