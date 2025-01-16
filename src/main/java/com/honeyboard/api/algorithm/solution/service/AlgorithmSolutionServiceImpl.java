@@ -1,5 +1,6 @@
 package com.honeyboard.api.algorithm.solution.service;
 
+import com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper;
 import com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper;
 import com.honeyboard.api.algorithm.solution.model.request.AlgorithmSolutionRequest;
 import com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail;
@@ -19,6 +20,7 @@ import java.util.List;
 public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 	
 	private final AlgorithmSolutionMapper asm;
+	private final AlgorithmProblemMapper apm;
 
 	@Override
 	public PageResponse<AlgorithmSolutionList> getAllAlgorithmSolution(int problemId, int generationId, List<String> languages,
@@ -67,6 +69,12 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 
 		if (request == null) {
 			throw new IllegalArgumentException("알고리즘 솔루션 정보가 없습니다.");
+		}
+
+		// 문제 존재 여부 확인
+		if (apm.selectAlgorithmProblem(problemId) == null) {
+			log.error("존재하지 않는 문제 - ID: {}", problemId);
+			throw new IllegalArgumentException("존재하지 않는 문제입니다.");
 		}
 
 		CreateResponse createResponse = new CreateResponse();
