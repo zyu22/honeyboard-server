@@ -72,8 +72,8 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         log.info("웹 추천 등록 시작 - 제목: {}", webRecommend.getTitle());
 
         // URL 중복 확인
-        boolean existingRecommend = webRecommendMapper.existByUrl(webRecommend.getUrl());
-        if (!existingRecommend) {
+        int count = webRecommendMapper.existByUrl(webRecommend.getUrl());
+        if (count > 0) {
             log.warn("이미 존재하는 URL - {}", webRecommend.getUrl());
             throw new BusinessException(DUPLICATE_URL);
         }
