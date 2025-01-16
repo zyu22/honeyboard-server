@@ -22,16 +22,16 @@ public class ChatController {
 
     @GetMapping
     public ResponseEntity<?> getChatListByGenerationId(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(defaultValue = "1") int currentPage,
+            @RequestParam(defaultValue = "50") int pageSize,
             @CurrentUser User loginUser
     ) {
         log.debug("채팅 목록 조회 요청 - 기수: {}, 페이지: {}, 사이즈: {}",
-                loginUser.getGenerationId(), page, size);
+                loginUser.getGenerationId(), currentPage, pageSize);
 
         PageResponse<Chat> response = chatService.getChatListByGenerationId(
-                page,
-                size,
+                currentPage,
+                pageSize,
                 loginUser.getGenerationId()
         );
 
