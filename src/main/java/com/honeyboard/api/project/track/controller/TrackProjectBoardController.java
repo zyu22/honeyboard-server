@@ -36,6 +36,11 @@ public class TrackProjectBoardController {
             @PathVariable int trackTeamId,
             @RequestBody TrackProjectBoardRequest board,
             @CurrentUser User user) {
+        // 사용자 ID가 null인 경우 처리
+        if (user == null || user.getUserId() == 0) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         CreateResponse createResponse = trackProjectBoardService.addBoard(trackProjectId, trackTeamId, user.getUserId(), board);
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
     }

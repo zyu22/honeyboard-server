@@ -59,7 +59,7 @@
     </select>
 
     <!-- 웹 추천 작성 -->
-    <insert id="insertWebRecommend" useGeneratedKeys="true" keyProperty="webRecommend.id">
+    <insert id="insertWebRecommend" useGeneratedKeys="true" keyProperty="createResponse.id">
         INSERT INTO web_recommend (
             title,
             url,
@@ -123,5 +123,10 @@
         <if test="generationId != 0">
             AND generation_id = (SELECT id FROM generation WHERE is_active = true)
         </if>
+    </select>
+
+    <!-- URl 중복체크 -->
+    <select id="existByUrl" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM web_recommend WHERE url = #{url}
     </select>
 </mapper>
