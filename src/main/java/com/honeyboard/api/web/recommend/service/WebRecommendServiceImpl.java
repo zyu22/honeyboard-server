@@ -3,15 +3,19 @@ package com.honeyboard.api.web.recommend.service;
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.web.recommend.mapper.WebRecommendMapper;
 import com.honeyboard.api.web.recommend.model.request.WebRecommendRequest;
 import com.honeyboard.api.web.recommend.model.response.WebRecommendDetail;
 import com.honeyboard.api.web.recommend.model.response.WebRecommendList;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.honeyboard.api.exception.ErrorCode.DUPLICATE_URL;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +70,13 @@ public class WebRecommendServiceImpl implements WebRecommendService {
     @Override
     public CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId) {
         log.info("웹 추천 등록 시작 - 제목: {}", webRecommend.getTitle());
+
+        // URL 중복 확인
+        boolean existingRecommend = webRecommendMapper.existByUrl(webRecommend.getUrl());
+        if (!existingRecommend) {
+            log.warn("이미 존재하는 URL - {}", webRecommend.getUrl());
+            throw new BusinessException(DUPLICATE_URL);
+        }
 
         int result = webRecommendMapper.insertWebRecommend(webRecommend, userId);
 

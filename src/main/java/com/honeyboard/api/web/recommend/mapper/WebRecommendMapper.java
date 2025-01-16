@@ -32,4 +32,8 @@ public interface WebRecommendMapper {
 
     // 웹추천 검색 개수
     int countSearchWebRecommend(String title, Integer generationId);
+
+    // Url 중복검사
+    boolean existByUrl(String url);
+
 }

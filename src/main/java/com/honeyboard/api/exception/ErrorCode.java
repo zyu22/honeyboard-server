@@ -14,6 +14,7 @@ public enum ErrorCode {
     // 중복 관련 에러
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 등록된 이메일입니다."),
     DUPLICATE_TEAM_MEMBER(HttpStatus.CONFLICT, "이미 등록된 팀원입니다."),
+    DUPLICATE_URL(HttpStatus.CONFLICT, "이미 등록된 URL입니다."),
     DUPLICATE_VIDEO(HttpStatus.CONFLICT, "이미 등록된 영상입니다."),
 
     // 인증코드 관련 에러

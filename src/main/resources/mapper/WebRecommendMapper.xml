@@ -124,4 +124,12 @@
             AND generation_id = (SELECT id FROM generation WHERE is_active = true)
         </if>
     </select>
+
+    <!-- URl 중복체크 -->
+    <select id="existByUrl" resultType="WebRecommend">
+        SELECT * FROM web_recommend
+        WHERE url = #{url}
+          AND is_deleted = false
+            LIMIT 1
+    </select>
 </mapper>

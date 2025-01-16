@@ -6,6 +6,7 @@ import com.honeyboard.api.project.track.model.request.TrackProjectBoardRequest;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardList;
 import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
+import com.honeyboard.api.web.recommend.mapper.WebRecommendMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.C;
@@ -19,6 +20,7 @@ import java.util.List;
 public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
     private final TrackProjectBoardMapper trackProjectBoardMapper;
+    private final WebRecommendMapper webRecommendMapper;
 
 
     @Override
@@ -34,6 +36,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
     // 관통 게시글 추가
     @Override
     public CreateResponse addBoard(int trackProjectId, int trackTeamId, int userId, TrackProjectBoardRequest board) {
+
         if (trackProjectId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 트랙 프로젝트 ID입니다.");
         }
@@ -58,7 +61,6 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
             throw new IllegalArgumentException("유효하지 않은 게시글 ID입니다.");
         }
         validateBoard(board);
-
 
         log.info("게시글 수정 시작 - ID: {}", boardId);
         int result = trackProjectBoardMapper.updateTrackProjectBoard(trackProjectId, trackTeamId, boardId, board);
