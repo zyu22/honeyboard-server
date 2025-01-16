@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper">
 
-    <resultMap id="AlgorithmProblemWithTags" type="com.honeyboard.api.algorithm.problem.model.AlgorithmProblemList">
+    <resultMap id="AlgorithmProblemWithTags" type="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="url" column="url"/>
@@ -39,7 +39,7 @@
                 END
             )
         ORDER BY ap.created_at DESC
-        LIMIT #{offset}, #{pageSize}
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="countAlgorithmProblem" resultType="int">
@@ -70,30 +70,8 @@
                title,
                url
         FROM algorithm_problem
-        WHERE id = #{problemId}
+        WHERE id = #{id}
     </select>
-
-    <select id="selectProblemSolutions" resultType="com.honeyboard.api.algorithm.problem.model.AlgorithmSolutionList">
-        SELECT s.id,
-               s.title,
-               s.created_at as subtitle,
-               s.memory,
-               s.language_id as languageId,
-               l.name as languageName,
-               s.runtime
-        FROM algorithm_problem_solution s
-                 LEFT JOIN programming_language l ON s.language_id = l.id
-        WHERE s.problem_id = #{problemId}
-    </select>
-
-    <select id="selectProblemTags" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
-        SELECT t.id,
-               t.name
-        FROM tag t
-                 JOIN algorithm_problem_tag apt ON t.id = apt.tag_id
-        WHERE apt.algorithm_problem_id = #{problemId}
-    </select>
-
 
     <!--  Algorithm Problem 작성  -->
     <insert id="insertAlgorithmProblem" useGeneratedKeys="true" keyProperty="createResponse.id">
@@ -115,7 +93,7 @@
         SET title = #{request.title},
             url = #{request.url},
             updated_at = CURRENT_TIMESTAMP
-        WHERE id = #{problemId}
+        WHERE id = #{id}
           AND is_deleted = false
     </update>
 
@@ -125,34 +103,11 @@
         UPDATE algorithm_problem
         SET is_deleted = true,
             updated_at = CURRENT_TIMESTAMP
-        WHERE id = #{problemId}
+        WHERE id = #{id}
           AND is_deleted = false
     </update>
 
 
-    <!--  Tag 관리  -->
-    <insert id="insertAlgorithmProblemTags">
-        INSERT INTO algorithm_problem_tag (algorithm_problem_id, tag_id)
-        VALUES
-        <foreach collection="tagIds" item="tagId" separator=",">
-            (#{problemId}, #{tagId})
-        </foreach>
-    </insert>
 
-
-    <select id="getTagIdsByProblemId" resultType="int">
-        SELECT tag_id
-        FROM algorithm_problem_tag
-        WHERE algorithm_problem_id = #{problemId}
-    </select>
-
-    <delete id="deleteSpecificAlgorithmProblemTags">
-        DELETE FROM algorithm_problem_tag
-        WHERE algorithm_problem_id = #{problemId}
-        AND tag_id IN
-        <foreach collection="tagIds" item="tagId" open="(" separator="," close=")">
-            #{tagId}
-        </foreach>
-    </delete>
 
 </mapper>
