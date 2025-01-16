@@ -33,8 +33,7 @@ public class AlgorithmSolutionController {
 			@RequestParam(value = "language", required = false) List<String> language,
 			@RequestParam(value = "sortType", defaultValue = "latest") String sortType,
 			@RequestParam(value = "currentPage", defaultValue = "1") int currentPage,
-			@RequestParam(value = "pageSize", defaultValue = "9") int pageSize,
-			@CurrentUser User user) {
+			@RequestParam(value = "pageSize", defaultValue = "9") int pageSize) {
 		log.info("알고리즘 풀이 전체 조회 요청 - 문제 ID: {}, 페이지: {}", problemId, currentPage);
 
 		PageResponse<AlgorithmSolutionList> response = algorithmSolutionService.getAllAlgorithmSolution(
