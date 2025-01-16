@@ -61,22 +61,28 @@
    </select>
 
 <!--    &lt;!&ndash; 웹 개념 작성 &ndash;&gt;-->
-   <insert id="createWebGuide">
-       INSERT INTO web_guide (title,
-                              content,
-                              thumbnail,
-                              generation_id,
-                              created_at,
-                              updated_at,
-                              is_deleted)
-       VALUES (#{title},
-               #{content},
-               #{thumbnail},
-               #{generationId},
-               NOW(),
-               NOW(),
-               false)
-   </insert>
+   <insert id="createWebGuide" useGeneratedKeys="true" keyProperty="createResponse.id" keyColumn="id">
+	    INSERT INTO web_guide (
+	        title,
+	        content,
+	        thumbnail,
+	        user_id,
+	        generation_id,
+	        created_at,
+	        updated_at,
+	        is_deleted
+	    )
+	    VALUES (
+	        #{webGuideRequest.title},
+	        #{webGuideRequest.content},
+	        #{webGuideRequest.thumbnail},
+	        #{userId},
+	        #{generationId},
+	        NOW(),
+	        NOW(),
+	        false
+	    )
+	</insert>
 
 <!--    &lt;!&ndash; 웹 개념 수정 &ndash;&gt;-->
    <update id="updateWebGuide">
@@ -86,17 +92,18 @@
            thumbnail  = #{webGuideRequest.thumbnail},
            updated_at = NOW()
        WHERE id = #{guideId}
+       	 AND user_id = #{userId}
          AND is_deleted = false
    </update>
 
 <!--    &lt;!&ndash; 웹 개념 삭제 &ndash;&gt;-->
-   <update id="softDeleteWebGuide" parameterType="int">
+   <delete id="softDeleteWebGuide" parameterType="int">
        UPDATE web_guide
        SET is_deleted = true,
            updated_at = NOW()
        WHERE id = #{guideId}
          AND is_deleted = false
-   </update>
+   </delete>
 
 <!--    &lt;!&ndash; 웹 개념 전체 개수 조회 &ndash;&gt;-->
    <select id="countWebGuide" resultType="int">

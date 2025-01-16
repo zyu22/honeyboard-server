@@ -65,11 +65,11 @@ public class WebGuideServiceImpl implements WebGuideService {
     }
 
     @Override
-    public CreateResponse createWebGuide(WebGuideRequest webGuideRequest) {
+    public CreateResponse createWebGuide(WebGuideRequest webGuideRequest, int userId, int generationId) {
         log.info("웹 개념 등록 시작 - 제목: {}", webGuideRequest.getTitle());
         
         CreateResponse createResponse = new CreateResponse();
-        webGuideMapper.createWebGuide(webGuideRequest, createResponse);
+        webGuideMapper.createWebGuide(webGuideRequest, userId, generationId, createResponse);
 
         if (createResponse.getId() <= 0) {
             log.error("웹 개념 등록 실패 - 제목: {}", webGuideRequest.getTitle());
@@ -81,10 +81,10 @@ public class WebGuideServiceImpl implements WebGuideService {
     }
 
     @Override
-    public void updateWebGuide(int guideId, WebGuideRequest webGuideRequest) {
+    public void updateWebGuide(int guideId, WebGuideRequest webGuideRequest, int userId) {
         log.info("웹 개념 수정 시작 - ID: {}", guideId);
 
-        int result = webGuideMapper.updateWebGuide(guideId, webGuideRequest);
+        int result = webGuideMapper.updateWebGuide(guideId, webGuideRequest, userId);
 
         if (result != 1) {
             log.error("웹 개념 수정 실패 - ID: {}", guideId);
@@ -95,10 +95,10 @@ public class WebGuideServiceImpl implements WebGuideService {
     }
 
     @Override
-    public void softDeleteWebGuide(int guideId) {
+    public void softDeleteWebGuide(int guideId, int userId) {
         log.info("웹 개념 삭제 시작 - ID: {}", guideId);
 
-        int result = webGuideMapper.softDeleteWebGuide(guideId);
+        int result = webGuideMapper.softDeleteWebGuide(guideId, userId);
 
         if (result != 1) {
             log.error("웹 개념 삭제 실패 - ID: {}", guideId);
@@ -106,18 +106,5 @@ public class WebGuideServiceImpl implements WebGuideService {
         }
 
         log.info("웹 개념 삭제 완료 - ID: {}", guideId);
-    }
-    
- // 유효성 검사
-    private void validateWeb(WebGuideRequest webGuideRequest) {
-        if (webGuideRequest == null) {
-            throw new IllegalArgumentException("가이드 정보가 없습니다.");
-        }
-        if (webGuideRequest.getTitle() == null || webGuideRequest.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("제목을 입력해주세요.");
-        }
-        if (webGuideRequest.getContent() == null || webGuideRequest.getContent().trim().isEmpty()) {
-            throw new IllegalArgumentException("내용을 입력해주세요.");
-        }
     }
 }

@@ -2,6 +2,9 @@ package com.honeyboard.api.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import com.honeyboard.api.web.guide.controller.ErrorResponse;
 
 @Getter
 public enum ErrorCode {
@@ -36,8 +39,10 @@ public enum ErrorCode {
     BOARD_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 제목은 필수입니다."),
     BOARD_CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 내용은 필수입니다."),
     BOARD_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 수정에 실패했습니다."),
-    UNAUTHORIZED_BOARD_UPDATE(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다.");
-
+    UNAUTHORIZED_BOARD_UPDATE(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
+	UNAUTHORIZED_WEB_GUIDE_UPDATE(HttpStatus.FORBIDDEN, "웹 게시글 작성 권한이 없습니다.");
+	
+	
     private final HttpStatus status;
     private final String message;
 
