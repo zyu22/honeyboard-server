@@ -37,8 +37,6 @@ public class AlgorithmSolutionController {
 			@CurrentUser User user) {
 		log.info("알고리즘 풀이 전체 조회 요청 - 문제 ID: {}, 페이지: {}", problemId, currentPage);
 
-		int userId = user.getUserId();
-
 		PageResponse<AlgorithmSolutionList> response = algorithmSolutionService.getAllAlgorithmSolution(
 				problemId, generationId, language, sortType, currentPage, pageSize);
 
