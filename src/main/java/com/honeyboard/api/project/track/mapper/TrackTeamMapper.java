@@ -10,6 +10,8 @@ public interface TrackTeamMapper {
 
     int insertTrackTeam(@Param("trackProjectId") int trackProjectId);
 
+    int getLastInsertedTeamId();
+
     int insertTeamLeader(@Param("teamId") int teamId, @Param("leaderId") int leaderId);
 
     int insertTeamMembers(@Param("teamId") int teamId, @Param("memberIds") List<Integer> memberIds);

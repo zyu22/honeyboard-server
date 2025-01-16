@@ -3,23 +3,28 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.project.track.mapper.TrackTeamMapper">
     <!-- 팀 생성 -->
-    <insert id="insertTrackTeam" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertTrackTeam">
+
         INSERT INTO track_team (
-            generation_id,
-            track_project_id,
-            is_completed,
-            created_at,
-            updated_at
+        generation_id,
+        track_project_id,
+        is_completed,
+        created_at,
+        updated_at
         )
         SELECT
-            g.id as generation_id,
-            #{trackProjectId},
-            false,
-            NOW(),
-            NOW()
+        g.id as generation_id,
+        #{trackProjectId},
+        false,
+        NOW(),
+        NOW()
         FROM generation g
         WHERE g.is_active = true
     </insert>
+
+    <select id="getLastInsertedTeamId" resultType="int">
+        SELECT LAST_INSERT_ID()
+    </select>
 
     <!-- 팀장 추가 -->
     <insert id="insertTeamLeader">

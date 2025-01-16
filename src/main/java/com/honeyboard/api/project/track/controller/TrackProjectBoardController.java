@@ -5,6 +5,8 @@ import com.honeyboard.api.project.track.model.request.TrackProjectBoardRequest;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardList;
 import com.honeyboard.api.project.track.service.TrackProjectBoardService;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +34,9 @@ public class TrackProjectBoardController {
     public ResponseEntity<?> createTrackProjectBoard(
             @PathVariable int trackProjectId,
             @PathVariable int trackTeamId,
-            @RequestBody TrackProjectBoardRequest board) {
-        CreateResponse createResponse = trackProjectBoardService.addBoard(trackProjectId, trackTeamId, board);
+            @RequestBody TrackProjectBoardRequest board,
+            @CurrentUser User user) {
+        CreateResponse createResponse = trackProjectBoardService.addBoard(trackProjectId, trackTeamId, user.getUserId(), board);
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
     }
 

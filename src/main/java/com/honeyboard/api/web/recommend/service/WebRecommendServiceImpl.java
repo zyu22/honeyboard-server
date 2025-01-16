@@ -1,5 +1,6 @@
 package com.honeyboard.api.web.recommend.service;
 
+import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
 import com.honeyboard.api.web.recommend.mapper.WebRecommendMapper;
@@ -63,24 +64,26 @@ public class WebRecommendServiceImpl implements WebRecommendService {
 
 
     @Override
-    public void addWebRecommend(WebRecommendRequest webRecommend) {
+    public CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId) {
         log.info("웹 추천 등록 시작 - 제목: {}", webRecommend.getTitle());
 
-        int result = webRecommendMapper.insertWebRecommend(webRecommend);
+        int result = webRecommendMapper.insertWebRecommend(webRecommend, userId);
 
         if (result <= 0) {
             log.error("웹 추천 등록 실패 - 제목: {}", webRecommend.getTitle());
             throw new IllegalArgumentException("웹 추천 등록에 실패했습니다.");
         }
 
-        log.info("웹 추천 등록 완료");
+        log.info("웹 추천 등록 완료 - ID: {}", webRecommend.getId());
+
+        return new CreateResponse(webRecommend.getId());
     }
 
     @Override
-    public void updateWebRecommend(int recommendId, WebRecommendRequest webRecommend) {
+    public void updateWebRecommend(int recommendId, WebRecommendRequest webRecommend, int userId) {
         log.info("웹 추천 수정 시작 - ID: {}", recommendId);
 
-        int result = webRecommendMapper.updateWebRecommend(recommendId, webRecommend);
+        int result = webRecommendMapper.updateWebRecommend(recommendId, webRecommend, userId);
 
         if (result <= 0) {
             log.error("웹 추천 수정 실패 - ID: {}", recommendId);

@@ -3,115 +3,125 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.honeyboard.api.web.recommend.mapper.WebRecommendMapper">
-<!--    &lt;!&ndash; 웹 추천 전체/기수별 조회 &ndash;&gt;-->
-<!--    <select id="selectAllWebRecommend" parameterType="int" resultType="WebRecommend">-->
-<!--        SELECT-->
-<!--        id ,-->
-<!--        title,-->
-<!--        url,-->
-<!--        user_id,-->
-<!--        generation_id,-->
-<!--        created_at,-->
-<!--        updated_at,-->
-<!--        is_deleted-->
-<!--        FROM web_recommend-->
-<!--        WHERE is_deleted = false-->
-<!--        <if test="generationId != null">-->
-<!--            AND generation_id = #{generationId}-->
-<!--        </if>-->
-<!--        ORDER BY created_at DESC-->
-<!--        LIMIT #{offset}, #{pageSize}-->
-<!--    </select>-->
+    <!-- 웹 추천 전체/기수별 조회 -->
+    <select id="selectAllWebRecommend" resultType="com.honeyboard.api.web.recommend.model.response.WebRecommendList">
+        SELECT
+        id,
+        title,
+        url,
+        created_at
+        FROM web_recommend
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+        </if>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
 
-<!--    &lt;!&ndash; 웹 추천 제목 기반 검색 &ndash;&gt;-->
-<!--    <select id="searchWebRecommendByTitle" resultType="WebRecommend">-->
-<!--        SELECT id AS recommendId,-->
-<!--               title,-->
-<!--               url,-->
-<!--               user_id,-->
-<!--               generation_id,-->
-<!--               created_at,-->
-<!--               updated_at,-->
-<!--               is_deleted-->
-<!--        FROM web_recommend-->
-<!--        WHERE generation_id = #{generationId}-->
-<!--          AND title LIKE CONCAT('%', #{title}, '%')-->
-<!--          AND is_deleted = false-->
-<!--        ORDER BY created_at-->
-<!--        LIMIT #{offset}, #{pageSize}-->
-<!--    </select>-->
+    <!-- 웹 추천 제목 기반 검색 -->
+    <select id="searchWebRecommendByTitle" resultType="com.honeyboard.api.web.recommend.model.response.WebRecommendList">
+        SELECT
+            id,
+            title,
+            url,
+            created_at
+        FROM web_recommend
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+        </if>
+          AND title LIKE CONCAT('%', #{title}, '%')
+        ORDER BY created_at DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
 
-<!--    &lt;!&ndash; 웹 추천 상세 조회 &ndash;&gt;-->
-<!--    <select id="selectWebRecommendById" parameterType="int" resultType="WebRecommend">-->
-<!--        SELECT id,-->
-<!--               title,-->
-<!--               url,-->
-<!--               content,-->
-<!--               user_id,-->
-<!--               generation_id,-->
-<!--               created_at,-->
-<!--               updated_at,-->
-<!--               is_deleted-->
-<!--        FROM web_recommend-->
-<!--        WHERE id = #{recommendId}-->
-<!--          AND is_deleted = false-->
-<!--    </select>-->
+    <!-- 웹 추천 상세 조회 -->
+    <select id="selectWebRecommendById" resultType="com.honeyboard.api.web.recommend.model.response.WebRecommendDetail">
+        SELECT
+            id,
+            title,
+            content,
+            url,
+            user_id AS authorId,
+            (SELECT name FROM user WHERE id = user_id) AS authorName,
+            (SELECT name FROM user WHERE id = user_id) AS authorName,
+            CASE WHEN EXISTS (
+                SELECT 1
+                FROM bookmark
+                WHERE user_id = #{userId}
+                  AND content_type = 'WEB_RECOMMEND'
+                  AND content_id = web_recommend.id
+            ) THEN true ELSE false END AS bookmark
+        FROM web_recommend
+        WHERE id = #{recommendId}
+          AND is_deleted = false
+    </select>
 
-<!--    &lt;!&ndash; 웹 추천 작성 &ndash;&gt;-->
-<!--    <insert id="insertWebRecommend" parameterType="WebRecommend">-->
-<!--        INSERT INTO web_recommend (title,-->
-<!--                                   url,-->
-<!--                                   content,-->
-<!--                                   user_id,-->
-<!--                                   generation_id,-->
-<!--                                   created_at,-->
-<!--                                   updated_at,-->
-<!--                                   is_deleted)-->
-<!--        VALUES (#{title},-->
-<!--                #{url},-->
-<!--                #{content},-->
-<!--                #{userId},-->
-<!--                #{generationId},-->
-<!--                NOW(),-->
-<!--                NOW(),-->
-<!--                false)-->
-<!--    </insert>-->
+    <!-- 웹 추천 작성 -->
+    <insert id="insertWebRecommend" useGeneratedKeys="true" keyProperty="webRecommend.id">
+        INSERT INTO web_recommend (
+            title,
+            url,
+            content,
+            user_id,
+            generation_id,
+            created_at,
+            updated_at,
+            is_deleted
+        ) VALUES (
+                     #{webRecommend.title},
+                     #{webRecommend.url},
+                     #{webRecommend.content},
+                     #{userId},
+                     (SELECT id FROM generation WHERE is_active = true),
+                     NOW(),
+                     NOW(),
+                     false
+                 )
+    </insert>
 
-<!--    &lt;!&ndash; 웹 추천 수정 &ndash;&gt;-->
-<!--    <update id="updateWebRecommend" parameterType="WebRecommend">-->
-<!--        UPDATE web_recommend-->
-<!--        SET title      = #{webRecommend.title},-->
-<!--            content    = #{webRecommend.content},-->
-<!--            url        = #{webRecommend.url},-->
-<!--            updated_at = NOW()-->
-<!--        WHERE id = #{recommendId}-->
-<!--          AND user_id = #{webRecommend.userId}-->
-<!--          AND is_deleted = false-->
-<!--    </update>-->
+    <!-- 웹 추천 수정 -->
+    <update id="updateWebRecommend">
+        UPDATE web_recommend
+        SET
+            title = #{webRecommend.title},
+            content = #{webRecommend.content},
+            url = #{webRecommend.url},
+            updated_at = NOW()
+        WHERE id = #{recommendId}
+          AND user_id = #{userId}
+          AND is_deleted = false
+    </update>
 
-<!--    &lt;!&ndash; 웹 추천 삭제 &ndash;&gt;-->
-<!--    <update id="deleteWebRecommend">-->
-<!--        UPDATE web_recommend-->
-<!--        SET is_deleted = true,-->
-<!--            updated_at = NOW()-->
-<!--        WHERE id = #{recommendId}-->
-<!--          AND is_deleted = false-->
-<!--    </update>-->
+    <!-- 웹 추천 삭제 -->
+    <update id="deleteWebRecommend">
+        UPDATE web_recommend
+        SET
+            is_deleted = true,
+            updated_at = NOW()
+        WHERE id = #{recommendId}
+          AND is_deleted = false
+    </update>
 
-<!--    &lt;!&ndash; 웹 추천 전체 개수 조회 &ndash;&gt;-->
-<!--    <select id="countWebRecommend" resultType="int">-->
-<!--        SELECT COUNT(*)-->
-<!--        FROM web_recommend-->
-<!--        WHERE generation_id = #{generationId}-->
-<!--          AND is_deleted = false-->
-<!--    </select>-->
+    <!-- 웹 추천 전체 개수 조회 -->
+    <select id="countWebRecommend" resultType="int">
+        SELECT COUNT(*)
+        FROM web_recommend
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+        </if>
+    </select>
 
-<!--    &lt;!&ndash; 웹 추천 검색 개수 조회 &ndash;&gt;-->
-<!--    <select id="countSearchWebRecommend" resultType="int">-->
-<!--        SELECT COUNT(*)-->
-<!--        FROM web_recommend-->
-<!--        WHERE generation_id = #{generationId}-->
-<!--          AND title LIKE CONCAT('%', #{title}, '%')-->
-<!--          AND is_deleted = false-->
-<!--    </select>-->
+    <!-- 웹 추천 검색 개수 조회 -->
+    <select id="countSearchWebRecommend" resultType="int">
+        SELECT COUNT(*)
+        FROM web_recommend
+        WHERE title LIKE CONCAT('%', #{title}, '%')
+          AND is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+        </if>
+    </select>
 </mapper>

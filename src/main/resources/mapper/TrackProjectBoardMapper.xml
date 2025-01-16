@@ -35,7 +35,7 @@
     </select>
 
     <!-- 게시글 생성 -->
-    <insert id="insertTrackProjectBoard" useGeneratedKeys="true" keyProperty="int">
+    <insert id="insertTrackProjectBoard" useGeneratedKeys="true" keyProperty="board.id">
         INSERT INTO track_project_board (
             track_project_id,
             track_team_id,
@@ -43,6 +43,7 @@
             url,
             content,
             thumbnail,
+            user_id,
             created_at,
             updated_at,
             is_deleted
@@ -53,6 +54,7 @@
                      #{board.url},
                      #{board.content},
                      #{board.thumbnail},
+                     #{userId},
                      NOW(),
                      NOW(),
                      false
