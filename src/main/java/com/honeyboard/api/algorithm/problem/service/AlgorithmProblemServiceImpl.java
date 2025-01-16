@@ -4,7 +4,6 @@ import com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper;
 import com.honeyboard.api.algorithm.problem.model.request.AlgorithmProblemRequest;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
-import com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper;
 import com.honeyboard.api.algorithm.tag.mapper.TagMapper;
 import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import com.honeyboard.api.common.model.CreateResponse;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
     private final AlgorithmProblemMapper apm;
-    private final AlgorithmSolutionMapper asm;
     private final TagMapper tm;
 
     // AlgorithmProblem 전체조회
