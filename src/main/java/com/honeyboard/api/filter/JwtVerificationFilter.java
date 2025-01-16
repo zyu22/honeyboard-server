@@ -67,15 +67,21 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         String accessToken = extractTokenFromCookies(request.getCookies(), ACCESS_TOKEN);
         String refreshToken = extractTokenFromCookies(request.getCookies(), REFRESH_TOKEN);
 
-
-
         try {
             if (accessToken != null) {
-                processAccessToken(accessToken, response);
+                try {
+                    processAccessToken(accessToken, response);
+                    filterChain.doFilter(request, response);
+                    return;
+                } catch (ExpiredJwtException e) {
+                    log.debug("Access Token 만료, Refresh Token으로 갱신 시도");
+                    handleExpiredToken(refreshToken, response);
+                    return;
+                }
+            } else if (refreshToken != null) {
+                handleExpiredToken(refreshToken, response);
+                return;
             }
-        } catch (ExpiredJwtException e) {
-            handleExpiredToken(refreshToken, response);
-            return;
         } catch (JwtException e) {
             log.error("JWT 처리 중 오류 발생: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
