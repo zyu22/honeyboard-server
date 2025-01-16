@@ -65,24 +65,25 @@
 
 
     <!--  Algorithm Problem 상세조회  -->
-    <select id="selectProblemBasicInfo" resultType="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail">
+    <select id="selectAlgorithmProblem" resultType="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail">
         SELECT id,
                title,
-               url
+               url,
+               created_at
         FROM algorithm_problem
-        WHERE id = #{id}
+        WHERE id = #{problemId}
     </select>
 
     <!--  Algorithm Problem 작성  -->
     <insert id="insertAlgorithmProblem" useGeneratedKeys="true" keyProperty="createResponse.id">
-        INSERT INTO algorithm_problem (title, url, user_id)
-        VALUES (#{request.title}, #{request.url}, #{userId})
+        INSERT INTO algorithm_problem (title, url, user_id, created_at)
+        VALUES (#{request.title}, #{request.url}, #{userId}, CURRENT_TIMESTAMP)
     </insert>
 
     <select id="existsByUrl" resultType="int">
         SELECT EXISTS (SELECT 1
                        FROM algorithm_problem
-                       WHERE url = #{url}
+                       WHERE url = #{request.url}
                          AND is_deleted = false)
     </select>
 
@@ -103,7 +104,7 @@
         UPDATE algorithm_problem
         SET is_deleted = true,
             updated_at = CURRENT_TIMESTAMP
-        WHERE id = #{id}
+        WHERE id = #{problemId}
           AND is_deleted = false
     </update>
 

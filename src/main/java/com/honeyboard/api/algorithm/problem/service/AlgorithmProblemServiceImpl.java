@@ -5,7 +5,7 @@ import com.honeyboard.api.algorithm.problem.model.request.AlgorithmProblemReques
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
 import com.honeyboard.api.algorithm.tag.mapper.TagMapper;
-import com.honeyboard.api.algorithm.tag.model.TagResponse;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
@@ -58,7 +58,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         log.info("알고리즘 문제 상세 조회 시작 - 문제ID: {}", problemId);
 
         // Problem 기본 정보 조회
-        AlgorithmProblemDetail problemDetail = apm.selectProblemBasicInfo(problemId);
+        AlgorithmProblemDetail problemDetail = apm.selectAlgorithmProblem(problemId);
         if (problemDetail == null) {
             throw new IllegalArgumentException("해당 알고리즘 문제를 찾을 수 없습니다.");
         }

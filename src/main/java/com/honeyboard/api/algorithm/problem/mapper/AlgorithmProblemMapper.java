@@ -22,7 +22,7 @@ public interface AlgorithmProblemMapper {
                               @Param("keyword") String keyword);
 
     // AlgorithmProblem 상세조회
-    AlgorithmProblemDetail selectProblemBasicInfo(@Param("problemId") int problemId);
+    AlgorithmProblemDetail selectAlgorithmProblem(@Param("problemId") int problemId);
 
     // AlgorithmProblem 작성
     int insertAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,

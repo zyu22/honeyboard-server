@@ -1,7 +1,7 @@
 package com.honeyboard.api.algorithm.problem.model.response;
 
 
-import com.honeyboard.api.algorithm.tag.model.TagResponse;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
