@@ -23,7 +23,7 @@ public class TrackTeamController {
 
     @PostMapping("/{trackProjectId}/team")
     public ResponseEntity<?> createTrackTeam(@RequestBody TeamRequest trackTeam, @PathVariable("trackProjectId") int trackProjectId) {
-        log.info("관통 팀 생성 요청 - 기수 : {}", trackProjectId);
+        log.info("관통 팀 생성 요청 - 프로젝트 ID : {}", trackProjectId);
 
         trackTeamService.addTrackTeam(trackProjectId, trackTeam);
         log.info("관통 팀 생성 완료 - Leader ID: {}", trackTeam.getLeaderId());
@@ -34,9 +34,9 @@ public class TrackTeamController {
     public ResponseEntity<?> updateTrackTeam(@PathVariable int trackProjectId,
                                              @PathVariable int trackTeamId,
                                              @RequestBody TeamRequest trackTeam) {
-        log.info("관통 팀 수정 요청 - ID : {}", trackTeamId);
+        log.info("관통 팀 수정 요청 - 팀 ID : {}", trackTeamId);
         trackTeamService.updateTrackTeam(trackProjectId, trackTeamId, trackTeam);
-        log.info("관통 팀 수정 완료 - ID : {}", trackTeamId);
+        log.info("관통 팀 수정 완료 - 팀 ID : {}", trackTeamId);
         return ResponseEntity.ok().build();
     }
 }

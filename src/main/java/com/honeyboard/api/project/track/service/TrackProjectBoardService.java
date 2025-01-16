@@ -13,7 +13,7 @@ public interface TrackProjectBoardService {
     TrackProjectBoardDetail getBoard(int boardId);
 
     // 관통 게시글 작성
-    CreateResponse addBoard(int trackProjectId, int trackTeamId, TrackProjectBoardRequest board);
+    CreateResponse addBoard(int trackProjectId, int trackTeamId, int userId, TrackProjectBoardRequest board);
 
     // 관통 게시글 수정
     void updateBoard(int trackProjectId, int trackTeamId, int boardId, TrackProjectBoardRequest board);

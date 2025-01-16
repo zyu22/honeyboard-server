@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TrackProjectDetail {
     private int id;
+    private String title;
     private String objective;
     private String description;
     private String createdAt;

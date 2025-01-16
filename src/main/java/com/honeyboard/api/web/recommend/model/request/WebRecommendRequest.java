@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WebRecommendRequest {
+    private int id;
     private String title;
     private String url;
     private String content;

@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class WebRecommendDetail {
     private int id;
+    private String title;
     private String content;
     private String url;
     private int authorId;
