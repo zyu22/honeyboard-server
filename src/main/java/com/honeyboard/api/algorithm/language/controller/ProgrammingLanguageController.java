@@ -1,6 +1,6 @@
 package com.honeyboard.api.algorithm.language.controller;
 
-import com.honeyboard.api.algorithm.language.model.ProgrammingLanguage;
+import com.honeyboard.api.algorithm.language.model.LanguageList;
 import com.honeyboard.api.algorithm.language.service.ProgrammingLanguageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class ProgrammingLanguageController {
     public ResponseEntity<?> getAllProgrammingLanguages() {
         log.info("프로그래밍 언어 전체 조회 시작");
 
-        List<ProgrammingLanguage> languages = programmingLanguageService.getAllProgrammingLanguage();
+        List<LanguageList> languages = programmingLanguageService.getAllProgrammingLanguage();
 
         log.info("프로그래밍 언어 전체 조회 완료 - 총 언어 수: {}", languages.size());
         return ResponseEntity.ok(languages);

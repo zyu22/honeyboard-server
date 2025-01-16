@@ -75,7 +75,7 @@
 			s.language_id,
 			p.name AS languageName,
 			s.created_at,
-			CASE 
+			CASE
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
         	END as bookmarked

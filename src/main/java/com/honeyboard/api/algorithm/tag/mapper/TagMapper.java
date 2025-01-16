@@ -1,6 +1,6 @@
 package com.honeyboard.api.algorithm.tag.mapper;
 
-import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
+import com.honeyboard.api.algorithm.tag.model.TagResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

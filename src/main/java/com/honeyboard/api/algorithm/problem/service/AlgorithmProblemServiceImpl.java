@@ -5,7 +5,7 @@ import com.honeyboard.api.algorithm.problem.model.request.AlgorithmProblemReques
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
 import com.honeyboard.api.algorithm.tag.mapper.TagMapper;
-import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
+import com.honeyboard.api.algorithm.tag.model.TagResponse;
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;

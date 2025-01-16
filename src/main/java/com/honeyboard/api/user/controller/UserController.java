@@ -1,17 +1,16 @@
 package com.honeyboard.api.user.controller;
 
+import com.honeyboard.api.bookmark.service.BookmarkService;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.LogInUserResponse;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.bookmark.Bookmark;
 import com.honeyboard.api.user.model.mypage.MyTrackProject;
 import com.honeyboard.api.user.model.mypage.MyFinaleProject;
 import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
 
-import com.honeyboard.api.user.service.BookmarkService2;
 import com.honeyboard.api.user.service.MyPageService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.honeyboard.api.jwt.model.service.JwtService;
@@ -30,9 +29,9 @@ public class UserController {
 
 	private final JwtService jwtService;
 	private final UserService userService;
-	private final BookmarkService2 bookmarkService;
 	private final MyPageService myPageService;
-
+	private final
+	PasswordEncoder passwordEncoder;
 
 	@PostMapping("/reset-password")
 	public ResponseEntity<Void> updatePassword(
@@ -40,7 +39,11 @@ public class UserController {
 			@RequestBody User requestUser) {
 		log.debug("비밀번호 재설정 요청");
 
-		requestUser.setUserId(jwtService.getUserIdFromToken(temporaryToken));
+		requestUser.setUserId(
+				userService.getUserByEmail(
+						jwtService.extractUserEmail(temporaryToken))
+						.getUserId());
+		requestUser.setPassword(passwordEncoder.encode(requestUser.getPassword()));
 		userService.updatePassword(requestUser);
 
 		return ResponseEntity.ok().build();
@@ -66,51 +69,6 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
-	// 북마크 목록 조회
-	@GetMapping(("/{userId}/bookmark"))
-	public ResponseEntity<?> getBookmarks(
-			@PathVariable int userId,
-			@RequestParam(name = "contentType") String content_type) {
-
-		log.info("[GET] /api/v1/user/{}/bookmark?contentType={} 요청 수신", userId, content_type);
-
-		List<?> bookmarks = bookmarkService.getAllBookmarks(userId, content_type);
-
-		if (bookmarks.isEmpty()) {
-			log.info("북마크가 없습니다. userId={}, contentType={}", userId, content_type);
-			return ResponseEntity.noContent().build();
-		}
-
-		log.info("북마크 조회 성공 - userId={}, contentType={}, count={}", userId, content_type, bookmarks.size());
-		return ResponseEntity.ok(bookmarks);
-	}
-
-	//북마크 추가
-	@PostMapping("/{userId}/bookmark")
-	public ResponseEntity<Void> addBookmark(
-			@PathVariable int userId,
-			@RequestBody Bookmark bookmark
-	) {
-		log.info("북마크 추가 요청 - 사용자: {}", userId);
-		bookmarkService.addBookmark(userId, bookmark);
-		log.info("북마크 추가 완료 - 사용자: {}", userId);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
-
-
-	// 북마크 삭제
-	@DeleteMapping("/{userId}/bookmark/{contentType}/{contentId}")
-	public ResponseEntity<Void> deleteBookmark(
-			@PathVariable int userId,
-			@PathVariable String contentType,
-			@PathVariable int contentId
-	) {
-		log.info("북마크 요청 시작 - 유저 ID: {}, contentType: {}, contentId: {}", userId, contentType, contentId);
-
-		bookmarkService.deleteBookmark(userId, contentType ,contentId);
-
-		return ResponseEntity.ok().build();
-	}
 
 
 	@GetMapping("/{userId}/trackproject")

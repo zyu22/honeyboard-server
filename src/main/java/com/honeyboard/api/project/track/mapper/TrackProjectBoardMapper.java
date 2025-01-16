@@ -1,6 +1,8 @@
 package com.honeyboard.api.project.track.mapper;
 
-import com.honeyboard.api.project.track.model.TrackProjectBoard;
+import com.honeyboard.api.project.track.model.request.TrackProjectBoardRequest;
+import com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail;
+import com.honeyboard.api.project.track.model.response.TrackProjectBoardList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -8,9 +10,15 @@ import java.util.List;
 
 @Mapper
 public interface TrackProjectBoardMapper {
-    List<TrackProjectBoard> selectAllTrackProjectsBoards(@Param("trackProjectId") Integer trackProjectId);
-    TrackProjectBoard selectTrackProjectBoard(@Param("boardId") Integer boardId);
-    int insertTrackProjectBoard(@Param("trackProjectId") Integer trackProjectId, @Param("trackProjectBoard") TrackProjectBoard trackProjectBoard);
-    int updateTrackProjectBoard(@Param("boardId") Integer boardId, @Param("trackProjectBoard") TrackProjectBoard trackProjectBoard);
+    TrackProjectBoardDetail selectTrackProjectBoard(@Param("boardId") Integer boardId);
+
+    int insertTrackProjectBoard(@Param("trackProjectId") int trackProjectId, @Param("trackTeamId") int trackTeamId,
+                                @Param("userId") int userId,
+                                @Param("board") TrackProjectBoardRequest board);
+
+    int updateTrackProjectBoard(@Param("trackProjectId") int trackProjectId, @Param("trackTeamId") int trackTeamId,
+                                @Param("boardId") int boardId, @Param("board") TrackProjectBoardRequest board
+                                );
+
     int deleteTrackProjectBoard(@Param("boardId") Integer boardId);
 }

@@ -1,17 +1,21 @@
 package com.honeyboard.api.web.guide.mapper;
 
-import com.honeyboard.api.web.guide.model.WebGuide;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.honeyboard.api.common.model.CreateResponse;
+import com.honeyboard.api.web.guide.model.request.WebGuideRequest;
+import com.honeyboard.api.web.guide.model.response.WebGuideDetail;
+import com.honeyboard.api.web.guide.model.response.WebGuideList;
+
 public interface WebGuideMapper {
-    List<WebGuide> selectAllWebGuide(Integer generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
-    List<WebGuide> searchWebGuideByTitle(String title, Integer generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
-    WebGuide selectWebGuideById(int guideId);
-    int insertWebGuide(WebGuide webGuide);
-    int updateWebGuide(@Param("guideId") int guideId, @Param("webGuide")WebGuide webGuide);
-    int deleteWebGuide(int guideId);
-    int countWebGuide(Integer generationId);
-    int countSearchWebGuide(String title, Integer generationId);
+    List<WebGuideList> selectAllWebGuide(@Param("generationId") int generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<WebGuideList> searchWebGuideByTitle(@Param("generationId") int generationId, @Param("offset") int offset, @Param("pageSize") int pageSize, String title);
+    WebGuideDetail selectWebGuideById(@Param("guideId") int guideId, @Param("userId") int userId);
+    int createWebGuide(@Param("webGuideRequest") WebGuideRequest webGuideRequest, @Param("createResponse") CreateResponse createResponse);
+    int updateWebGuide(@Param("guideId") int guideId, @Param("webGuideRequest")WebGuideRequest webGuideRequest);
+    int softDeleteWebGuide(int guideId);
+    int countWebGuide(int generationId);
+    int countSearchWebGuide(@Param("title") String title, @Param("generationId") int generationId);
 }

@@ -2,89 +2,88 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectBoardMapper">
-
-    <resultMap id="TrackProjectBoardResultMap" type="com.honeyboard.api.project.track.model.TrackProjectBoard">
+    <!-- TrackProjectBoardList resultMap -->
+    <resultMap id="boardListMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardList">
         <id property="id" column="id"/>
-        <result property="trackProjectId" column="track_project_id"/>
+        <result property="title" column="title"/>
+        <result property="thumbnail" column="thumbnail"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- TrackProjectBoardDetail resultMap -->
+    <resultMap id="boardDetailMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail">
+        <id property="id" column="id"/>
         <result property="trackTeamId" column="track_team_id"/>
-        <result property="title" column="title" />
+        <result property="title" column="title"/>
         <result property="url" column="url"/>
         <result property="content" column="content"/>
         <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
-        <result property="isDeleted" column="is_deleted"/>
-        <result property="teamMembers" column="team_members"/>
     </resultMap>
 
-    <select id="selectAllTrackProjectsBoards" parameterType="int" resultType="TrackProjectBoard" >
+    <!-- 게시글 상세 조회 -->
+    <select id="selectTrackProjectBoard" parameterType="int" resultMap="boardDetailMap">
         SELECT
-            tpb.title AS title,       -- 게시글 제목
-            tpb.created_at AS createdAt,      -- 게시글 생성 날짜
-            tpb.thumbnail AS thumbnail,
-            GROUP_CONCAT(u.name ORDER BY u.name) AS team_members -- 팀원들 이름을 ,으로 묶어서 출력 (예: "홍길동, 김철수")
-        FROM
-            track_project_board tpb
-                JOIN
-            track_team_member ttm ON tpb.track_team_id = ttm.track_team_id
-                JOIN
-            user u ON ttm.user_id = u.id
-        WHERE
-            tpb.is_deleted = FALSE           -- 삭제되지 않은 게시글만
-        GROUP BY
-            tpb.id                          -- 게시글 별로 그룹화
-        ORDER BY
-            tpb.created_at DESC;            -- 게시글 생성일 기준 내림차순 정렬
-
+            id,
+            track_team_id,
+            title,
+            url,
+            content,
+            created_at
+        FROM track_project_board
+        WHERE id = #{boardId}
+          AND is_deleted = false
     </select>
 
-    <select id="selectTrackProjectBoard" parameterType="int" resultType="TrackProjectBoard">
-        SELECT
-            tpb.id,
-            tpb.track_project_id,
-            tpb.track_team_id,
-            tpb.title,
-            tpb.thumbnail,
-            tpb.url,
-            tpb.content,
-            tpb.updated_at,
-            GROUP_CONCAT(u.name ORDER BY u.name) AS team_members
-        FROM
-            track_project_board tpb
-                JOIN
-            track_team_member ttm ON tpb.track_team_id = ttm.track_team_id
-                JOIN
-            user u ON ttm.user_id = u.id
-        WHERE
-            tpb.id = #{boardId}   -- 게시글 ID에 해당하는 조건
-        GROUP BY
-            tpb.id;
-    </select>
-
-    <insert id="insertTrackProjectBoard" parameterType="TrackProjectBoard" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO track_project_board(
-            track_project_id, track_team_id, url, title, content, thumbnail, user_id, created_at
+    <!-- 게시글 생성 -->
+    <insert id="insertTrackProjectBoard" useGeneratedKeys="true" keyProperty="board.id">
+        INSERT INTO track_project_board (
+            track_project_id,
+            track_team_id,
+            title,
+            url,
+            content,
+            thumbnail,
+            user_id,
+            created_at,
+            updated_at,
+            is_deleted
         ) VALUES (
                      #{trackProjectId},
                      #{trackTeamId},
-                     #{url},
-                     #{title},
-                     #{content},
-                     #{thumbnail},
+                     #{board.title},
+                     #{board.url},
+                     #{board.content},
+                     #{board.thumbnail},
                      #{userId},
-                     CURRENT_TIME
+                     NOW(),
+                     NOW(),
+                     false
                  )
     </insert>
 
-    <update id="updateTrackProjectBoard" >
-        update track_project_board
-        set title = #{title}, url = #{url}, content = #{content}, thumbnail = #{thumbnail}, update_at = CURRENT_TIME
-        where id = #{boardId} and is_deleted = false
+
+    <!-- 게시글 수정 -->
+    <update id="updateTrackProjectBoard">
+        UPDATE track_project_board
+        SET
+        title = #{board.title},
+        url = #{board.url},
+        content = #{board.content},
+        thumbnail = #{board.thumbnail},
+        updated_at = NOW()
+        WHERE id = #{boardId}
+        AND track_project_id = #{trackProjectId}
+        AND track_team_id = #{trackTeamId}
+        AND is_deleted = false
     </update>
 
+    <!-- 게시글 삭제 (논리적 삭제) -->
     <update id="deleteTrackProjectBoard" parameterType="int">
-        update track_project_board
-        set is_deleted = true
-        where id =#{boardId}
+        UPDATE track_project_board
+        SET
+            is_deleted = true,
+            updated_at = NOW()
+        WHERE id = #{boardId}
+          AND is_deleted = false
     </update>
-
 </mapper>

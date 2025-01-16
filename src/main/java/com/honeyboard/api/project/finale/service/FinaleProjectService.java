@@ -1,11 +1,9 @@
 package com.honeyboard.api.project.finale.service;
 
-import com.honeyboard.api.project.finale.model.request.FinaleProjectBoardRequest;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectCreate;
-import com.honeyboard.api.project.finale.model.request.FinaleProjectTeamUpdate;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectUpdate;
-import com.honeyboard.api.project.finale.model.response.*;
-import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.project.finale.model.response.FinaleProjectDetail;
+import com.honeyboard.api.project.finale.model.response.FinaleProjectResponse;
 
 public interface FinaleProjectService {
 
@@ -18,14 +16,5 @@ public interface FinaleProjectService {
     boolean deleteFinaleProject(int finaleProjectId);
 
     FinaleProjectDetail getFinaleProjectDetail(int finaleProjectId);
-
-    boolean updateFinaleProjectTeam(int finaleProjectId, int finaleTeamId, FinaleProjectTeamUpdate request);
-
-    FinaleProjectBoardDetail getFinaleProjectBoardDetail(int finaleProjectId, int boardId);
-
-    int createFinaleProjectBoard(int finaleProjectId, FinaleProjectBoardRequest request, User currentUser);
-
-    boolean updateFinaleProjectBoard(int finaleProjectId, int finaleProjectBoardId,
-                                     FinaleProjectBoardRequest request, User currentUser);
 
 }

@@ -1,9 +1,16 @@
 package com.honeyboard.api.project.track.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.honeyboard.api.common.model.CreateResponse;
+import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.track.mapper.TrackProjectMapper;
-import com.honeyboard.api.project.track.model.TrackProject;
+import com.honeyboard.api.project.track.model.request.TrackProjectRequest;
+import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
+import com.honeyboard.api.project.track.model.response.TrackProjectList;
 import com.honeyboard.api.user.model.User;
 
 import lombok.RequiredArgsConstructor;
@@ -19,125 +26,125 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     private final TrackProjectMapper trackProjectMapper;
 
     @Override
-    public List<TrackProject> getAllTrackProjects(Integer generationId) {
-        if (generationId == null || generationId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
-        }
-        log.debug("전체 관통 프로젝트 조회 시작 - 기수: {}", generationId);
+    public List<TrackProjectList> getAllTrackProjects(int generationId) {
+        log.info("전체 관통 프로젝트 조회 시작 - 기수: {}", generationId);
         return trackProjectMapper.selectAllTrackProjects(generationId);
     }
 
     @Override
-    public TrackProject getTrackProjectById(int trackId) {
+    public TrackProjectDetail getTrackProjectById(int trackId) {
         if (trackId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 프로젝트 ID입니다.");
         }
-        log.debug("관통 프로젝트 상세 조회 시작 - ID: {}", trackId);
+        log.info("관통 프로젝트 상세 조회 시작 - ID: {}", trackId);
         return trackProjectMapper.selectTrackProjectById(trackId);
     }
 
+    // 관통 프로젝트 가능한 멤버 조회
     @Override
-    public List<User> getTrackProjectMembers(Integer generationId) {
-        if (generationId == null || generationId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 기수 ID입니다.");
-        }
-        log.debug("관통 프로젝트 멤버 조회 시작 - 기수: {}", generationId);
-        return trackProjectMapper.selectTrackProjectMembers(generationId);
+    public List<ProjectUserInfo> getTrackProjectMembers(int trackProjectId) {
+        log.info("관통 프로젝트 멤버 조회 시작 - 프로젝트 ID: {}", trackProjectId);
+        return trackProjectMapper.selectTrackProjectMembers(trackProjectId);
     }
 
     @Override
     @Transactional
-    public TrackProject createTrackProject(TrackProject trackProject, List<Integer> excludedMemberIds) {
+    public CreateResponse createTrackProject(TrackProjectRequest trackProject, int userId) {
         validateTrackProject(trackProject);
 
-        try {
-            log.debug("관통 프로젝트 생성 시작 - 제목: {}", trackProject.getTitle());
-            int result = trackProjectMapper.insertTrackProject(trackProject);
+        log.info("관통 프로젝트 생성 시작 - 설명: {}", trackProject.getDescription());
 
-            if (result != 1) {
-                throw new RuntimeException("프로젝트 생성에 실패했습니다.");
-            }
-
-            if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
-                validateExcludedMembers(excludedMemberIds);
-                trackProjectMapper.insertExcludedMembers(trackProject.getId(), excludedMemberIds);
-            }
-
-            log.info("관통 프로젝트 생성 완료 - ID: {}", trackProject.getId());
-            return trackProject;
-
-        } catch (Exception e) {
-            log.error("프로젝트 생성 실패 - 제목: {}, 오류: {}", trackProject.getTitle(), e.getMessage());
-            throw new RuntimeException("프로젝트 생성 중 오류가 발생했습니다.", e);
+        int insertResult = trackProjectMapper.insertTrackProject(trackProject, userId);
+        if (insertResult == 0) {
+            log.info("관통 프로젝트 생성 실패");
+            throw new RuntimeException("프로젝트 생성에 실패했습니다.");
         }
+
+        int trackId = trackProject.getId();
+        // 제외 인원 추가
+        List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
+        if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
+            validateExcludedMembers(excludedMemberIds);
+            trackProjectMapper.insertExcludedMembers(trackId, excludedMemberIds);
+        }
+
+        log.info("관통 프로젝트 생성 완료 - ID: {}", trackId);
+        return new CreateResponse(trackId);
     }
 
     @Override
     @Transactional
-    public TrackProject updateTrackProject(int trackId, TrackProject trackProject) {
-        if (trackId <= 0) {
+    public void updateTrackProject(int trackProjectId, TrackProjectRequest trackProject) {
+        if (trackProjectId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 프로젝트 ID입니다.");
         }
+        
+        // 유효성 검사
         validateTrackProject(trackProject);
 
-        try {
-            log.debug("관통 프로젝트 수정 시작 - ID: {}", trackId);
+        log.info("관통 프로젝트 수정 시작 - ID: {}", trackProjectId);
 
-            if (!trackProjectMapper.existsById(trackId)) {
-                throw new IllegalArgumentException("존재하지 않는 프로젝트입니다.");
-            }
-
-            int result = trackProjectMapper.updateTrackProject(trackId, trackProject);
-            if (result != 1) {
-                throw new RuntimeException("프로젝트 수정에 실패했습니다.");
-            }
-
-            log.info("관통 프로젝트 수정 완료 - ID: {}", trackId);
-            return trackProject;
-
-        } catch (Exception e) {
-            log.error("프로젝트 수정 실패 - ID: {}, 오류: {}", trackId, e.getMessage());
-            throw new RuntimeException("프로젝트 수정 중 오류가 발생했습니다.", e);
+        int result = trackProjectMapper.updateTrackProject(trackProjectId, trackProject);
+        if (result == 0) {
+            throw new RuntimeException("프로젝트 수정에 실패했습니다.");
         }
+
+        // 1. 현재 DB에 저장된 제외 인원 목록 조회
+        final List<Integer> currentExcluded = trackProjectMapper.selectExcludedMembers(trackProjectId);
+
+        // 2. 새로 요청된 제외 인원 목록 (null 처리)
+        final List<Integer> newExcluded = Optional.ofNullable(trackProject.getExcludedMembers())
+                .orElse(new ArrayList<>());
+
+        // 3. 제거할 멤버 계산: 현재 있는데 새 목록에는 없는 멤버
+        List<Integer> toRemove = currentExcluded.stream()
+                .filter(id -> !newExcluded.contains(id))
+                .collect(Collectors.toList());
+
+        // 4. 추가할 멤버 계산: 새 목록에는 있는데 현재 없는 멤버
+        List<Integer> toAdd = newExcluded.stream()
+                .filter(id -> !currentExcluded.contains(id))
+                .collect(Collectors.toList());
+
+        // 5. 변경사항 적용
+        if (!toRemove.isEmpty()) {
+            trackProjectMapper.deleteSelectedExcludedMembers(trackProjectId, toRemove);
+        }
+        if (!toAdd.isEmpty()) {
+            trackProjectMapper.insertExcludedMembers(trackProjectId, toAdd);
+        }
+
+
+        log.info("관통 프로젝트 수정 성공 - ID: {}", trackProjectId);
     }
 
     @Override
     @Transactional
-    public boolean deleteTrackProject(int trackId) {
-        if (trackId <= 0) {
+    public void deleteTrackProject(int trackProjectId) {
+        if (trackProjectId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 프로젝트 ID입니다.");
         }
 
-        try {
-            log.debug("관통 프로젝트 삭제 시작 - ID: {}", trackId);
+        log.info("관통 프로젝트 삭제 시작 - ID: {}", trackProjectId);
 
-            if (!trackProjectMapper.existsById(trackId)) {
-                throw new IllegalArgumentException("존재하지 않는 프로젝트입니다.");
-            }
-
-            int result = trackProjectMapper.deleteTrackProject(trackId);
-            if (result != 1) {
-                throw new RuntimeException("프로젝트 삭제에 실패했습니다.");
-            }
-
-            log.info("관통 프로젝트 삭제 완료 - ID: {}", trackId);
-            return true;
-
-        } catch (Exception e) {
-            log.error("프로젝트 삭제 실패 - ID: {}, 오류: {}", trackId, e.getMessage());
-            throw new RuntimeException("프로젝트 삭제 중 오류가 발생했습니다.", e);
+        if (!trackProjectMapper.existsById(trackProjectId)) {
+            throw new IllegalArgumentException("존재하지 않는 프로젝트입니다.");
         }
+
+        int result = trackProjectMapper.deleteTrackProject(trackProjectId);
+        if (result != 1) {
+            throw new RuntimeException("프로젝트 삭제에 실패했습니다.");
+        }
+
+        log.info("관통 프로젝트 삭제 완료 - ID: {}", trackProjectId);
     }
 
-    private void validateTrackProject(TrackProject trackProject) {
+    private void validateTrackProject(TrackProjectRequest trackProject) {
         if (trackProject == null) {
             throw new IllegalArgumentException("프로젝트 정보가 없습니다.");
         }
-        if (trackProject.getTitle() == null || trackProject.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("프로젝트 제목을 입력해주세요.");
-        }
-        if (trackProject.getGenerationId() <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 기수 정보입니다.");
+        if (trackProject.getObjective() == null || trackProject.getObjective().trim().isEmpty()) {
+            throw new IllegalArgumentException("프로젝트 목표를 입력해주세요.");
         }
     }
 
@@ -146,5 +153,4 @@ public class TrackProjectServiceImpl implements TrackProjectService {
             throw new IllegalArgumentException("유효하지 않은 사용자 ID가 포함되어 있습니다.");
         }
     }
-
 }

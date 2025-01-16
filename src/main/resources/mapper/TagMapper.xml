@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.algorithm.tag.mapper.TagMapper">
-    <select id="selectAllTag" resultType="com.honeyboard.api.algorithm.tag.model.Tag">
+    <select id="selectAllTag" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
         SELECT id, name
         FROM tag
         ORDER BY name ASC
         LIMIT 20
     </select>
-    <select id="selectSearchTag" resultType="com.honeyboard.api.algorithm.tag.model.Tag">
+    <select id="selectSearchTag" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
         SELECT id, name
         FROM tag
         WHERE name LIKE CONCAT('%', #{name}, '%')
@@ -15,13 +15,13 @@
         LIMIT 20
     </select>
 
-    <insert id="insertTag" parameterType="com.honeyboard.api.algorithm.tag.model.Tag"
+    <insert id="insertTag" parameterType="com.honeyboard.api.algorithm.tag.model.TagResponse"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tag (name)
         VALUES (#{name})
     </insert>
 
-    <select id="selectTagByName" resultType="com.honeyboard.api.algorithm.tag.model.Tag">
+    <select id="selectTagByName" resultType="com.honeyboard.api.algorithm.tag.model.TagResponse">
         SELECT id, name
         FROM tag
         WHERE name = #{name}

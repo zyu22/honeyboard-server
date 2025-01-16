@@ -1,27 +1,32 @@
-//package com.honeyboard.api.project.finale.mapper;
-//
-//import java.util.List;
-//
-//import org.apache.ibatis.annotations.Param;
-//
-//public interface FinaleProjectBoardMapper {
-//
-//	List<FinaleProjectBoard> selectAllFinaleBoards(
-//			@Param("finaleId") int finaleId
-//	);
-//
-//	FinaleProjectBoard selectFinaleBoard(int boardId);
-//
-//	List<FinaleMember> selectAllFinaleMembers(int boardId);
-//
-//	int insertFinaleBoard(FinaleProjectBoard board);
-//
-//	int updateFinaleBoard(
-//			@Param("boardId") int boardId,
-//			@Param("board") FinaleProjectBoard board
-//	);
-//
-//	void updateFinaleBoardSubmitStatus(int boardId);
-//
-//	int deleteFinaleBoard(int boardId);
-//}
+package com.honeyboard.api.project.finale.mapper;
+
+import java.util.List;
+
+import com.honeyboard.api.project.finale.model.request.FinaleProjectBoardRequest;
+import com.honeyboard.api.project.finale.model.response.FinaleProjectBoardDetail;
+import com.honeyboard.api.project.finale.model.response.FinaleProjectBoardList;
+import org.apache.ibatis.annotations.Param;
+
+public interface FinaleProjectBoardMapper {
+
+    // 프로젝트 상세 내 게시글 조회
+    List<FinaleProjectBoardList> selectFinaleProjectDetailBoards(int finaleProjectId);
+
+    FinaleProjectBoardDetail selectFinaleProjectBoardDetail(
+            @Param("finaleProjectId") int finaleProjectId,
+            @Param("boardId") int boardId
+    );
+
+    boolean checkFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
+                                    @Param("boardId") int boardId);
+
+    int insertFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
+                                 @Param("request") FinaleProjectBoardRequest request);
+
+    int updateFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
+                                 @Param("finaleProjectBoardId") int finaleProjectBoardId,
+                                 @Param("request") FinaleProjectBoardRequest request);
+
+    int selectLastInsertedBoardId();
+
+}

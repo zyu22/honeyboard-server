@@ -1,26 +1,30 @@
 package com.honeyboard.api.project.track.service;
 
-import com.honeyboard.api.project.track.model.TrackProject;
+import com.honeyboard.api.common.model.CreateResponse;
+import com.honeyboard.api.project.model.ProjectUserInfo;
+import com.honeyboard.api.project.track.model.request.TrackProjectRequest;
+import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
+import com.honeyboard.api.project.track.model.response.TrackProjectList;
 import com.honeyboard.api.user.model.User;
 
 import java.util.List;
 
 public interface TrackProjectService {
-    // 전체 조회
-    List<TrackProject> getAllTrackProjects(Integer generationId);
+    // 관통 프로젝트 전체 조회
+    List<TrackProjectList> getAllTrackProjects(int generationId);
     
-    // 상세 조회
-    TrackProject getTrackProjectById(int trackId);
+    // 관통 프로젝트 상세 조회
+    TrackProjectDetail getTrackProjectById(int trackId);
     
     // 프로젝트 멤버 조회
-    List<User> getTrackProjectMembers(Integer generationId);
+    List<ProjectUserInfo> getTrackProjectMembers(int trackProjectId);
     
     // 프로젝트 생성
-    TrackProject createTrackProject(TrackProject trackProject, List<Integer> excludedMemberIds);
+    CreateResponse createTrackProject(TrackProjectRequest trackProject, int userId);
     
     // 프로젝트 수정
-    TrackProject updateTrackProject(int trackId, TrackProject trackProject);
+    void updateTrackProject(int trackProjectId, TrackProjectRequest trackProject);
     
     // 프로젝트 삭제
-    boolean deleteTrackProject(int trackId);
+    void deleteTrackProject(int trackProjectId);
 }
