@@ -40,11 +40,19 @@
     <select id="selectWebRecommendById" resultType="com.honeyboard.api.web.recommend.model.response.WebRecommendDetail">
         SELECT
             id,
+            title,
             content,
             url,
             user_id AS authorId,
             (SELECT name FROM user WHERE id = user_id) AS authorName,
-            false AS bookmark
+            (SELECT name FROM user WHERE id = user_id) AS authorName,
+            CASE WHEN EXISTS (
+                SELECT 1
+                FROM bookmark
+                WHERE user_id = #{userId}
+                  AND content_type = 'WEB_RECOMMEND'
+                  AND content_id = web_recommend.id
+            ) THEN true ELSE false END AS bookmark
         FROM web_recommend
         WHERE id = #{recommendId}
           AND is_deleted = false
