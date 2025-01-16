@@ -2,6 +2,8 @@ package com.honeyboard.api.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 
 @Getter
 public enum ErrorCode {
@@ -14,6 +16,7 @@ public enum ErrorCode {
     // 중복 관련 에러
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 등록된 이메일입니다."),
     DUPLICATE_TEAM_MEMBER(HttpStatus.CONFLICT, "이미 등록된 팀원입니다."),
+    DUPLICATE_URL(HttpStatus.CONFLICT, "이미 등록된 URL입니다."),
     DUPLICATE_VIDEO(HttpStatus.CONFLICT, "이미 등록된 영상입니다."),
 
     // 인증코드 관련 에러
@@ -36,8 +39,10 @@ public enum ErrorCode {
     BOARD_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 제목은 필수입니다."),
     BOARD_CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 내용은 필수입니다."),
     BOARD_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 수정에 실패했습니다."),
-    UNAUTHORIZED_BOARD_UPDATE(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다.");
-
+    UNAUTHORIZED_BOARD_UPDATE(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
+	UNAUTHORIZED_WEB_GUIDE_UPDATE(HttpStatus.FORBIDDEN, "웹 게시글 작성 권한이 없습니다.");
+	
+	
     private final HttpStatus status;
     private final String message;
 

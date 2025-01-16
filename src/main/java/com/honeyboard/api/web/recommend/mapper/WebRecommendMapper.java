@@ -1,5 +1,6 @@
 package com.honeyboard.api.web.recommend.mapper;
 
+import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.web.recommend.model.request.WebRecommendRequest;
 import com.honeyboard.api.web.recommend.model.response.WebRecommendDetail;
 import com.honeyboard.api.web.recommend.model.response.WebRecommendList;
@@ -19,7 +20,8 @@ public interface WebRecommendMapper {
     WebRecommendDetail selectWebRecommendById(int recommendId);
 
     // 웹추천 작성
-    int insertWebRecommend(@Param("webRecommend") WebRecommendRequest webRecommend, @Param("userId") int userId);
+    int insertWebRecommend(@Param("webRecommend") WebRecommendRequest webRecommend, @Param("userId") int userId,
+                           @Param("createResponse") CreateResponse createResponse);
 
     // 웹추천 수정
     int updateWebRecommend(@Param("recommendId") int recommendId, @Param("webRecommend")WebRecommendRequest webRecommend, @Param("userId") int userId);
@@ -32,4 +34,8 @@ public interface WebRecommendMapper {
 
     // 웹추천 검색 개수
     int countSearchWebRecommend(String title, Integer generationId);
+
+    // Url 중복검사
+    int existByUrl(String url);
+
 }

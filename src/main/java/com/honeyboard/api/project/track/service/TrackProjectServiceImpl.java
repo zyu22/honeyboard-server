@@ -25,12 +25,15 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     
     private final TrackProjectMapper trackProjectMapper;
 
+    // 관통 프로젝트 전체 조회
     @Override
     public List<TrackProjectList> getAllTrackProjects(int generationId) {
         log.info("전체 관통 프로젝트 조회 시작 - 기수: {}", generationId);
         return trackProjectMapper.selectAllTrackProjects(generationId);
     }
 
+    
+    // 관통프로젝트 상세조회
     @Override
     public TrackProjectDetail getTrackProjectById(int trackId) {
         if (trackId <= 0) {
@@ -47,6 +50,7 @@ public class TrackProjectServiceImpl implements TrackProjectService {
         return trackProjectMapper.selectTrackProjectMembers(trackProjectId);
     }
 
+    // 관통프로젝트 생성
     @Override
     @Transactional
     public CreateResponse createTrackProject(TrackProjectRequest trackProject, int userId) {
@@ -54,13 +58,14 @@ public class TrackProjectServiceImpl implements TrackProjectService {
 
         log.info("관통 프로젝트 생성 시작 - 설명: {}", trackProject.getDescription());
 
-        int insertResult = trackProjectMapper.insertTrackProject(trackProject, userId);
+        CreateResponse createResponse = new CreateResponse();
+        int insertResult = trackProjectMapper.insertTrackProject(trackProject, userId, createResponse);
         if (insertResult == 0) {
             log.info("관통 프로젝트 생성 실패");
             throw new RuntimeException("프로젝트 생성에 실패했습니다.");
         }
 
-        int trackId = trackProject.getId();
+        int trackId = createResponse.getId();
         // 제외 인원 추가
         List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
         if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {

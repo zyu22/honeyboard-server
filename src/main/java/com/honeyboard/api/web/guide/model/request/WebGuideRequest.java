@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WebGuideRequest {
+	private int id;
 	private String title;
 	private String content;
 	private String thumbnail;
