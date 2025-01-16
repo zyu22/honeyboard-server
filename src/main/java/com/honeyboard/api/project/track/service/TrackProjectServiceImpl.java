@@ -1,6 +1,8 @@
 package com.honeyboard.api.project.track.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.honeyboard.api.common.model.CreateResponse;
@@ -52,12 +54,13 @@ public class TrackProjectServiceImpl implements TrackProjectService {
 
         log.info("관통 프로젝트 생성 시작 - 설명: {}", trackProject.getDescription());
 
-        int trackId = trackProjectMapper.insertTrackProject(trackProject, userId);
-        if (trackId == 0) {
+        int insertResult = trackProjectMapper.insertTrackProject(trackProject, userId);
+        if (insertResult == 0) {
             log.info("관통 프로젝트 생성 실패");
             throw new RuntimeException("프로젝트 생성에 실패했습니다.");
         }
 
+        int trackId = trackProject.getId();
         // 제외 인원 추가
         List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
         if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
@@ -81,19 +84,26 @@ public class TrackProjectServiceImpl implements TrackProjectService {
 
         log.info("관통 프로젝트 수정 시작 - ID: {}", trackProjectId);
 
+        int result = trackProjectMapper.updateTrackProject(trackProjectId, trackProject);
+        if (result == 0) {
+            throw new RuntimeException("프로젝트 수정에 실패했습니다.");
+        }
+
         // 1. 현재 DB에 저장된 제외 인원 목록 조회
-        List<Integer> currentExcluded = trackProjectMapper.selectExcludedMembers(trackProjectId);
-        // 2. 새로 요청된 제외 인원 목록
-        List<Integer> newExcluded = trackProject.getExcludedMembers();
+        final List<Integer> currentExcluded = trackProjectMapper.selectExcludedMembers(trackProjectId);
+
+        // 2. 새로 요청된 제외 인원 목록 (null 처리)
+        final List<Integer> newExcluded = Optional.ofNullable(trackProject.getExcludedMembers())
+                .orElse(new ArrayList<>());
 
         // 3. 제거할 멤버 계산: 현재 있는데 새 목록에는 없는 멤버
         List<Integer> toRemove = currentExcluded.stream()
-                .filter(id -> !newExcluded.contains(id))  // 새 목록에 없는 id만 필터링
+                .filter(id -> !newExcluded.contains(id))
                 .collect(Collectors.toList());
 
         // 4. 추가할 멤버 계산: 새 목록에는 있는데 현재 없는 멤버
         List<Integer> toAdd = newExcluded.stream()
-                .filter(id -> !currentExcluded.contains(id))  // 현재 목록에 없는 id만 필터링
+                .filter(id -> !currentExcluded.contains(id))
                 .collect(Collectors.toList());
 
         // 5. 변경사항 적용

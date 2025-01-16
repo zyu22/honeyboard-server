@@ -30,13 +30,14 @@ public class TrackTeamServiceImpl implements TrackTeamService {
         }
 
         log.info("팀 생성 시작 - 프로젝트 ID: {}", trackProjectId);
-        int teamId = trackTeamMapper.insertTrackTeam(trackProjectId);
+        int insertResult = trackTeamMapper.insertTrackTeam(trackProjectId);
 
-        if(teamId == 0) {
+        if(insertResult == 0) {
             log.info("팀 생성 실패 - 프로젝트 ID: {}", trackProjectId);
             throw new RuntimeException("팀 생성에 실패하였습니다.");
         }
-        log.info("팀 생성 성공 - 팀 ID: {}", teamId);
+        log.info("팀 생성 성공 및 팀 ID 조회");
+        int teamId = trackTeamMapper.getLastInsertedTeamId();
 
         log.info("팀장 추가 시작 - 팀장 ID: {}", trackTeam.getLeaderId());
         int result = trackTeamMapper.insertTeamLeader(teamId, trackTeam.getLeaderId());

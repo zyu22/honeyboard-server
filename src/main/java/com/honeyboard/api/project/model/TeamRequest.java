@@ -9,10 +9,9 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public
-class TeamRequest {
-
-    int leaderId;
-    List<Integer> memberIds;
+public class TeamRequest {
+    private int id;
+    private int leaderId;
+    private List<Integer> memberIds;
 
 }

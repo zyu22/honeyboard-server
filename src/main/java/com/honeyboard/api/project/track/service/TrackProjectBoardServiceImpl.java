@@ -33,14 +33,14 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
     // 관통 게시글 추가
     @Override
-    public CreateResponse addBoard(int trackProjectId, int trackTeamId, TrackProjectBoardRequest board) {
+    public CreateResponse addBoard(int trackProjectId, int trackTeamId, int userId, TrackProjectBoardRequest board) {
         if (trackProjectId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 트랙 프로젝트 ID입니다.");
         }
         validateBoard(board);
 
         log.info("게시글 생성 시작 - 제목: {}", board.getTitle());
-        int boardId = trackProjectBoardMapper.insertTrackProjectBoard(trackProjectId, trackTeamId, board);
+        int boardId = trackProjectBoardMapper.insertTrackProjectBoard(trackProjectId, trackTeamId, userId, board);
 
         if (boardId == 0) {
             throw new RuntimeException("게시글 생성에 실패했습니다.");
@@ -48,7 +48,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
         log.info("게시글 생성 완료 - 게시글 번호: {}", boardId);
 
-        return new CreateResponse(boardId);
+        return new CreateResponse(board.getId());
     }
 
     // 관통 게시글 수정

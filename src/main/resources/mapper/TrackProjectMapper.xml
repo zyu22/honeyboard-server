@@ -9,7 +9,6 @@
         <result property="role" column="member_role"/>
     </resultMap>
 
-    <!-- TrackTeamList resultMap -->
     <resultMap id="trackTeamListMap" type="com.honeyboard.api.project.track.model.response.TrackTeamList">
         <id property="id" column="team_id"/>
         <result property="submitted" column="is_completed"/>
@@ -17,25 +16,22 @@
         <collection property="members" resultMap="teamMemberInfoMap"/>
     </resultMap>
 
-    <!-- TrackProjectBoardList resultMap -->
     <resultMap id="trackProjectBoardMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardList">
         <id property="id" column="board_id"/>
         <result property="title" column="board_title"/>
         <result property="createdAt" column="board_created_at"/>
-        <result property="thumbnail" column="board_thumbnail"/>
+        <result property="thumbnailUrl" column="board_thumbnail"/>
     </resultMap>
 
-    <!-- TrackProjectDetail resultMap -->
     <resultMap id="trackProjectDetailMap" type="com.honeyboard.api.project.track.model.response.TrackProjectDetail">
-        <id property="id" column="project_id"/>
-        <result property="title" column="project_title"/>
-        <result property="objective" column="project_objective"/>
-        <result property="description" column="project_description"/>
-        <result property="createdAt" column="project_created_at"/>
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="objective" column="objective"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
         <collection property="noTeamUsers" ofType="com.honeyboard.api.project.model.ProjectUserInfo">
             <id property="id" column="no_team_user_id"/>
             <result property="name" column="no_team_user_name"/>
-            <result property="role" column="no_team_user_role"/>
         </collection>
         <collection property="teams" resultMap="trackTeamListMap"/>
         <collection property="trackProjectBoardList" resultMap="trackProjectBoardMap"/>
@@ -58,7 +54,7 @@
     <!-- 관통 프로젝트 상세 조회 -->
     <select id="selectTrackProjectById" resultMap="trackProjectDetailMap">
         WITH NoTeamUsers AS (
-            SELECT u.id, u.name, u.role
+            SELECT u.id, u.name
             FROM user u
             WHERE u.generation_id = (
                 SELECT generation_id FROM track_project WHERE id = #{trackProjectId}
@@ -76,16 +72,15 @@
         )
         SELECT
             /* 프로젝트 정보 */
-            tp.id AS project_id,
-            tp.title AS project_title,
-            tp.objective AS project_objective,
-            tp.description AS project_description,
-            tp.created_at AS project_created_at,
+            tp.id AS id,
+            tp.title AS title,
+            tp.objective AS objective,
+            tp.description AS description,
+            tp.created_at AS created_at,
 
             /* 팀이 없는 사용자 */
             ntu.id AS no_team_user_id,
             ntu.name AS no_team_user_name,
-            ntu.role AS no_team_user_role,
 
             /* 팀 정보 */
             tt.id AS team_id,
@@ -112,49 +107,51 @@
           AND tp.is_deleted = 0
         ORDER BY tt.id, tm.id, pb.created_at DESC
     </select>
-    
+
     <!-- 관통 프로젝트 가능한 인원 조회 -->
     <select id="selectTrackProjectMembers" parameterType="Integer" resultType="ProjectUserInfo">
-        SELECT DISTINCT u.*
+        SELECT DISTINCT u.id, u.name
         FROM user u
-        WHERE u.generation_id = #{generationId}
-        AND u.is_ssafy = true
+                 JOIN generation g ON u.generation_id = g.id
+        WHERE g.is_active = true
+          AND u.is_ssafy = true
     </select>
 
     <!-- 관통 프로젝트 생성 -->
-    <insert id="insertTrackProject" parameterType="com.honeyboard.api.project.track.model.request.TrackProjectRequest"
-            useGeneratedKeys="true" keyProperty="int">
+    <insert id="insertTrackProject" parameterType="TrackProjectRequest"
+            useGeneratedKeys="true" keyProperty="trackProject.id">
         INSERT INTO track_project (
-            title,
-            objective,
-            description,
-            user_id,
-            generation_id,
-            created_at,
-            updated_at,
-            is_deleted
+        title,
+        objective,
+        description,
+        user_id,
+        generation_id,
+        created_at,
+        updated_at,
+        is_deleted
         ) VALUES (
-                     #{title},
-                     #{objective},
-                     #{description},
-                     #{userId},
-                     (SELECT id FROM generation WHERE is_active = 1),
-                     NOW(),
-                     NOW(),
-                     0
-                 )
+        #{trackProject.title},
+        #{trackProject.objective},
+        #{trackProject.description},
+        #{userId},
+        (SELECT id FROM generation WHERE is_active = 1),
+        NOW(),
+        NOW(),
+        0
+        )
     </insert>
 
     <!-- 제외 인원 추가 -->
     <insert id="insertExcludedMembers">
         INSERT INTO track_excluded_member (
-            project_id,
-            user_id
+        project_id,
+        user_id
         ) VALUES
-        <foreach collection="excludedMembers" item="memberId" separator=",">
-            (#{trackProjectId}, #{excludedMemberId})
+        <foreach collection="excludedMemberIds" item="memberId" separator=",">
+            (#{trackProjectId}, #{memberId})
         </foreach>
     </insert>
+
 
     <!-- 제외 인원 삭제 -->
     <delete id="deleteSelectedExcludedMembers">
@@ -162,7 +159,7 @@
         WHERE project_id = #{trackProjectId}
         AND user_id IN
         <foreach collection="memberIds" item="memberId" open="(" separator="," close=")">
-            #{excludedMemberId}
+            #{memberId}
         </foreach>
     </delete>
 
@@ -186,7 +183,7 @@
     </update>
     
     <!-- 프로젝트 삭제 (논리적 삭제) -->
-    <update id="deleteTrackProject" parameterType="int">
+    <update id="deleteTrackProject">
         UPDATE track_project
         SET is_deleted = true
         WHERE id = #{trackProjectId}
@@ -197,7 +194,7 @@
         SELECT EXISTS (
             SELECT 1 
             FROM track_project 
-            WHERE id = #{trackId} 
+            WHERE id = #{trackProjectId}
             AND is_deleted = false
         )
     </select>

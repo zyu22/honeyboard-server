@@ -26,7 +26,7 @@ public interface TrackProjectMapper {
 
     // 제외 멤버 등록
     int insertExcludedMembers(@Param("trackProjectId") int trackProjectId,
-                              @Param("excludedMemberId") List<Integer> excludedMemberIds);
+                              @Param("excludedMemberIds") List<Integer> excludedMemberIds);
 
     // 제외 멤버 삭제
     int deleteSelectedExcludedMembers(@Param("trackProjectId") int trackProjectId,

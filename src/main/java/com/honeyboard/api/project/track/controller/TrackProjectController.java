@@ -35,7 +35,7 @@ public class TrackProjectController {
     }
 
     // 관통 프로젝트 상세 조회
-    @GetMapping("/{trackId}/{trackProjectId}")
+    @GetMapping("/{trackProjectId}")
     public ResponseEntity<TrackProjectDetail> getTrackProject(@PathVariable int trackProjectId) {
         log.info("관통 프로젝트 상세 조회 요청 - ID: {}", trackProjectId);
         TrackProjectDetail project = trackProjectService.getTrackProjectById(trackProjectId);
@@ -57,7 +57,7 @@ public class TrackProjectController {
     public ResponseEntity<CreateResponse> createTrackProject(
             @RequestBody TrackProjectRequest trackProject,
             @CurrentUser User user) {
-        log.info("관통 프로젝트 생성 요청 - 유저 ID: {}", user.getUserId());
+       // log.info("관통 프로젝트 생성 요청 - 유저 ID: {}", user.getUserId());
         CreateResponse createResponse = trackProjectService.createTrackProject(trackProject, user.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
     }
