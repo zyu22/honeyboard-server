@@ -10,6 +10,7 @@ import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
 
 import com.honeyboard.api.user.service.MyPageService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.honeyboard.api.jwt.model.service.JwtService;
@@ -28,9 +29,9 @@ public class UserController {
 
 	private final JwtService jwtService;
 	private final UserService userService;
-	private final BookmarkService bookmarkService;
 	private final MyPageService myPageService;
-
+	private final
+	PasswordEncoder passwordEncoder;
 
 	@PostMapping("/reset-password")
 	public ResponseEntity<Void> updatePassword(
@@ -42,6 +43,7 @@ public class UserController {
 				userService.getUserByEmail(
 						jwtService.extractUserEmail(temporaryToken))
 						.getUserId());
+		requestUser.setPassword(passwordEncoder.encode(requestUser.getPassword()));
 		userService.updatePassword(requestUser);
 
 		return ResponseEntity.ok().build();
