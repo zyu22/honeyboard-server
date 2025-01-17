@@ -205,6 +205,8 @@ public class JwtServiceImpl implements JwtService {
                 );
             }
 
+            invalidateRefreshToken(user.getEmail());
+
             String newAccessToken = generateAccessToken(user);
             String newRefreshToken = generateRefreshToken(user);
 

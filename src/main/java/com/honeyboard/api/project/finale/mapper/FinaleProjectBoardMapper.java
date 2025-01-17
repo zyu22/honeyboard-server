@@ -2,6 +2,7 @@ package com.honeyboard.api.project.finale.mapper;
 
 import java.util.List;
 
+import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectBoardRequest;
 import com.honeyboard.api.project.finale.model.response.FinaleProjectBoardDetail;
 import com.honeyboard.api.project.finale.model.response.FinaleProjectBoardList;
@@ -21,7 +22,7 @@ public interface FinaleProjectBoardMapper {
                                     @Param("boardId") int boardId);
 
     int insertFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
-                                 @Param("request") FinaleProjectBoardRequest request);
+                                 @Param("board") FinaleProjectBoard board);
 
     int updateFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
                                  @Param("finaleProjectBoardId") int finaleProjectBoardId,

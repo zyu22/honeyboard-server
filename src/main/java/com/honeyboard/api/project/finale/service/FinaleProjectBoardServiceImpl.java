@@ -5,6 +5,7 @@ import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.project.finale.mapper.FinaleProjectBoardMapper;
 import com.honeyboard.api.project.finale.mapper.FinaleProjectMapper;
 import com.honeyboard.api.project.finale.mapper.FinaleTeamMapper;
+import com.honeyboard.api.project.finale.model.FinaleProjectBoard;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectBoardRequest;
 import com.honeyboard.api.project.finale.model.response.FinaleProjectBoardDetail;
 import com.honeyboard.api.user.model.User;
@@ -39,9 +40,21 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
     public int createFinaleProjectBoard(int finaleProjectId, FinaleProjectBoardRequest request, User currentUser) {
         log.info("게시글 작성 시작 - finaleProjectId: {}, userId: {}", finaleProjectId, currentUser.getUserId());
 
+        Integer finaleTeamId = finaleTeamMapper.selectFinaleTeamId(finaleProjectId);
+        if (finaleTeamId == null) {
+            throw new IllegalArgumentException("해당 프로젝트의 팀 정보를 찾을 수 없습니다.");
+        }
+
+        boolean isTeamMember = finaleTeamMapper.checkTeamMember(finaleTeamId, currentUser.getUserId());
+        if (!isTeamMember) {
+            throw new IllegalArgumentException("해당 팀의 멤버만 게시글을 작성할 수 있습니다.");
+        }
+
         validateBoardCreate(finaleProjectId, request, currentUser);
 
-        int result = finaleProjectBoardMapper.insertFinaleProjectBoard(finaleProjectId, request);
+        FinaleProjectBoard board = new FinaleProjectBoard();
+        board.setInfos(finaleTeamId, currentUser.getUserId(), request);
+        int result = finaleProjectBoardMapper.insertFinaleProjectBoard(finaleProjectId, board);
 
         if (result <= 0) {
             throw new IllegalArgumentException("요청 정보가 잘못되었습니다.");

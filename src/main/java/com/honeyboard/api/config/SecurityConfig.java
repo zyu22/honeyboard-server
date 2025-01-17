@@ -59,6 +59,7 @@ public class SecurityConfig {
                     log.debug("URL 기반 보안 설정 구성");
                     auth.requestMatchers(
                                     "/ws/**",
+                                    "/api/v1/**",
                                     "/api/v1/auth/**",
                                     "/oauth2/**",
                                     "/login/oauth2/**",
