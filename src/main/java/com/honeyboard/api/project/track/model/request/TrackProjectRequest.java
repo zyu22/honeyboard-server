@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrackProjectRequest {
-    private int id;
     private String title;
     private String objective;
     private String description;

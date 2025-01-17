@@ -4,9 +4,8 @@ import com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper;
 import com.honeyboard.api.algorithm.problem.model.request.AlgorithmProblemRequest;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail;
 import com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList;
-import com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionList;
 import com.honeyboard.api.algorithm.tag.mapper.TagMapper;
-import com.honeyboard.api.algorithm.tag.model.TagResponse;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
@@ -51,7 +50,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
     // AlgorithmProblem 상세조회
     @Override
-    public AlgorithmProblemDetail getProblem(int problemId) {
+    public  AlgorithmProblemDetail getProblem(int problemId) {
         if (problemId <= 0) {
             throw new IllegalArgumentException("유효하지 않은 알고리즘 문제 ID입니다.");
         }
@@ -59,20 +58,16 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         log.info("알고리즘 문제 상세 조회 시작 - 문제ID: {}", problemId);
 
         // Problem 기본 정보 조회
-        AlgorithmProblemDetail problemDetail = apm.selectProblemBasicInfo(problemId);
+        AlgorithmProblemDetail problemDetail = apm.selectAlgorithmProblem(problemId);
         if (problemDetail == null) {
             throw new IllegalArgumentException("해당 알고리즘 문제를 찾을 수 없습니다.");
         }
 
-        // Solution list 조회
-        List<AlgorithmSolutionList> solutions = apm.selectProblemSolutions(problemId);
-        problemDetail.setAlgorithmSolutionList(solutions);
-
         // Tag list 조회
-        List<TagResponse> tags = apm.selectProblemTags(problemId);
+        List<TagResponse> tags = tm.selectProblemTags(problemId);
         problemDetail.setTags(tags);
 
-        log.info("알고리즘 문제 상세 조회 완료 - 문제ID: {}, 솔루션 수: {}, 태그 수: {}", problemId, solutions.size(), tags.size());
+        log.info("알고리즘 문제 상세 조회 완료 - 문제ID: {}, 태그 수: {}", problemId, tags.size());
 
         return problemDetail;
     }
@@ -90,9 +85,9 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
         // 문제 생성
         CreateResponse createResponse = new CreateResponse();
-        apm.insertAlgorithmProblem(request, userId, createResponse);
+        int result = apm.insertAlgorithmProblem(request, userId, createResponse);
 
-        if (createResponse.getId() <= 0) {
+        if (result != 1) {
             log.error("문제 생성 실패 - 제목: {}", request.getTitle());
             throw new IllegalArgumentException("생성된 알고리즘 문제 ID를 가져오는데 실패했습니다.");
         }
@@ -149,12 +144,6 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         log.info("알고리즘 문제 삭제 완료 - ID: {}", problemId);
     }
 
-    @Override
-    public boolean existsByUrl(String url) {
-        return false;
-    }
-
-
     @Transactional
     protected void updateProblemTags(int problemId, List<TagResponse> newTags) {
         if (problemId <= 0) {
@@ -186,7 +175,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
             }
         }
 
-        List<Integer> existingTagIds = apm.getTagIdsByProblemId(problemId);
+        List<Integer> existingTagIds = tm.getTagIdsByProblemId(problemId);
 
         List<Integer> tagsToRemove = existingTagIds.stream()
                 .filter(id -> !newTagIds.contains(id))
@@ -199,12 +188,12 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         try {
             if (!tagsToRemove.isEmpty()) {
                 log.debug("태그 삭제 - 문제 ID: {}, 삭제할 태그: {}", problemId, tagsToRemove);
-                apm.deleteSpecificAlgorithmProblemTags(problemId, tagsToRemove);
+                tm.deleteSpecificAlgorithmProblemTags(problemId, tagsToRemove);
             }
 
             if (!tagsToAdd.isEmpty()) {
                 log.debug("태그 추가 - 문제 ID: {}, 추가할 태그: {}", problemId, tagsToAdd);
-                apm.insertAlgorithmProblemTags(problemId, tagsToAdd);
+                tm.insertAlgorithmProblemTags(problemId, tagsToAdd);
             }
         } catch (Exception e) {
             log.error("태그 업데이트 실패 - 문제 ID: {}", problemId, e);

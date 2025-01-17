@@ -35,7 +35,7 @@
     </select>
 
     <!-- 게시글 생성 -->
-    <insert id="insertTrackProjectBoard" useGeneratedKeys="true" keyProperty="board.id">
+    <insert id="insertTrackProjectBoard" useGeneratedKeys="true" keyProperty="createResponse.id">
         INSERT INTO track_project_board (
             track_project_id,
             track_team_id,

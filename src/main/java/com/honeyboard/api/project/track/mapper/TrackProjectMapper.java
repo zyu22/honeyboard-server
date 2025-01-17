@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.track.mapper;
 
+import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.track.model.request.TrackProjectRequest;
 import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
@@ -22,7 +23,8 @@ public interface TrackProjectMapper {
     List<ProjectUserInfo> selectTrackProjectMembers(@Param("trackProjectId") int trackProjectId);
 
     // 관통 프로젝트 생성
-    int insertTrackProject(@Param("trackProject") TrackProjectRequest trackProject, @Param("userId") int userId);
+    int insertTrackProject(@Param("trackProject") TrackProjectRequest trackProject, @Param("userId") int userId,
+                           @Param("createResponse")CreateResponse createResponse);
 
     // 제외 멤버 등록
     int insertExcludedMembers(@Param("trackProjectId") int trackProjectId,

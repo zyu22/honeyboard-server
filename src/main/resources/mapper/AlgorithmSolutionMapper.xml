@@ -5,33 +5,43 @@
 
 <mapper namespace="com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper">
 
+	<resultMap id="algorithmSolutionDetailMap" type="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
+		<id property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="summary" column="summary"/>
+		<result property="content" column="content"/>
+		<result property="authorId" column="user_id"/>
+		<result property="name" column="name"/>
+		<result property="runtime" column="runtime"/>
+		<result property="memory" column="memory"/>
+		<result property="languageId" column="language_id"/>
+		<result property="languageName" column="language_name"/>
+		<result property="createdAt" column="created_at"/>
+		<association property="bookmarked" javaType="com.honeyboard.api.bookmark.model.BookmarkResponse">
+			<result property="bookmarked" column="bookmarked"/>
+		</association>
+	</resultMap>
+
 	<!-- 전체 조회 + 정렬 + 삭제 여부 + 내 기수만 + 페이지네이션 -->
-	<select id="selectAllAlgorithmSolution" resultType="AlgorithmSolutionList">
+	<select id="selectAllProblemSolutions" resultType="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionList">
 		SELECT
-			s.id as solutionId,
-			s.title,
-			s.user_id,
-			u.name as author,
-			s.runtime,
-			s.memory,
+			s.id,
 			s.language_id,
-			CASE 
-            	WHEN b.id IS NOT NULL THEN true 
-            	ELSE false 
-        	END as bookmark
+			s.memory,
+			s.runtime,
+			s.title,
+			u.name AS subtitle,
+			p.name AS languageName
 		FROM algorithm_problem_solution s
 		INNER JOIN user u ON s.user_id = u.id
 		INNER JOIN programming_language p ON s.language_id = p.id
-		LEFT JOIN bookmark b ON b.content_id = s.id
-			AND b.content_type = 'algo_solution'
-        	AND b.user_id = #{userId}
 		WHERE s.is_deleted = false
 			AND s.problem_id = #{problemId}
 		<if test="generationId != 0">
         	AND s.generation_id = #{generationId}
     	</if>
     	<if test="languages != null and languages.size > 0">
-        	AND p.id IN
+        	AND p.name IN
         	<foreach collection="languages" item="language" open="(" separator="," close=")">
             	#{language}
         	</foreach>
@@ -48,35 +58,38 @@
 				s.id DESC
 			</otherwise>
 		</choose>
-		LIMIT 9 OFFSET #{offset}
+		LIMIT #{pageSize} OFFSET #{offset}
 	</select>
 	
 	<!-- 알고리즘 풀이 상세 조회	 -->
-	<select id="selectAlgorithmSolution" resultType="AlgorithmSolutionDetail">
+	<select id="selectAlgorithmSolution" resultType="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
 		SELECT
-			s.id AS solutionId,
+			s.id,
 			s.title,
 			s.summary,
 			s.content,
-			s.user_id,
-			u.name as author,
+			s.user_id AS authorId,
+			u.name,
 			s.runtime,
 			s.memory,
 			s.language_id,
-			CASE 
+			p.name AS languageName,
+			s.created_at,
+			CASE
             	WHEN b.id IS NOT NULL THEN true 
             	ELSE false 
-        	END as bookmark
+        	END as bookmarked
         FROM algorithm_problem_solution s
 		INNER JOIN user u ON s.user_id = u.id
+		INNER JOIN programming_language p ON s.language_id = p.id
 		LEFT JOIN bookmark b ON b.content_id = s.id
 			AND b.content_type = 'algo_solution'
-        WHERE s.id = #{solutionId}
+        WHERE s.id = #{id}
         	AND s.is_deleted = false
 	</select>
 	
 	<!-- 알고리즘 풀이 작성 -->
-	<insert id="insertAlgorithmSolution" parameterType="AlgorithmSolutionRequest" useGeneratedKeys="true" keyProperty="solutionId">
+	<insert id="insertAlgorithmSolution" useGeneratedKeys="true" keyProperty="createResponse.id">
 		INSERT INTO algorithm_problem_solution (
 			problem_id,
 			title,
@@ -93,31 +106,31 @@
 			)
 		VALUES (
 			#{problemId},
-			#{title},
-			#{summary},
-			#{content},
+			#{algorithmSolution.title},
+			#{algorithmSolution.summary},
+			#{algorithmSolution.content},
 			#{userId},
-			#{runtime},
-			#{memory},
-			#{languageId},
+			#{algorithmSolution.runtime},
+			#{algorithmSolution.memory},
+			#{algorithmSolution.languageId},
 			#{generationId},
-			NOW(),
-			NOW(),
+			CURRENT_TIMESTAMP,
+			CURRENT_TIMESTAMP,
 			false
 			)
 	</insert>
 	
 	<!-- 알고리즘 풀이 수정 -->
-	<update id="updateAlgorithmSolution" parameterType="AlgorithmSolutionRequest">
+	<update id="updateAlgorithmSolution">
 		UPDATE algorithm_problem_solution
 		SET
-			title = #{title},
-			summary = #{summary},
-			content = #{content},
-			runtime = #{runtime},
-			memory = #{memory},
-			language_id = #{languageId},
-			updated_at = NOW()
+			title = #{algorithmSolution.title},
+			summary = #{algorithmSolution.summary},
+			content = #{algorithmSolution.content},
+			runtime = #{algorithmSolution.runtime},
+			memory = #{algorithmSolution.memory},
+			language_id = #{algorithmSolution.languageId},
+			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{solutionId}
         	AND is_deleted = false
 	</update>
@@ -139,9 +152,6 @@
 	   FROM algorithm_problem_solution s
 	   INNER JOIN user u ON s.user_id = u.id
 	   INNER JOIN programming_language p ON s.language_id = p.id
-	   LEFT JOIN bookmark b ON b.content_id = s.id 
-	       AND b.content_type = 'algo_solution'
-	       AND b.user_id = #{userId}
 	   WHERE s.is_deleted = false
 	   AND s.problem_id = #{problemId}
 	   <if test="generationId != null">
