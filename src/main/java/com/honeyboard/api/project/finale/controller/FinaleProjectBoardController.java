@@ -46,6 +46,7 @@ public class FinaleProjectBoardController {
             @CurrentUser User currentUser) {
         log.info("피날레 게시글 작성 요청 - finaleProjectId: {}, userId: {}", finaleProjectId, currentUser.getUserId());
         CreateResponse res = new CreateResponse();
+
         res.setId(finaleProjectBoardService.createFinaleProjectBoard(finaleProjectId, request, currentUser));
         log.info("피날레 게시글 작성 성공");
         return ResponseEntity.ok().body(res);
