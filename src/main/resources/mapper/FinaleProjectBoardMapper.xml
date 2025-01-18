@@ -67,20 +67,24 @@
     </select>
 
     <!-- 게시글 작성 -->
-    <insert id="insertFinaleProjectBoard" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertFinaleProjectBoard" useGeneratedKeys="true" keyProperty="board.id">
         INSERT INTO finale_project_board (
             finale_project_id,
-            title,
+            finale_team_id,
             summary,
+            title,
             content,
+            user_id,
             thumbnail,
             created_at
         ) VALUES (
                      #{finaleProjectId},
-                     #{request.title},
-                     #{request.summary},
-                     #{request.content},
-                     #{request.thumbnail},
+                     #{board.finaleTeamId},
+                     #{board.summary},
+                     #{board.title},
+                     #{board.content},
+                     #{board.userId},
+                     #{board.thumbnail},
                      NOW()
                  )
     </insert>

@@ -31,7 +31,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         log.info("FinaleResponse 가져오기 시작 generationId: {}", generationId);
         FinaleProjectResponse fpr = new FinaleProjectResponse();
         List<FinaleProjectList> projects = getFinaleProjectList(generationId);
-        if(projects == null) {
+        if(projects == null || projects.isEmpty()) {
             log.info("프로젝트가 없습니다.");
             return null;
         }

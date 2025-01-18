@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'NanumGothic', Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .document {
+            margin-bottom: 60px;
+            page-break-after: always;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .metadata {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        .summary {
+            background-color: #f5f5f5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .team-members {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .member {
+            margin: 5px 0;
+        }
+        .document-type {
+            color: #888;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="document" th:each="document : ${documents}">
+    <div class="document-type"
+         th:text="${document.documentType.getDescription()}"></div>
+
+    <div class="header">
+        <div class="title" th:text="${document.title}"></div>
+        <div class="metadata">
+            <span th:text="'작성일: ' + ${document.createdAt}"></span>
+            <span th:if="${document.authorName}"
+                  th:text="' | 작성자: ' + ${document.authorName}"></span>
+        </div>
+    </div>
+
+    <!-- 최종 프로젝트인 경우 -->
+    <div th:if="${document.documentType.name() == 'FINALE'}">
+        <div class="summary" th:if="${document.summary}">
+            <strong>요약:</strong>
+            <p th:text="${document.summary}"></p>
+        </div>
+        <div class="content" th:text="${document.content}"></div>
+    </div>
+
+    <!-- 트랙 프로젝트인 경우 -->
+    <div th:if="${document.documentType.name() == 'TRACK'}">
+        <div class="metadata" th:if="${document.url}">
+            <strong>프로젝트 URL:</strong>
+            <span th:text="${document.url}"></span>
+        </div>
+        <div class="team-members" th:if="${!document.teamMembers.empty}">
+            <strong>팀 구성원:</strong>
+            <div class="member" th:each="member : ${document.teamMembers}"
+                 th:text="${member.name}"></div>
+        </div>
+        <div class="content" th:text="${document.content}"></div>
+    </div>
+</div>
+</body>
+</html>
