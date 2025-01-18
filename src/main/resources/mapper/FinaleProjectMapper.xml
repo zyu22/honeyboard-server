@@ -42,6 +42,9 @@
 				 LEFT JOIN finale_team_member ftm ON fp.team_id = ftm.finale_team_id
 				 LEFT JOIN user u ON ftm.user_id = u.id
 		WHERE fp.is_deleted = 0
+		<if test="generationId != 0">
+			AND generation_id = #{generationId}
+		</if>
 		ORDER BY fp.created_at DESC, u.id
 	</select>
 

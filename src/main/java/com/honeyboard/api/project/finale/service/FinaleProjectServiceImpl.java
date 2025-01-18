@@ -103,7 +103,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
     }
 
     private List<FinaleProjectList> getFinaleProjectList(int generationId) {
-        return finaleProjectMapper.selectFinaleProjectList();
+        return finaleProjectMapper.selectFinaleProjectList(generationId);
     }
 
     private List<ProjectUserInfo> getNoFinaleTeamUsers(int finaleProjectId) {
