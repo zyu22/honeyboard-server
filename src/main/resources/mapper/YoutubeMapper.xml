@@ -5,32 +5,30 @@
 
 <mapper namespace="com.honeyboard.api.youtube.mapper.YoutubeMapper">
     <!-- 유뷰브 영상 저장 -->
-    <insert id="insertYoutubeVideo" parameterType="Youtube">
+    <insert id="insertYoutubeVideo" parameterType="com.honeyboard.api.youtube.model.request.YoutubeCreate">
         INSERT INTO youtube (
             video_id,
             title,
             channel,
-            generation_id,
             created_at
         )
         VALUES (
             #{videoId},
             #{title},
             #{channel},
-            #{generationId},
-            NOW()
+            CURRENT_TIME
         )
     </insert>
     
     <!-- 플레이 리스트 조회 -->
-    <select id="selectAllYoutubeVideo" resultType="Youtube">
+    <select id="selectAllYoutubeVideo" resultType="com.honeyboard.api.youtube.model.response.YoutubeList">
         SELECT
             id,
             video_id,
             title,
-            channel
+            channel,
+            created_at
         FROM youtube
-        WHERE generation_id = #{generationId}
         ORDER BY created_at
     </select>
 

@@ -8,8 +8,9 @@ import com.google.api.services.youtube.model.SearchResult;
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.youtube.mapper.YoutubeMapper;
-import com.honeyboard.api.youtube.model.Youtube;
-import com.honeyboard.api.youtube.model.YoutubeSearchResult;
+import com.honeyboard.api.youtube.model.request.YoutubeCreate;
+import com.honeyboard.api.youtube.model.response.YoutubeList;
+import com.honeyboard.api.youtube.model.response.YoutubeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +30,9 @@ public class YoutubeServiceImpl implements YoutubeService {
     @Value("${YOUTUBE_API_KEY}")
     private String apiKey;
 
+    // 유튜브 검색 결과 조회
     @Override
-    public YoutubeSearchResult searchVideos(String query, String pageToken) {
+    public YoutubeResponse searchVideos(String query, String pageToken) {
         log.info("유튜브 영상 검색 시작 - 검색어: {}, pageToken: {}", query, pageToken);
 
         if (query == null || query.trim().isEmpty()) {
@@ -67,27 +69,27 @@ public class YoutubeServiceImpl implements YoutubeService {
                 throw new IllegalArgumentException("검색 결과를 가져올 수 없습니다.");
             }
 
-            List<Youtube> result = new ArrayList<>();
+            List<YoutubeList> youtubeList = new ArrayList<>();
             for(SearchResult item : searchResponse.getItems()) {
                 if (item.getId() == null || item.getId().getVideoId() == null || item.getSnippet() == null) {
                     log.warn("잘못된 형식의 검색 결과를 건너뜁니다.");
                     continue;
                 }
 
-                Youtube video = new Youtube();
+                YoutubeList video = new YoutubeList();
                 video.setVideoId(item.getId().getVideoId());
                 video.setTitle(item.getSnippet().getTitle());
                 video.setChannel(item.getSnippet().getChannelTitle());
-                result.add(video);
+                youtubeList.add(video);
             }
 
-            YoutubeSearchResult searchResult = new YoutubeSearchResult();
-            searchResult.setVideos(result);
-            searchResult.setNextPageToken(searchResponse.getNextPageToken());
+            YoutubeResponse response  = new YoutubeResponse ();
+            response .setYoutubeList(youtubeList);
+            response .setNextPageToken(searchResponse.getNextPageToken());
 
-            log.info("유튜브 영상 검색 완료 - 검색된 영상 수: {}, 다음 페이지 토큰: {}", result.size(), searchResponse.getNextPageToken());
+            log.info("유튜브 영상 검색 완료 - 검색된 영상 수: {}, 다음 페이지 토큰: {}", youtubeList.size(), searchResponse.getNextPageToken());
 
-            return searchResult;
+            return response;
 
         } catch (IOException e) {
             log.error("YouTube API 호출 중 오류 발생", e);
@@ -98,8 +100,9 @@ public class YoutubeServiceImpl implements YoutubeService {
         }
     }
 
+    //유튜브 영상 저장
     @Override
-    public void addYoutubeVideo(Youtube youtube) {
+    public void addYoutubeVideo(YoutubeCreate youtube) {
         log.info("유튜브 영상 저장 시작 - 제목: {}", youtube.getTitle());
 
         if (youtube == null) {
@@ -119,16 +122,18 @@ public class YoutubeServiceImpl implements YoutubeService {
         log.info("유튜브 영상 저장 완료 - videoId: {}", youtube.getVideoId());
     }
 
+    // 플레이리스트 조회
     @Override
-    public List<Youtube> getAllYoutubeVideos(int generationId) {
+    public List<YoutubeList> getAllYoutubeVideos() {
         log.info("플레이리스트 조회 시작");
 
-        List<Youtube> youtubeList = youtubeMapper.selectAllYoutubeVideo(generationId);
+        List<YoutubeList> youtubeList = youtubeMapper.selectAllYoutubeVideo();
 
         log.info("플레이리스트 조회 완료 - 조회된 영상 수: {}", youtubeList.size());
         return youtubeList;
     }
 
+    // 플레이리스트 삭제
     @Override
     public void deleteYoutubeVideo(int id) {
         log.info("플레이리스트에서 영상 삭제 시작 - youtubeId: {}", id);
