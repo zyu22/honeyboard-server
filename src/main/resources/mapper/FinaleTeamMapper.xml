@@ -9,6 +9,7 @@
         <result property="name" column="name"/>
     </resultMap>
     <resultMap id="finaleTeamListMap" type="FinaleTeamList">
+        <id property="id" column="team_id"/>
         <result property="submitted" column="submitted"/>
         <result property="projectBoardId" column="projectBoardId"/>
         <collection property="members" ofType="TeamMemberInfo">
@@ -55,9 +56,7 @@
                  JOIN finale_project fp ON ft.id = fp.team_id
                  LEFT JOIN finale_team_member ftm ON ft.id = ftm.finale_team_id
                  LEFT JOIN user u ON ftm.user_id = u.id
-        WHERE fp.id = #{finaleProjectId}
-          AND fp.is_deleted = 0
-        GROUP BY ft.id, u.id, u.name, ftm.role
+        WHERE fp.is_deleted = 0
         ORDER BY
             ft.id,
             CASE ftm.role

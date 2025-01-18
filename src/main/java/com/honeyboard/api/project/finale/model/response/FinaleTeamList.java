@@ -12,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public
 class FinaleTeamList {
-
-    List<TeamMemberInfo> members;
-    boolean submitted;
-    Integer projectBoardId; // null || 숫자 값 보내줘야해서 객체
+    private int id;
+    private List<TeamMemberInfo> members;
+    private boolean submitted;
+    private Integer projectBoardId; // null || 숫자 값 보내줘야해서 객체
 
 }
