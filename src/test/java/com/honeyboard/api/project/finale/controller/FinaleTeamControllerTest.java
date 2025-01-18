@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(FinaleProjectController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @WithMockUser(username = "testUser", roles = "USER")
-class FinaleProjectControllerTest {
+class FinaleProjectControllerTest3 {
 
     @Autowired
     private MockMvc mockMvc;

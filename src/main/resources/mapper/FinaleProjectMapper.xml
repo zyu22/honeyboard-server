@@ -12,8 +12,8 @@
 		<result property="thumbnail" column="thumbnail"/>
 		<result property="createdAt" column="createdAt"/>
 		<collection property="members" ofType="ProjectUserInfo">
-			<id property="id" column="id"/>
-			<result property="name" column="name"/>
+			<id property="id" column="user_id"/>
+			<result property="name" column="user_name"/>
 		</collection>
 	</resultMap>
 
@@ -36,8 +36,8 @@
 			fp.description,
 			fp.thumbnail,
 			DATE_FORMAT(fp.created_at, '%Y-%m-%d %H:%i:%s') as createdAt,
-			u.id,
-			u.name
+			u.id AS user_id,
+			u.name AS user_name
 		FROM finale_project fp
 				 LEFT JOIN finale_team_member ftm ON fp.team_id = ftm.finale_team_id
 				 LEFT JOIN user u ON ftm.user_id = u.id
