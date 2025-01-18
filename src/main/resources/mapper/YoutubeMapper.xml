@@ -10,13 +10,15 @@
             video_id,
             title,
             channel,
-            created_at
+            created_at,
+            generation_id
         )
         VALUES (
-            #{videoId},
-            #{title},
-            #{channel},
-            CURRENT_TIME
+            #{youtubeCreate.videoId},
+            #{youtubeCreate.title},
+            #{youtubeCreate.channel},
+            CURRENT_TIME,
+            #{generationId}
         )
     </insert>
     
@@ -29,6 +31,7 @@
             channel,
             created_at
         FROM youtube
+        WHERE generation_id = #{generationId}
         ORDER BY created_at
     </select>
 
@@ -43,5 +46,6 @@
         SELECT COUNT(*)
         FROM youtube
         WHERE video_id = #{videoId}
+          AND generation_id = #{generationId}
     </select>
 </mapper>

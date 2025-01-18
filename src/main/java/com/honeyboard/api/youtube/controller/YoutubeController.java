@@ -1,5 +1,7 @@
 package com.honeyboard.api.youtube.controller;
 
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import com.honeyboard.api.youtube.model.request.YoutubeCreate;
 import com.honeyboard.api.youtube.model.response.YoutubeList;
 import com.honeyboard.api.youtube.model.response.YoutubeResponse;
@@ -39,10 +41,12 @@ public class YoutubeController {
 
     //유튜브 영상 저장
     @PostMapping("/playlist")
-    public ResponseEntity<?> createPlaylist(@RequestBody YoutubeCreate youtube) {
+    public ResponseEntity<?> createPlaylist(@RequestBody YoutubeCreate youtube,
+                                            @CurrentUser User user) {
         log.info("유튜브 영상 저장 요청 - 제목: {}", youtube.getTitle());
 
-        youtubeService.addYoutubeVideo(youtube);
+        int generationId = user.getGenerationId();
+        youtubeService.addYoutubeVideo(youtube, generationId);
 
         log.info("유튜브 영상 저장 완료 - 영상ID: {}", youtube.getVideoId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -50,9 +54,11 @@ public class YoutubeController {
 
     //플레이리스트 조회
     @GetMapping("/playlist")
-    public ResponseEntity<?> getAllPlaylist() {
-        log.info("플레이리스트 전체 조회 요청");
-        List<YoutubeList> playlist = youtubeService.getAllYoutubeVideos();
+    public ResponseEntity<?> getAllPlaylist(@CurrentUser User user) {
+        log.info("플레이리스트 전체 조회 요청 - 기수: {}", user.getGenerationId());
+
+        int generationId = user.getGenerationId();
+        List<YoutubeList> playlist = youtubeService.getAllYoutubeVideos(generationId);
 
         if(playlist == null || playlist.isEmpty()) {
             log.info("조회된 플레이리스트 없음");

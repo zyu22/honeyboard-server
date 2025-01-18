@@ -102,18 +102,18 @@ public class YoutubeServiceImpl implements YoutubeService {
 
     //유튜브 영상 저장
     @Override
-    public void addYoutubeVideo(YoutubeCreate youtube) {
+    public void addYoutubeVideo(YoutubeCreate youtube, int generationId) {
         log.info("유튜브 영상 저장 시작 - 제목: {}", youtube.getTitle());
 
         if (youtube == null) {
             throw new IllegalArgumentException("영상 정보가 없습니다.");
         }
 
-        if (youtubeMapper.existsByVideoId(youtube.getVideoId()) > 0) {
+        if (youtubeMapper.existsByVideoId(youtube.getVideoId(), generationId) > 0) {
             throw new BusinessException(ErrorCode.DUPLICATE_VIDEO);
         }
 
-        int result = youtubeMapper.insertYoutubeVideo(youtube);
+        int result = youtubeMapper.insertYoutubeVideo(youtube, generationId);
 
         if (result != 1) {
             throw new IllegalArgumentException("영상 저장에 실패했습니다.");
@@ -124,10 +124,10 @@ public class YoutubeServiceImpl implements YoutubeService {
 
     // 플레이리스트 조회
     @Override
-    public List<YoutubeList> getAllYoutubeVideos() {
-        log.info("플레이리스트 조회 시작");
+    public List<YoutubeList> getAllYoutubeVideos(int generationId) {
+        log.info("플레이리스트 조회 시작 - 기수: {}", generationId);
 
-        List<YoutubeList> youtubeList = youtubeMapper.selectAllYoutubeVideo();
+        List<YoutubeList> youtubeList = youtubeMapper.selectAllYoutubeVideo(generationId);
 
         log.info("플레이리스트 조회 완료 - 조회된 영상 수: {}", youtubeList.size());
         return youtubeList;

@@ -12,5 +12,5 @@ public class YoutubeCreate {
     private String videoId;
     private String title;
     private String channel;
-    private String  createdAt;
+    private String createdAt;
 }

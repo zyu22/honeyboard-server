@@ -11,9 +11,9 @@ public interface YoutubeService {
     // 유튜브 검색 결과 조회
     YoutubeResponse searchVideos(String query, String pageToken);
     // 유튜브 영상 저장
-    void addYoutubeVideo(YoutubeCreate youtube);
+    void addYoutubeVideo(YoutubeCreate youtube, int generationId);
     // 플레이리스트 조회
-    List<YoutubeList> getAllYoutubeVideos();
+    List<YoutubeList> getAllYoutubeVideos(int generationId);
     // 플레이리스트 삭제
     void deleteYoutubeVideo(int id);
 }
