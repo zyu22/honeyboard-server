@@ -29,9 +29,13 @@ public class TrackProjectController {
             @RequestParam(required = false, defaultValue = "0") int generationId) {
         log.info("관통 프로젝트 전체 조회 요청 - 기수: {}", generationId);
         List<TrackProjectList> projects = trackProjectService.getAllTrackProjects(generationId);
+        if(projects.isEmpty() || projects == null || projects.size() == 0) {
+            log.info("관통 프로젝트 전체 조회 완료, 조회 없음 - 기수: {}", generationId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
         log.info("관통 프로젝트 전체 조회 완료 - 기수: {}", generationId);
-        return projects.isEmpty() ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(projects);
+        return ResponseEntity.ok(projects);
     }
 
     // 관통 프로젝트 상세 조회
