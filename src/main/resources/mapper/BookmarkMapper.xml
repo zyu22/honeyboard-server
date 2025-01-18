@@ -8,7 +8,7 @@
     <!-- 1) 알고리즘 가이드 북마크 조회 -->
     <select id="selectAllAlgorithmGuideBookmarks"
             parameterType="int"
-            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmGuide">
+            resultType="AlgorithmGuideList">
         SELECT a.id,
                a.title,
                a.user_id       AS userId,
@@ -17,7 +17,7 @@
         FROM bookmark b
                  JOIN algorithm_guide a ON b.content_id = a.id
         WHERE b.user_id = #{userId}
-          AND b.content_type = 'algo_guide'
+          AND b.content_type = 'ALGO_GUIDE'
           AND a.is_deleted = FALSE
         ORDER BY a.created_at DESC
     </select>
@@ -38,7 +38,7 @@
                  JOIN algorithm_problem_solution s ON b.content_id = s.id
                  JOIN user u ON s.user_id = u.id
         WHERE b.user_id = #{userId}
-          AND b.content_type = 'algo_solution'
+          AND b.content_type = 'ALGO_SOLUTION'
           AND s.is_deleted = FALSE
         ORDER BY s.created_at DESC
     </select>
@@ -55,7 +55,7 @@
         FROM bookmark b
                  JOIN web_guide w ON b.content_id = w.id
         WHERE b.user_id = #{userId}
-          AND b.content_type = 'web_guide'
+          AND b.content_type = 'WEB_GUIDE'
           AND w.is_deleted = FALSE
         ORDER BY w.created_at DESC
     </select>
@@ -71,7 +71,7 @@
         FROM bookmark b
                  JOIN web_recommend r ON b.content_id = r.id
         WHERE b.user_id = #{userId}
-          AND b.content_type = 'web_recommend'
+          AND b.content_type = 'WEB_RECOMMEND'
           AND r.is_deleted = FALSE
         ORDER BY r.created_at DESC
     </select>
