@@ -1,13 +1,18 @@
 package com.honeyboard.api.schedule.service;
 
-import com.honeyboard.api.schedule.model.Schedule;
+import com.honeyboard.api.schedule.model.request.SceduleRequest;
+import com.honeyboard.api.schedule.model.response.ScheduleList;
 
 import java.util.List;
 
 public interface ScheduleService {
-//
-//	void addSchedule(Schedule schedule);
-//	List<Schedule> getScheduleByMonth(int year, int month, Integer generationId, String role);
-//	void updateSchedule(Schedule schedule);
-//	void deleteSchedule(int scheduleId);
+
+    // 일정 추가
+	void addSchedule(SceduleRequest schedule, int userId);
+    // 일정 조회
+	List<ScheduleList> getScheduleByMonth(int year, int month, Integer generationId, String role);
+	// 일정 수정
+    void updateSchedule(SceduleRequest schedule, int id);
+    // 일정 삭제
+	void deleteSchedule(int id);
 }
