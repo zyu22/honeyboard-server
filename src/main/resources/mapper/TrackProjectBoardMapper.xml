@@ -19,7 +19,7 @@
         <result property="content" column="content"/>
         <result property="createdAt" column="created_at"/>
         <!-- members 컬렉션 매핑 -->
-        <collection property="members" ofType="com.honeyboard.api.project.track.model.TeamMemberInfo">
+        <collection property="members" ofType="TeamMemberInfo">
             <id property="id" column="member_id"/>
             <result property="name" column="member_name"/>
             <result property="role" column="member_role"/>
