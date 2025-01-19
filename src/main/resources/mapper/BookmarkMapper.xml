@@ -3,12 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.honeyboard.api.user.mapper.BookmarkMapper">
+<mapper namespace="com.honeyboard.api.bookmark.mapper.BookmarkMapper">
 
     <!-- 1) 알고리즘 가이드 북마크 조회 -->
-    <select id="selectAllAlgorithmGuideBookmarks"
-            parameterType="int"
-            resultType="AlgorithmGuideList">
+    <select id="selectAllAlgorithmGuideBookmarks"  resultType="AlgorithmGuideList">
         SELECT a.id,
                a.title,
                a.user_id       AS userId,
@@ -23,9 +21,7 @@
     </select>
 
     <!-- 2) 알고리즘 문제풀이(솔루션) 북마크 조회 -->
-    <select id="selectAllAlgorithmSolutionBookmarks"
-            parameterType="int"
-            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedAlgorithmSolution">
+    <select id="selectAllAlgorithmSolutionBookmarks" resultType="AlgorithmProblemList">
         SELECT
             s.id            AS solutionId,
             s.title AS solutionTitle,
@@ -45,9 +41,7 @@
 
 
     <!-- 3) 웹 가이드 북마크 조회 -->
-    <select id="selectAllWebGuideBookmarks"
-            parameterType="int"
-            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedWebGuide">
+    <select id="selectAllWebGuideBookmarks" resultType="WebGuideList">
         SELECT w.id,
                w.title,
                w.created_at    AS createdAt,
@@ -61,9 +55,7 @@
     </select>
 
     <!-- 4) 웹 추천(링크) 북마크 조회 -->
-    <select id="selectAllWebRecommendBookmarks"
-            parameterType="int"
-            resultType="com.honeyboard.api.user.model.bookmark.BookmarkedWebRecommendation">
+    <select id="selectAllWebRecommendBookmarks" resultType="WebRecommendList">
         SELECT r.id,
                r.title,
                r.url,
@@ -77,7 +69,7 @@
     </select>
 
     <!-- bookmark 추가 (중복 시 무시) -->
-    <insert id="insertBookmark" parameterType="com.honeyboard.api.user.model.bookmark.Bookmark">
+    <insert id="insertBookmark">
         INSERT IGNORE INTO bookmark (user_id, content_type, content_id, created_at)
     VALUES (#{userId}, #{contentType}, #{contentId}, CURRENT_DATE)
     </insert>

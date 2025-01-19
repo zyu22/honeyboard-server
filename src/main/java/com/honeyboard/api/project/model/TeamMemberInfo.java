@@ -9,9 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public
 class TeamMemberInfo {
-
-    int id;
-    String name;
-    String role;
-
+    private int id;
+    private String name;
+    private String role;
 }

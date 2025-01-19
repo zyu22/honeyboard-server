@@ -1,106 +1,101 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.user.mapper.MyPageMapper">
-<!--    <resultMap id="TrackTeamMemberResultMap" type="com.honeyboard.api.project.track.model.TrackTeamMember">-->
-<!--        &lt;!&ndash; trackMemberId 매핑 (ttm.id) &ndash;&gt;-->
-<!--        <id property="trackMemberId" column="id"/>-->
 
-<!--        &lt;!&ndash; trackTeamId 매핑 (ttm.track_team_id) &ndash;&gt;-->
-<!--        <result property="trackTeamId" column="trackTeamId"/>-->
+    <!-- MyTrackProjectList 결과 매핑 -->
+    <resultMap id="MyTrackProjectListResult" type="MyTrackProjectList">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="thumbnail" column="thumbnail"/>
+        <result property="trackProjectName" column="track_project_name"/>
+        <collection
+                property="trackTeam"
+                column="track_team_id"
+                javaType="java.util.List"
+                ofType="TeamMemberInfo"
+                select="getTrackTeamMembers"/>
+    </resultMap>
 
-<!--    </resultMap>-->
-<!--    &lt;!&ndash;-->
-<!--        1) 나의 트랙 프로젝트 목록 조회-->
-<!--           - track_team_member ttm 에서 userId에 맞는 팀 찾음-->
-<!--           - track_project_board tpb 조인 (하위 프로젝트)-->
-<!--           - track_project tp 조인 (상위 프로젝트)-->
-<!--           - is_deleted = FALSE 조건 처리-->
-<!--           - resultType: MyTrackProject-->
-<!--    &ndash;&gt;-->
-<!--    <select id="selectAllMyTrackProjects"-->
-<!--            parameterType="int"-->
-<!--            resultType="com.honeyboard.api.user.model.mypage.MyTrackProject">-->
+    <!-- TeamMemberInfo 결과 매핑 -->
+    <resultMap id="TeamMemberInfoResult" type="TeamMemberInfo">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="role" column="role"/>
+    </resultMap>
 
-<!--        SELECT-->
-<!--            tp.id   AS trackProjectId,-->
-<!--            tp.title AS trackProjectTitle,-->
+    <!-- 트랙 프로젝트 리스트 조회 -->
+    <select id="selectAllMyTrackProjects" resultMap="MyTrackProjectListResult">
+        SELECT
+            tpb.id,
+            tp.title,
+            tpb.thumbnail,
+            tpb.title AS track_project_name,
+            tt.id AS track_team_id
+        FROM
+            track_project tp
+                LEFT JOIN
+            track_team tt ON tp.id = tt.track_project_id
+                LEFT JOIN
+            track_project_board tpb ON tp.id = tpb.track_project_id
+        WHERE
+            tt.id IN (
+                SELECT
+                    track_team_id
+                FROM
+                    track_team_member
+                WHERE
+                    user_id = #{userId}
+            )
+        ORDER BY tp.created_at DESC
+    </select>
 
-<!--            tpb.id   AS trackProjectBoardId,-->
-<!--            tpb.title AS trackProjectBoardTitle,-->
-<!--            tpb.thumbnail AS thumbnail,-->
+    <!-- 팀원 정보 조회 -->
+    <select id="getTrackTeamMembers" resultMap="TeamMemberInfoResult">
+        SELECT
+            u.id,
+            u.name,
+            ttm.role
+        FROM
+            track_team_member ttm
+                JOIN
+            user u ON ttm.user_id = u.id
+        WHERE
+            ttm.track_team_id = #{trackTeamId}
+    </select>
 
-<!--            ttm.track_team_id AS trackTeamId-->
-<!--        FROM track_team_member ttm-->
-<!--                 JOIN track_project_board tpb-->
-<!--                      ON ttm.track_team_id = tpb.track_team_id-->
-<!--                 JOIN track_project tp-->
-<!--                      ON tpb.track_project_id = tp.id-->
+    <!-- 2) 나의 파이널 프로젝트 목록 조회 -->
+    <select id="selectAllMyFinaleProjects"
+            parameterType="int"
+            resultType="com.honeyboard.api.user.model.mypage.MyFinaleProjectList">
+        SELECT
+            fpb.id        AS finaleProjectBoardId,
+            fpb.title     AS title,
+            fpb.created_at AS createdAt
+        FROM finale_team_member ftm
+                 JOIN finale_project_board fpb
+                      ON ftm.finale_team_id = fpb.team_id
+        WHERE ftm.user_id = #{userId}
+          AND fpb.is_deleted = FALSE
+        ORDER BY fpb.created_at DESC
+    </select>
 
-<!--        WHERE ttm.user_id = #{userId}-->
-<!--          AND tp.is_deleted = FALSE-->
-<!--          AND tpb.is_deleted = FALSE-->
+    <!-- 3) 나의 알고리즘 풀이 목록 조회 -->
+    <select id="selectAllMyAlgorithmSolutions"
+            parameterType="int"
+            resultType="com.honeyboard.api.user.model.mypage.MyAlgorithmSolutionList">
+        SELECT
+            s.title       AS solutionTitle,
+            s.id  AS solutionId,
+            s.runtime     AS runtime,
+            s.memory      AS memory,
+            s.language_id AS languageId,
+            p.title       AS problemTitle
 
-<!--        ORDER BY tpb.created_at DESC-->
-<!--    </select>-->
-
-
-<!--    &lt;!&ndash;-->
-<!--        1-1) 트랙 팀 멤버 조회-->
-<!--    &ndash;&gt;-->
-
-<!--    <select id="selectTrackTeamMembers"-->
-<!--            parameterType="int"-->
-<!--            resultType="string">-->
-<!--        SELECT-->
-<!--            u.name-->
-<!--        FROM track_team_member ttm-->
-<!--                 JOIN user u ON ttm.user_id = u.id-->
-<!--        WHERE ttm.track_team_id = #{trackTeamId}-->
-<!--    </select>-->
-
-
-<!--    &lt;!&ndash;-->
-<!--        2) 나의 파이널 프로젝트 목록 조회-->
-<!--    &ndash;&gt;-->
-<!--    <select id="selectAllMyFinaleProjects"-->
-<!--            parameterType="int"-->
-<!--            resultType="com.honeyboard.api.user.model.mypage.MyFinaleProject">-->
-<!--        SELECT-->
-<!--            fpb.id        AS finaleProjectBoardId,-->
-<!--            fpb.title     AS title,-->
-<!--            fpb.created_at AS createdAt-->
-<!--        FROM finale_team_member ftm-->
-<!--                 JOIN finale_project_board fpb-->
-<!--                      ON ftm.finale_team_id = fpb.team_id-->
-<!--        WHERE ftm.user_id = #{userId}-->
-<!--          AND fpb.is_deleted = FALSE-->
-<!--        ORDER BY fpb.created_at DESC-->
-<!--    </select>-->
-
-
-<!--    &lt;!&ndash;-->
-<!--        3) 나의 알고리즘 풀이 목록 조회-->
-<!--    &ndash;&gt;-->
-<!--    <select id="selectAllMyAlgorithmSolutions"-->
-<!--            parameterType="int"-->
-<!--            resultType="com.honeyboard.api.user.model.mypage.MyAlgorithmSolution">-->
-<!--        SELECT-->
-<!--            s.title       AS solutionTitle,-->
-<!--            s.id  AS solutionId,-->
-<!--            s.runtime     AS runtime,-->
-<!--            s.memory      AS memory,-->
-<!--            s.language_id AS languageId,-->
-<!--            p.title       AS problemTitle-->
-
-<!--        FROM algorithm_problem_solution s-->
-<!--                 JOIN algorithm_problem p ON s.problem_id = p.id-->
-<!--        WHERE s.user_id = #{userId}-->
-<!--          AND s.is_deleted = FALSE-->
-<!--          AND p.is_deleted = FALSE-->
-<!--        ORDER BY s.created_at DESC-->
-<!--    </select>-->
-
+        FROM algorithm_problem_solution s
+                 JOIN algorithm_problem p ON s.problem_id = p.id
+        WHERE s.user_id = #{userId}
+          AND s.is_deleted = FALSE
+          AND p.is_deleted = FALSE
+        ORDER BY s.created_at DESC
+    </select>
 </mapper>
