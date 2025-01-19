@@ -25,7 +25,7 @@ public class MyPageServiceImpl implements MyPageService {
         // 유효성 검사
         validateUserId(userId);
         log.info("내 관통 프로젝트 조회 시작 - 유저 ID: {}", userId);
-        return myPageMapper.selectAllMyTrackProjects(userId);
+        return myPageMapper.selectAllMyTrackProjects(10);
     }
 
     @Override
