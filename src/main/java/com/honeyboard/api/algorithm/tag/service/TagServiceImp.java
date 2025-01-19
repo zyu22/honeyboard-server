@@ -1,9 +1,12 @@
 package com.honeyboard.api.algorithm.tag.service;
 
 import com.honeyboard.api.algorithm.tag.mapper.TagMapper;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -11,13 +14,20 @@ import org.springframework.stereotype.Service;
 public class TagServiceImp implements TagService {
     private final TagMapper tm;
 
-//    @Override
-//    public List<TagResponse> getAllTag() {
-//        log.debug("전체 태그 조회 시작");
-//        List<TagResponse> tags = tm.selectAllTag();
-//        log.debug("전체 태그 조회 완료 - 조회된 태그 수: {}", tags.size());
-//        return tags;
-//    }
+    // 전체 Tag 조회
+    @Override
+    public List<TagResponse> getAllTag() {
+        log.debug("전체 태그 조회 시작");
+
+        List<TagResponse> tags = tm.selectAllTag();
+
+        if (tags.isEmpty()) {
+            throw new IllegalArgumentException("조회된 태그 정보가 없습니다.");
+        }
+
+        log.debug("전체 태그 조회 완료 - 조회된 태그 수: {}", tags.size());
+        return tags;
+    }
 //
 //    @Override
 //    public List<TagResponse> searchTag(String input) {

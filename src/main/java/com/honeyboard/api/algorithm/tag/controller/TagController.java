@@ -1,10 +1,15 @@
 package com.honeyboard.api.algorithm.tag.controller;
 
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import com.honeyboard.api.algorithm.tag.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -13,24 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TagController {
     private final TagService ts;
 
-//    @GetMapping
-//    public ResponseEntity<?> getAllTag(@RequestParam(required = false) String name) {
-//        try {
-//            List<TagResponse> list;
-//            if (name == null || name.isEmpty()) {
-//                log.info("전체 태그 조회 요청");
-//                list = ts.getAllTag();
-//            } else {
-//                log.info("태그 검색 요청 - 검색어: {}", name);
-//                list = ts.searchTag(name);
-//            }
-//            log.debug("태그 조회 결과 - 태그 수: {}", list.size());
-//            return ResponseEntity.ok().body(list);
-//        } catch (Exception e) {
-//            log.error("태그 조회 중 에러 발생", e);
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    // 전체 Tag 조회
+    @GetMapping
+    public ResponseEntity<?> getAllTag() {
+        log.info("태그 전체 조회 시작");
+
+        List<TagResponse> tags = ts.getAllTag();
+
+        log.info("태그 전체 조회 완료 - 총 태그 수: {}", tags.size());
+
+        return ResponseEntity.ok(tags);
+    }
 //
 //    @PostMapping
 //    public ResponseEntity<?> createTag(@RequestBody TagResponse tag) {
