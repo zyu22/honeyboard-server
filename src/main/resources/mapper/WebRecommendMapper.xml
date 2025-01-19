@@ -37,7 +37,7 @@
     </select>
 
     <!-- 웹 추천 상세 조회 -->
-    <select id="selectWebRecommendById" resultType="com.honeyboard.api.web.recommend.model.response.WebRecommendDetail">
+    <select id="selectWebRecommendById" resultType="WebRecommendDetail">
         SELECT
             id,
             title,
