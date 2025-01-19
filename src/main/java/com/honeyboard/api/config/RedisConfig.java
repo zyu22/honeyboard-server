@@ -9,7 +9,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import java.time.Duration;
 
 @Configuration
@@ -28,8 +28,8 @@ public class RedisConfig {
         redisConfig.setPort(port);
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-                .commandTimeout(Duration.ofSeconds(1))
-                .shutdownTimeout(Duration.ofSeconds(1))
+                .commandTimeout(Duration.ofSeconds(60))
+                .shutdownTimeout(Duration.ofSeconds(60))
                 .build();
 
         return new LettuceConnectionFactory(redisConfig, clientConfig);
