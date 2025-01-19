@@ -2,8 +2,9 @@ package com.honeyboard.api.youtube.controller;
 
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.youtube.model.Youtube;
-import com.honeyboard.api.youtube.model.YoutubeSearchResult;
+import com.honeyboard.api.youtube.model.request.YoutubeCreate;
+import com.honeyboard.api.youtube.model.response.YoutubeList;
+import com.honeyboard.api.youtube.model.response.YoutubeResponse;
 import com.honeyboard.api.youtube.service.YoutubeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/youtube")
@@ -21,21 +24,29 @@ public class YoutubeController {
 
     private final YoutubeService youtubeService;
 
-    //유튜브 영상 검색
+    // 유튜브 검색 결과 조회
     @GetMapping("/search")
-    public YoutubeSearchResult searchYoutubeVideo(@RequestParam String query,
-                                                @RequestParam(required = false) String pageToken) {
+    public Map<String, Object> searchYoutubeVideo(@RequestParam String query,
+                                                  @RequestParam(required = false) String pageToken) {
         log.info("유튜브 영상 검색 요청 - 키워드: {}, pageToken: {}", query, pageToken);
 
-        return youtubeService.searchVideos(query, pageToken);
+        YoutubeResponse response = youtubeService.searchVideos(query, pageToken);
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("List<YoutubeList>", response.getYoutubeList());
+        result.put("nextPageToken", response.getNextPageToken());
+
+        return result;
     }
 
     //유튜브 영상 저장
     @PostMapping("/playlist")
-    public ResponseEntity<?> createPlaylist(@RequestBody Youtube youtube) {
+    public ResponseEntity<?> createPlaylist(@RequestBody YoutubeCreate youtube,
+                                            @CurrentUser User user) {
         log.info("유튜브 영상 저장 요청 - 제목: {}", youtube.getTitle());
 
-        youtubeService.addYoutubeVideo(youtube);
+        int generationId = user.getGenerationId();
+        youtubeService.addYoutubeVideo(youtube, generationId);
 
         log.info("유튜브 영상 저장 완료 - 영상ID: {}", youtube.getVideoId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -47,10 +58,10 @@ public class YoutubeController {
         log.info("플레이리스트 전체 조회 요청 - 기수: {}", user.getGenerationId());
 
         int generationId = user.getGenerationId();
-        List<Youtube> playlist = youtubeService.getAllYoutubeVideos(generationId);
+        List<YoutubeList> playlist = youtubeService.getAllYoutubeVideos(generationId);
 
         if(playlist == null || playlist.isEmpty()) {
-            log.info("조회된 플레이리스트 없음 - 기수: {}", generationId);
+            log.info("조회된 플레이리스트 없음");
             return ResponseEntity.noContent().build();
         }
 
