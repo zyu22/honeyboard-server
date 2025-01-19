@@ -77,7 +77,7 @@ public class WebGuideServiceImpl implements WebGuideService {
             log.info("웹 개념 등록 실패 - 제목: {}", webGuideRequest.getTitle());
             throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
         }
-        createResponse.setId(insertresult);
+
         log.info("웹 개념 등록 완료 - ID: {}", createResponse.getId());
         return createResponse;
     }

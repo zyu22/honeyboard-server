@@ -29,7 +29,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
     public TrackProjectBoardDetail getBoard(int boardId) {
         validateBoardId(boardId);
 
-        log.debug("게시글 상세 조회 시작 - 게시글ID: {}", boardId);
+        log.info("게시글 상세 조회 시작 - 게시글ID: {}", boardId);
         return trackProjectBoardMapper.selectTrackProjectBoard(boardId);
     }
 
@@ -47,8 +47,9 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
         CreateResponse createResponse = new CreateResponse();
         int result = trackProjectBoardMapper.insertTrackProjectBoard(trackProjectId, trackTeamId, userId, board, createResponse);
 
-        if (result == 0) {
-            throw new RuntimeException("게시글 생성에 실패했습니다.");
+        if (result <= 0) {
+            log.info("게시글 생성 실패 - 제목: {}", board.getTitle());
+            throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
         }
 
         log.info("게시글 생성 완료 - 게시글 번호: {}", createResponse.getId());
@@ -65,8 +66,9 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
         log.info("게시글 수정 시작 - ID: {}", boardId);
         int result = trackProjectBoardMapper.updateTrackProjectBoard(trackProjectId, trackTeamId, boardId, board);
 
-        if (result != 1) {
-            throw new RuntimeException("게시글 수정에 실패했습니다.");
+        if (result <= 0) {
+            log.info("게시글 수정 실패 - 제목: {}", board.getTitle());
+            throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
         }
 
         log.info("게시글 수정 완료 - ID: {}", boardId);
@@ -74,12 +76,13 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
     // 관통 게시글 삭제
     @Override
-    public void softDeleteBoard(int boardId) {
+    public void softDeleteBoard(int trackProjectId, int trackTeamId, int boardId) {
         validateBoardId(boardId);
         log.info("게시글 삭제 시작 - ID: {}", boardId);
         int result = trackProjectBoardMapper.deleteTrackProjectBoard(boardId);
 
         if (result != 1) {
+            log.info("게시글 삭제 실패 - 제목: {}", boardId);
             throw new BusinessException(ErrorCode.BOARD_DELETE_FAILED);
         }
 

@@ -19,5 +19,5 @@ public interface TrackProjectBoardService {
     void updateBoard(int trackProjectId, int trackTeamId, int boardId, TrackProjectBoardRequest board);
 
     // 관통 게시글 삭제
-    void softDeleteBoard(int boardId);
+    void softDeleteBoard(int trackProjectId, int trackTeamId, int boardId);
 }
