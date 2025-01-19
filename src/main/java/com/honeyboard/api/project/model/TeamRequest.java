@@ -13,5 +13,4 @@ public class TeamRequest {
     private int id;
     private int leaderId;
     private List<Integer> memberIds;
-
 }

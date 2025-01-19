@@ -1,17 +1,17 @@
-package com.honeyboard.api.user.model.bookmark;
+package com.honeyboard.api.user.model.mypage;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookmarkedWebGuide {
-
+@Builder
+@ToString
+public class MyFinaleProjectList {
     private int id;
     private String title;
     private String createdAt;
-    private String thumbnail;
-
 }

@@ -1,13 +1,12 @@
 package com.honeyboard.api.user.controller;
 
-import com.honeyboard.api.bookmark.service.BookmarkService;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.LogInUserResponse;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.mypage.MyTrackProject;
-import com.honeyboard.api.user.model.mypage.MyFinaleProject;
-import com.honeyboard.api.user.model.mypage.MyAlgorithmSolution;
+import com.honeyboard.api.user.model.mypage.MyAlgorithmSolutionList;
+import com.honeyboard.api.user.model.mypage.MyFinaleProjectList;
 
+import com.honeyboard.api.user.model.mypage.MyTrackProjectList;
 import com.honeyboard.api.user.service.MyPageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,45 +70,43 @@ public class UserController {
 
 
 
-	@GetMapping("/{userId}/trackproject")
-	public ResponseEntity<List<MyTrackProject>> getMyTrackProjects(@PathVariable int userId) {
-		log.info("[GET] /api/v1/user/{}/trackproject 요청 수신", userId);
+	@GetMapping("/trackProject")
+	public ResponseEntity<List<MyTrackProjectList>> getMyTrackProjects(@CurrentUser User user) {
+		log.info("내 관통 프로젝트 조회 요청 - 유저 ID : {}", user.getUserId());
 
-		List<MyTrackProject> projects = myPageService.getAllMyTrackProjects(userId);
-		if (projects.isEmpty()) {
-			log.info("나의 트랙 프로젝트가 없습니다. userId={}", userId);
+		List<MyTrackProjectList> trackProjects = myPageService.getAllMyTrackProjects(user.getUserId());
+		if (trackProjects.isEmpty() || trackProjects.size() == 0) {
+			log.info("내 관통 프로젝트 조회 완료, 데이터 없음 - 유저 ID: {}", user.getUserId());
 			return ResponseEntity.noContent().build();
 		}
-
-		log.info("나의 트랙 프로젝트 조회 성공 - userId={}, count={}", userId, projects.size());
-		return ResponseEntity.ok(projects);
+		log.info("내 관통 프로젝트 조회 완료 - 유저 ID: {}, 개수: {}", user.getUserId(), trackProjects.size());
+		return ResponseEntity.ok(trackProjects);
 	}
 
-	@GetMapping("/{userId}/finaleproject")
-	public ResponseEntity<List<MyFinaleProject>> getMyFinaleProjects(@PathVariable int userId) {
-		log.info("[GET] /api/v1/user/{}/finaleproject 요청 수신", userId);
+	@GetMapping("/finaleproject")
+	public ResponseEntity<List<MyFinaleProjectList>> getMyFinaleProjects(@CurrentUser User user) {
+		log.info("내 파이널 프로젝트 조회 요청 - 유저 ID: {}", user.getUserId());
 
-		List<MyFinaleProject> finaleProjects = myPageService.getAllMyFinaleProjects(userId);
-		if (finaleProjects.isEmpty()) {
-			log.info("나의 파이널 프로젝트가 없습니다. userId={}", userId);
+		List<MyFinaleProjectList> finaleProjects = myPageService.getAllMyFinaleProjects(user.getUserId());
+		if (finaleProjects.isEmpty() || finaleProjects.size() == 0) {
+			log.info("내 파이널 프로젝트 조회 완료, 데이터없음 - 유저 ID: {}", user.getUserId());
 			return ResponseEntity.noContent().build();
 		}
-
-		log.info("나의 파이널 프로젝트 조회 성공 - userId={}, count={}", userId, finaleProjects.size());
+		log.info("내 파이널 프로젝트 조회 완료 - 유저 ID: {}, 개수: {}", user.getUserId(), finaleProjects.size());
 		return ResponseEntity.ok(finaleProjects);
 	}
 
-	@GetMapping("/{userId}/algorithm")
-	public ResponseEntity<List<MyAlgorithmSolution>> getMyAlgorithms(@PathVariable int userId) {
-		log.info("[GET] /api/v1/user/{}/algorithm 요청 수신", userId);
+	@GetMapping("/algorithmSolution")
+	public ResponseEntity<List<MyAlgorithmSolutionList>> getMyAlgorithms(@CurrentUser User user) {
+		log.info("나의 알고리즘 조회 요청 - 유저 ID: {}", user.getUserId());
 
-		List<MyAlgorithmSolution> solutions = myPageService.getAllMyAlgorithms(userId);
-		if (solutions.isEmpty()) {
-			log.info("나의 알고리즘 풀이가 없습니다. userId={}", userId);
+		List<MyAlgorithmSolutionList> solutions = myPageService.getAllMyAlgorithms(user.getUserId());
+		if (solutions.isEmpty() || solutions.size() == 0) {
+			log.info("나의 알고리즘 조회 완료, 데이터 없음 - 유저 ID: {}", user.getUserId());
 			return ResponseEntity.noContent().build();
 		}
 
-		log.info("나의 알고리즘 조회 성공 - userId={}, count={}", userId, solutions.size());
+		log.info("나의 알고리즘 조회 완료 - 유저 ID: {}, 개수: {}", user.getUserId(), solutions.size());
 		return ResponseEntity.ok(solutions);
 	}
 

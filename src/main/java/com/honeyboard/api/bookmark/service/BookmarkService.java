@@ -1,9 +1,7 @@
 package com.honeyboard.api.bookmark.service;
 
 import com.honeyboard.api.bookmark.model.BookmarkResponse;
-import com.honeyboard.api.user.model.bookmark.Bookmark;
 
-import java.awt.print.Book;
 import java.util.List;
 
 public interface BookmarkService {
