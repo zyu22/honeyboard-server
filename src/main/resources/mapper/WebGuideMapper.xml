@@ -25,7 +25,7 @@
 		    wg.id,
 		    wg.title,
 		    wg.content,
-		    wg.user_id,
+		    wg.user_id AS author_id,
 		    u.name as author_name,    
 		    CASE 
 		        WHEN b.id IS NOT NULL THEN true
