@@ -86,7 +86,7 @@ public class WebGuideController {
     										@RequestBody WebGuideRequest webGuideRequest,
     										@CurrentUser User user) {
         log.info("웹 개념 수정 요청 - ID: {}", guideId);
-        webGuideService.updateWebGuide(guideId, webGuideRequest, 5);
+        webGuideService.updateWebGuide(guideId, webGuideRequest, user.getUserId());
         log.info("웹 개념 수정 완료 - ID: {}", guideId);
         return ResponseEntity.ok().build();
     }
