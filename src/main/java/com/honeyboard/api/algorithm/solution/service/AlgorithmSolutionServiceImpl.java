@@ -22,6 +22,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 	private final AlgorithmSolutionMapper asm;
 	private final AlgorithmProblemMapper apm;
 
+	// AlgorithmSolution 전체조회
 	@Override
 	public PageResponse<AlgorithmSolutionList> getAllAlgorithmSolution(int problemId, int generationId, List<String> languages,
 																	   String sortType, int currentPage, int pageSize) {
@@ -48,6 +49,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 		return new PageResponse<>(solutions, pageInfo);
 	}
 
+	// AlgorithmSolution 상세조회
 	@Override
 	public AlgorithmSolutionDetail getAlgorithmSolution(int solutionId) {
 		log.info("알고리즘 솔루션 상세 조회 시작 - 솔루션 ID: {}", solutionId);
@@ -63,6 +65,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 		return solution;
 	}
 
+	// AlgorithmSolution 등록
 	@Override
 	public CreateResponse addAlgorithmSolution(int problemId, AlgorithmSolutionRequest request, int userId, int generationId) {
 		log.info("알고리즘 솔루션 추가 시작 - 문제 title: {}", request.getTitle());
@@ -89,6 +92,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 		return createResponse;
 	}
 
+	// AlgorithmSolution 수정
 	@Override
 	public void updateAlgorithmSolution(int solutionId, AlgorithmSolutionRequest request) {
 		log.info("알고리즘 솔루션 수정 시작 - 솔루션 ID: {}", solutionId);
@@ -106,6 +110,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 		log.info("알고리즘 솔루션 수정 완료");
 	}
 
+	// AlgorithmSolution 삭제
 	@Override
 	public void softDeleteAlgorithmSolution(int solutionId) {
 		log.info("알고리즘 솔루션 삭제 시작 - 솔루션 ID: {}", solutionId);
