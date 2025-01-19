@@ -2,6 +2,8 @@ package com.honeyboard.api.web.guide.service;
 
 import java.util.List;
 
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import com.honeyboard.api.common.model.CreateResponse;
@@ -56,7 +58,7 @@ public class WebGuideServiceImpl implements WebGuideService {
         WebGuideDetail webGuideDetail = webGuideMapper.selectWebGuideById(guideId, userId);
 
         if (webGuideDetail == null) {
-            log.error("웹 개념 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", guideId);
+            log.info("웹 개념 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", guideId);
             throw new IllegalArgumentException("웹 개념 정보가 존재하지 않습니다.");
         }
 
@@ -69,11 +71,11 @@ public class WebGuideServiceImpl implements WebGuideService {
         log.info("웹 개념 등록 시작 - 제목: {}", webGuideRequest.getTitle());
         
         CreateResponse createResponse = new CreateResponse();
-        webGuideMapper.createWebGuide(webGuideRequest, userId, generationId, createResponse);
+        int insertresult = webGuideMapper.createWebGuide(webGuideRequest, userId, generationId, createResponse);
 
-        if (createResponse.getId() <= 0) {
-            log.error("웹 개념 등록 실패 - 제목: {}", webGuideRequest.getTitle());
-            throw new IllegalArgumentException("생성된 웹 개념 ID를 가져오는데 실패했습니다.");
+        if (insertresult <= 0) {
+            log.info("웹 개념 등록 실패 - 제목: {}", webGuideRequest.getTitle());
+            throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
         }
 
         log.info("웹 개념 등록 완료 - ID: {}", createResponse.getId());
@@ -87,8 +89,8 @@ public class WebGuideServiceImpl implements WebGuideService {
         int result = webGuideMapper.updateWebGuide(guideId, webGuideRequest, userId);
 
         if (result != 1) {
-            log.error("웹 개념 수정 실패 - ID: {}", guideId);
-            throw new IllegalArgumentException("웹 개념 수정에 실패했습니다.");
+            log.info("웹 개념 수정 실패 - ID: {}", guideId);
+            throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
         }
 
         log.info("웹 개념 수정 완료 - ID: {}", guideId);
@@ -101,8 +103,8 @@ public class WebGuideServiceImpl implements WebGuideService {
         int result = webGuideMapper.softDeleteWebGuide(guideId, userId);
 
         if (result != 1) {
-            log.error("웹 개념 삭제 실패 - ID: {}", guideId);
-            throw new IllegalArgumentException("웹 개념 삭제에 실패했습니다.");
+            log.info("웹 개념 삭제 실패 - ID: {}", guideId);
+            throw new BusinessException(ErrorCode.BOARD_DELETE_FAILED);
         }
 
         log.info("웹 개념 삭제 완료 - ID: {}", guideId);
