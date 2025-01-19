@@ -61,7 +61,7 @@
    </select>
 
 <!--    &lt;!&ndash; 웹 개념 작성 &ndash;&gt;-->
-   <insert id="createWebGuide" useGeneratedKeys="true" keyProperty="createResponse.id" keyColumn="id">
+   <insert id="createWebGuide" useGeneratedKeys="true" keyProperty="createResponse.id">
 	    INSERT INTO web_guide (
 	        title,
 	        content,

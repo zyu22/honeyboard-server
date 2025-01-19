@@ -57,7 +57,7 @@ public class TrackProjectBoardController {
     }
 
     // 관통 게시글 삭제
-    @DeleteMapping("/{trackProjectId}/track/{trackTeamId}/board/{boardId}")
+    @DeleteMapping("/{trackProjectId}/team/{trackTeamId}/board/{boardId}")
     public ResponseEntity<Void> deleteTrackProjectBoard(
             @PathVariable int trackProjectId,
             @PathVariable int trackTeamId,
