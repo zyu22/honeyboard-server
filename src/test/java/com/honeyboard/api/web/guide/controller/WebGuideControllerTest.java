@@ -132,7 +132,7 @@ public class WebGuideControllerTest {
     @WithMockCustomUser(id = 5, email = "sktndid1203@gmail.com", name = "박수양", role = "ADMIN", generationId = 13)
     void getWebGuide_Success() throws Exception {
         // given
-        int guideId = 1;
+        int guideId = 41;
         
         // when & then
         MvcResult result = mockMvc.perform(get("/api/v1/web/guide/{guideId}", guideId)

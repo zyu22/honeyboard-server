@@ -6,7 +6,6 @@ import com.honeyboard.api.bookmark.model.BookmarkResponse;
 import com.honeyboard.api.bookmark.service.BookmarkService;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.bookmark.Bookmark;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

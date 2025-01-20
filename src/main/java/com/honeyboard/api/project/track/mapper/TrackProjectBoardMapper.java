@@ -22,5 +22,5 @@ public interface TrackProjectBoardMapper {
                                 @Param("boardId") int boardId, @Param("board") TrackProjectBoardRequest board
                                 );
 
-    int deleteTrackProjectBoard(@Param("boardId") Integer boardId);
+    int deleteTrackProjectBoard(@Param("boardId") int boardId);
 }

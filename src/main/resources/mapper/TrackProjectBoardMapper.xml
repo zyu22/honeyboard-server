@@ -18,20 +18,31 @@
         <result property="url" column="url"/>
         <result property="content" column="content"/>
         <result property="createdAt" column="created_at"/>
+        <!-- members 컬렉션 매핑 -->
+        <collection property="members" ofType="TeamMemberInfo">
+            <id property="id" column="member_id"/>
+            <result property="name" column="member_name"/>
+            <result property="role" column="member_role"/>
+        </collection>
     </resultMap>
 
     <!-- 게시글 상세 조회 -->
     <select id="selectTrackProjectBoard" parameterType="int" resultMap="boardDetailMap">
         SELECT
-            id,
-            track_team_id,
-            title,
-            url,
-            content,
-            created_at
-        FROM track_project_board
-        WHERE id = #{boardId}
-          AND is_deleted = false
+            b.id,
+            b.track_team_id,
+            b.title,
+            b.url,
+            b.content,
+            b.created_at,
+            tm.user_id as member_id,
+            u.name as member_name,
+            tm.role as member_role
+        FROM track_project_board b
+                 LEFT JOIN track_team_member tm ON b.track_team_id = tm.track_team_id
+                 LEFT JOIN user u ON tm.user_id = u.id
+        WHERE b.id = #{boardId}
+          AND b.is_deleted = false;
     </select>
 
     <!-- 게시글 생성 -->

@@ -83,7 +83,7 @@
 		INNER JOIN user u ON s.user_id = u.id
 		INNER JOIN programming_language p ON s.language_id = p.id
 		LEFT JOIN bookmark b ON b.content_id = s.id
-			AND b.content_type = 'algo_solution'
+			AND b.content_type = 'ALGO_SOLUTION'
         WHERE s.id = #{id}
         	AND s.is_deleted = false
 	</select>
@@ -154,8 +154,8 @@
 	   INNER JOIN programming_language p ON s.language_id = p.id
 	   WHERE s.is_deleted = false
 	   AND s.problem_id = #{problemId}
-	   <if test="generationId != null">
-	       AND u.generation_id = #{generationId}
+	   <if test="generationId != 0">
+	       AND s.generation_id = #{generationId}
 	   </if>
 	   <if test="languages != null and languages.size > 0">
 	       AND p.name IN

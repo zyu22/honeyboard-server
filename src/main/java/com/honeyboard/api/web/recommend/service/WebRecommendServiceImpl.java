@@ -4,6 +4,7 @@ import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
 import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.web.recommend.mapper.WebRecommendMapper;
 import com.honeyboard.api.web.recommend.model.request.WebRecommendRequest;
 import com.honeyboard.api.web.recommend.model.response.WebRecommendDetail;
@@ -58,8 +59,8 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         WebRecommendDetail webRecommendDetail = webRecommendMapper.selectWebRecommendById(recommendId);
 
         if (webRecommendDetail == null) {
-            log.error("웹 추천 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", recommendId);
-            throw new IllegalArgumentException("웹 추천 정보가 존재하지 않습니다.");
+            log.info("웹 추천 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", recommendId);
+            throw new BusinessException(ErrorCode.BOARD_NOT_FOUND);
         }
 
         log.info("웹 추천 상세 조회 완료 - ID: {}", recommendId);

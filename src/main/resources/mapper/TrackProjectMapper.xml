@@ -20,7 +20,7 @@
         <id property="id" column="board_id"/>
         <result property="title" column="board_title"/>
         <result property="createdAt" column="board_created_at"/>
-        <result property="thumbnailUrl" column="board_thumbnail"/>
+        <result property="thumbnail" column="board_thumbnail"/>
     </resultMap>
 
     <resultMap id="trackProjectDetailMap" type="com.honeyboard.api.project.track.model.response.TrackProjectDetail">
