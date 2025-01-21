@@ -15,28 +15,27 @@
 
     <!--  Algorithm Problem 전체 조회 + 검색  -->
     <select id="selectAllAlgorithmProblem" resultMap="AlgorithmProblemWithTags">
-        SELECT ap.id,
-               ap.title,
-               ap.url,
-               ap.created_at,
-               t.id AS tag_id,
-               t.name AS tag_name
+        SELECT DISTINCT ap.id,
+                        ap.title,
+                        ap.url,
+                        ap.created_at,
+                        t.id AS tag_id,
+                        t.name AS tag_name
         FROM algorithm_problem ap
-                 LEFT JOIN algorithm_problem_tag apt ON ap.id = apt.algorithm_problem_id
-                 LEFT JOIN tag t ON apt.tag_id = t.id
+                 LEFT JOIN (
+            SELECT apt.algorithm_problem_id, apt.tag_id, t.name
+            FROM algorithm_problem_tag apt
+                     JOIN tag t ON apt.tag_id = t.id
+            WHERE #{searchType} != 'tag'
+               OR #{keyword} IS NULL
+               OR t.name LIKE CONCAT('%', #{keyword}, '%')
+        ) combined_tags ON ap.id = combined_tags.algorithm_problem_id
+                 LEFT JOIN tag t ON t.id = combined_tags.tag_id
         WHERE ap.is_deleted = false
           AND (
-            #{keyword} IS NULL OR
-            CASE #{searchType}
-                WHEN 'title' THEN ap.title LIKE CONCAT('%', #{keyword}, '%')
-                WHEN 'tag' THEN EXISTS (
-                    SELECT 1
-                    FROM algorithm_problem_tag apt2
-                             JOIN tag t2 ON apt2.tag_id = t2.id
-                    WHERE apt2.algorithm_problem_id = ap.id
-                      AND t2.name LIKE CONCAT('%', #{keyword}, '%')
-                )
-                END
+            #{keyword} IS NULL
+                OR #{searchType} = 'tag'
+                OR ap.title LIKE CONCAT('%', #{keyword}, '%')
             )
         ORDER BY ap.created_at DESC
         LIMIT #{pageSize} OFFSET #{offset}
@@ -45,21 +44,20 @@
     <select id="countAlgorithmProblem" resultType="int">
         SELECT COUNT(DISTINCT ap.id)
         FROM algorithm_problem ap
-                 LEFT JOIN algorithm_problem_tag apt ON ap.id = apt.algorithm_problem_id
-                 LEFT JOIN tag t ON apt.tag_id = t.id
+                 LEFT JOIN (
+            SELECT apt.algorithm_problem_id, apt.tag_id, t.name
+            FROM algorithm_problem_tag apt
+                     JOIN tag t ON apt.tag_id = t.id
+            WHERE #{searchType} != 'tag'
+               OR #{keyword} IS NULL
+               OR t.name LIKE CONCAT('%', #{keyword}, '%')
+        ) combined_tags ON ap.id = combined_tags.algorithm_problem_id
+                 LEFT JOIN tag t ON t.id = combined_tags.tag_id
         WHERE ap.is_deleted = false
           AND (
-            #{keyword} IS NULL OR
-            CASE #{searchType}
-                WHEN 'title' THEN ap.title LIKE CONCAT('%', #{keyword}, '%')
-                WHEN 'tag' THEN EXISTS (
-                    SELECT 1
-                    FROM algorithm_problem_tag apt2
-                             JOIN tag t2 ON apt2.tag_id = t2.id
-                    WHERE apt2.algorithm_problem_id = ap.id
-                      AND t2.name LIKE CONCAT('%', #{keyword}, '%')
-                )
-                END
+            #{keyword} IS NULL
+                OR #{searchType} = 'tag'
+                OR ap.title LIKE CONCAT('%', #{keyword}, '%')
             )
     </select>
 

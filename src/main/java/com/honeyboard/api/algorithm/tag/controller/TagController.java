@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,13 +20,25 @@ public class TagController {
     private final TagService ts;
 
     // 전체 Tag 조회
+//    @GetMapping
+//    public ResponseEntity<?> getAllTag() {
+//        log.info("태그 전체 조회 시작");
+//
+//        List<TagResponse> tags = ts.getAllTag();
+//
+//        log.info("태그 전체 조회 완료 - 총 태그 수: {}", tags.size());
+//
+//        return ResponseEntity.ok(tags);
+//    }
+
+    // Tag 검색
     @GetMapping
-    public ResponseEntity<?> getAllTag() {
-        log.info("태그 전체 조회 시작");
+    public ResponseEntity<?> searchTag(@RequestParam(value = "keyword") String keyword) {
+        log.info("태그 검색 시작 - 키워드: {}", keyword);
 
-        List<TagResponse> tags = ts.getAllTag();
+        List<TagResponse> tags = ts.searchTag(keyword);
 
-        log.info("태그 전체 조회 완료 - 총 태그 수: {}", tags.size());
+        log.info("태그 검색 완료 - 총 태그 수: {}", tags.size());
 
         return ResponseEntity.ok(tags);
     }
