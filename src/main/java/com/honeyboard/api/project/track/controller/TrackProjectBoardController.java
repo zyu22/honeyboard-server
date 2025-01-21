@@ -24,7 +24,7 @@ public class TrackProjectBoardController {
             @PathVariable int trackProjectId,
             @PathVariable int trackTeamId,
             @PathVariable int boardId) {
-        TrackProjectBoardDetail board = trackProjectBoardService.getBoard(boardId);
+        TrackProjectBoardDetail board = trackProjectBoardService.getBoard(trackProjectId, trackTeamId, boardId);
         return board == null ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(board);
     }

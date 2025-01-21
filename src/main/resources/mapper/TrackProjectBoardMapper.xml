@@ -42,6 +42,8 @@
                  LEFT JOIN track_team_member tm ON b.track_team_id = tm.track_team_id
                  LEFT JOIN user u ON tm.user_id = u.id
         WHERE b.id = #{boardId}
+          AND b.track_project_id = #{trackProjectId}
+          AND b.track_team_id = #{trackTeamId}
           AND b.is_deleted = false;
     </select>
 
