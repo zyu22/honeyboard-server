@@ -12,7 +12,7 @@
     <select id="selectSearchTag" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT id, name
         FROM tag
-        WHERE name LIKE CONCAT('%', #{name}, '%')
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
         ORDER BY name ASC
         LIMIT 20
     </select>

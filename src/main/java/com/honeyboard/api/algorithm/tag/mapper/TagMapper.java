@@ -10,9 +10,10 @@ import java.util.List;
 public interface TagMapper {
 
     // 전체 Tag 조회
-    List<TagResponse> selectAllTag();
+    //List<TagResponse> selectAllTag();
 
-    //List<TagResponse> selectSearchTag(@Param("name") String input);
+    // Tag 검색
+    List<TagResponse> selectSearchTag(@Param("keyword") String keyword);
 
     // Tag 추가
     int insertTag(TagResponse tag);

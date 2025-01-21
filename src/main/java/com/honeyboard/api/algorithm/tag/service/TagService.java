@@ -7,9 +7,10 @@ import java.util.List;
 public interface TagService {
 
     // 전체 Tag 조회
-    List<TagResponse> getAllTag();
+    //List<TagResponse> getAllTag();
 
-//    List<TagResponse> searchTag(String input);
+    // Tag 검색
+    List<TagResponse> searchTag(String keyword);
 //
 //    TagResponse addTag(TagResponse tag);
 }
