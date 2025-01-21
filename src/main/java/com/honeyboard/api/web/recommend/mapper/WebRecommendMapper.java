@@ -11,16 +11,16 @@ import java.util.List;
 public interface WebRecommendMapper {
     
     // 웹추천 전체 조회 (검색어 x) 
-    List<WebRecommendList> selectAllWebRecommend(Integer generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<WebRecommendList> selectAllWebRecommend(@Param("generationId") Integer generationId, @Param("offset") int offset, @Param("pageSize") int pageSize);
     
     // 웹추천 전체 조회 (검색어 - 제목 O)
-    List<WebRecommendList> searchWebRecommendByTitle(String title, Integer generationId,  @Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<WebRecommendList> searchWebRecommendByTitle(@Param("title") String title, @Param("generationId") Integer generationId,  @Param("offset") int offset, @Param("pageSize") int pageSize);
     
     // 웹추천 상세 조회
     WebRecommendDetail selectWebRecommendById(int recommendId);
 
     // 웹추천 작성
-    int insertWebRecommend(@Param("webRecommend") WebRecommendRequest webRecommend, @Param("userId") int userId,
+    int insertWebRecommend(@Param("webRecommend") WebRecommendRequest webRecommend, @Param("userId") int userId, @Param("generationId") int generationId,
                            @Param("createResponse") CreateResponse createResponse);
 
     // 웹추천 수정
@@ -33,7 +33,7 @@ public interface WebRecommendMapper {
     int countWebRecommend(Integer generationId);
 
     // 웹추천 검색 개수
-    int countSearchWebRecommend(String title, Integer generationId);
+    int countSearchWebRecommend(@Param("title") String title, @Param("title") Integer generationId);
 
     // Url 중복검사
     int existByUrl(String url);

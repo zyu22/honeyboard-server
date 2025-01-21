@@ -13,7 +13,7 @@
         FROM web_recommend
         WHERE is_deleted = false
         <if test="generationId != 0">
-            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+            AND generation_id = #{generationId}
         </if>
         ORDER BY created_at DESC
         LIMIT #{offset}, #{pageSize}
@@ -29,7 +29,7 @@
         FROM web_recommend
         WHERE is_deleted = false
         <if test="generationId != 0">
-            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+            AND generation_id = #{generationId}
         </if>
           AND title LIKE CONCAT('%', #{title}, '%')
         ORDER BY created_at DESC
@@ -74,7 +74,7 @@
                      #{webRecommend.url},
                      #{webRecommend.content},
                      #{userId},
-                     (SELECT id FROM generation WHERE is_active = true),
+                     #{generationId},
                      NOW(),
                      NOW(),
                      false
@@ -110,7 +110,7 @@
         FROM web_recommend
         WHERE is_deleted = false
         <if test="generationId != 0">
-            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+            AND generation_id = #{generationId}
         </if>
     </select>
 
@@ -121,7 +121,7 @@
         WHERE title LIKE CONCAT('%', #{title}, '%')
           AND is_deleted = false
         <if test="generationId != 0">
-            AND generation_id = (SELECT id FROM generation WHERE is_active = true)
+            AND generation_id = #{generationId}
         </if>
     </select>
 

@@ -18,7 +18,7 @@ public interface WebRecommendService {
     WebRecommendDetail getWebRecommend(int recommendId);
 
     // 웹추천 작성
-    CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId);
+    CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId, int generationId);
 
     // 웹추천 수정
     void updateWebRecommend(int recommendId, WebRecommendRequest webRecommend, int userId);
