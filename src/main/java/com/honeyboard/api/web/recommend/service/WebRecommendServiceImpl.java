@@ -69,7 +69,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
 
 
     @Override
-    public CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId) {
+    public CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId, int generationId) {
         log.info("웹 추천 등록 시작 - 제목: {}", webRecommend.getTitle());
 
         // URL 중복 확인
@@ -80,7 +80,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         }
 
         CreateResponse response = new CreateResponse();
-        int result = webRecommendMapper.insertWebRecommend(webRecommend, userId, response);
+        int result = webRecommendMapper.insertWebRecommend(webRecommend, userId, generationId, response);
 
         if (result <= 0) {
             log.error("웹 추천 등록 실패 - 제목: {}", webRecommend.getTitle());
