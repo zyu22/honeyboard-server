@@ -65,14 +65,13 @@ public enum ErrorCode {
     TEAM_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 생성에 실패하였습니다."),
     TEAM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 수정에 실패하였습니다."),
     TEAM_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 인원 변경에 실패하였습니다."),
-
+    INVALID_TEAM_ID(HttpStatus.BAD_REQUEST, "잘못된 팀 아이디를 입력했습니다."),
 	
 	// 북마크 관련 에러
 
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),
     BOOKMARK_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 북마크입니다."),
     BOOKMARK_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "북마크 삭제에 실패했습니다.");
-
 
     private final HttpStatus status;
     private final String message;

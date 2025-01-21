@@ -129,7 +129,7 @@ public class SecurityConfig {
                             log.debug("CORS 설정 생성 - 요청 URI: {}", request.getRequestURI());
 
                             CorsConfiguration configuration = new CorsConfiguration();
-                            configuration.setAllowedOrigins(List.of(frontendUrl));
+                            configuration.setAllowedOriginPatterns(List.of(frontendUrl));
                             configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                             configuration.setAllowCredentials(true);
                             configuration.addAllowedHeader("*");
