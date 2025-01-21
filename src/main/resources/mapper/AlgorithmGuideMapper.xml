@@ -98,19 +98,23 @@
     <select id="countSearchAlgorithmGuide" resultType="int">
         SELECT COUNT(*)
         FROM algorithm_guide
-        WHERE generation_id = #{generationId}
+        WHERE is_deleted = false
         <if test="title != null">
             AND title LIKE CONCAT('%', #{title}, '%')
         </if>
-        AND is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
     </select>
 
     <!-- 전체 알고리즘 가이드 수 -->
     <select id="countAlgorithmGuide" resultType="int">
         SELECT COUNT(*)
         FROM algorithm_guide
-        WHERE generation_id = #{generationId}
-          AND is_deleted = false
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
     </select>
 
 </mapper>
