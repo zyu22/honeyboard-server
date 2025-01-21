@@ -68,13 +68,6 @@ public class WebGuideController {
     @PostMapping
     public ResponseEntity<?> createWebGuide(@RequestBody WebGuideRequest webGuideRequest,
     										@CurrentUser User user) {
-        log.info("웹 개념 작성 요청 - 제목:{}, 아이디:{}", webGuideRequest.getTitle(), user.getUserId());
-        if(!user.getRole().equals("ADMIN")) {
-        	log.info("관리자 권한이 없습니다");
-        	return ResponseEntity
-                    .status(ErrorCode.UNAUTHORIZED_WEB_GUIDE_UPDATE.getStatus())
-                    .body(ErrorCode.UNAUTHORIZED_WEB_GUIDE_UPDATE.getMessage());
-        }
         CreateResponse createResponse = webGuideService.createWebGuide(webGuideRequest, user.getUserId(), user.getGenerationId());
         log.info("웹 개념 작성 완료 - ID: {}", createResponse.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createResponse.getId());
