@@ -107,8 +107,6 @@ public class AuthController {
     @PostMapping("/email/send")
     public ResponseEntity<?> sendVerificationEmail(@RequestBody EmailVerification req) {
         String email = req.getEmail();
-        boolean exists = userService.existsByEmail(email);
-        if(exists) return ResponseEntity.status(HttpStatus.CONFLICT).build();
         log.debug("이메일 인증 코드 발송 요청 시작 - 수신자: {}", email);
         String code = verificationService.generateVerificationCode();
         log.debug("인증 코드 생성 완료: {}", code);
