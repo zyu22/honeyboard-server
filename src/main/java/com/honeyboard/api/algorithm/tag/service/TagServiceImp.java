@@ -35,10 +35,6 @@ public class TagServiceImp implements TagService {
         log.info("태그 검색 시작 - 검색어: {}", keyword);
         List<TagResponse> tags = tm.selectSearchTag(keyword);
 
-        if (tags.isEmpty()) {
-            throw new IllegalArgumentException("조회된 태그 정보가 없습니다.");
-        }
-
         log.info("태그 검색 완료 - 검색어: {}, 검색된 태그 수: {}", keyword, tags.size());
         return tags;
     }
