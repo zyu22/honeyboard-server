@@ -9,8 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public
 class ProjectUserInfo {
-
-    int id;
-    String name;
-
+    private int id;
+    private String name;
 }

@@ -25,8 +25,7 @@ public class FinaleProjectController {
 
     // 피날레 프로젝트 전체 조회
     @GetMapping
-    public
-    ResponseEntity<?> getFinaleProjectResponse(@RequestParam(defaultValue = "0") int generationId) {
+    public ResponseEntity<?> getFinaleProjectResponse(@RequestParam(required = false, defaultValue = "0") int generationId) {
         log.info("피날레 프로젝트 전체 조회 시작 generationId: {}", generationId);
         if(generationId == 0) generationId = userService.getActiveGenerationId();
         FinaleProjectResponse res = finaleProjectService.getFinaleResponse(generationId);

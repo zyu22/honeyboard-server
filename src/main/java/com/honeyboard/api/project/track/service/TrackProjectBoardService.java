@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface TrackProjectBoardService {
     // 관통 게시글 상세조회
-    TrackProjectBoardDetail getBoard(int boardId);
+    TrackProjectBoardDetail getBoard(int trackProjectId, int trackTeamId, int boardId);
 
     // 관통 게시글 작성
     CreateResponse addBoard(int trackProjectId, int trackTeamId, int userId, TrackProjectBoardRequest board);
@@ -19,5 +19,5 @@ public interface TrackProjectBoardService {
     void updateBoard(int trackProjectId, int trackTeamId, int boardId, TrackProjectBoardRequest board);
 
     // 관통 게시글 삭제
-    void softDeleteBoard(int boardId);
+    void softDeleteBoard(int trackProjectId, int trackTeamId, int boardId);
 }

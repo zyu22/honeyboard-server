@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.algorithm.tag.mapper.TagMapper">
+
+    <!--  전체 Tag 조회  -->
     <select id="selectAllTag" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT id, name
         FROM tag
         ORDER BY name ASC
-        LIMIT 20
     </select>
+
     <select id="selectSearchTag" resultType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
         SELECT id, name
         FROM tag
-        WHERE name LIKE CONCAT('%', #{name}, '%')
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
         ORDER BY name ASC
         LIMIT 20
     </select>

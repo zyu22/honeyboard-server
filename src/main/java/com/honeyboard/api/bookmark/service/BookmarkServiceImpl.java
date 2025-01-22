@@ -2,6 +2,9 @@ package com.honeyboard.api.bookmark.service;
 
 import com.honeyboard.api.bookmark.mapper.BookmarkMapper;
 import com.honeyboard.api.bookmark.model.BookmarkResponse;
+import com.honeyboard.api.bookmark.model.ContentType;
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,30 +22,31 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public List<?> getAllBookmarks(String contentType, int userId) {
         // 유효성 검증
-        validateInput(contentType, userId);
-
+        validateUserId(userId);
+        ContentType type = ContentType.from(contentType);
         log.info("북마크 전체 조회 시작 - 유저ID: {}, 컨텐츠 타입: {}", userId, contentType);
 
-        contentType = contentType.trim().toUpperCase();
-        switch (contentType) {
-            case "ALGO_GUIDE":
+        switch (type) {
+            case ALGO_GUIDE:
                 return bookmarkMapper.selectAllAlgorithmGuideBookmarks(userId);
-            case "ALGO_SOLUTION":
+            case ALGO_SOLUTION:
                 return bookmarkMapper.selectAllAlgorithmSolutionBookmarks(userId);
-            case "WEB_GUIDE":
+            case WEB_GUIDE:
                 return bookmarkMapper.selectAllWebGuideBookmarks(userId);
-            case "WEB_RECOMMEND":
+            case WEB_RECOMMEND:
                 return bookmarkMapper.selectAllWebRecommendBookmarks(userId);
             default:
-                log.warn("지원하지 않는 contentType입니다. contentType: {}", contentType);
-                return Collections.emptyList();
+                throw new BusinessException(ErrorCode.INVALID_CONTENT_TYPE);
         }
     }
 
     @Override
     public boolean addBookmark(String contentType, int contentId, int userId) {
         // 유효성 검증
-        validateInput(contentType, userId);
+        validateUserId(userId);
+        validateContentId(contentId);
+
+        ContentType type = ContentType.from(contentType);
 
         log.info("북마크 추가 시작 - 타입: {}, 컨텐츠 ID: {}, 유저ID: {}", contentType, contentId, userId);
         int result = bookmarkMapper.insertBookmark(contentType, contentId, userId);
@@ -60,7 +64,10 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public boolean deleteBookmark(String contentType, int contentId, int userId) {
         // 유효성 검증
-        validateInput(contentType, userId);
+        validateUserId(userId);
+        validateContentId(contentId);
+
+        ContentType type = ContentType.from(contentType);
         log.info("북마크 삭제 시작 - 타입: {}, 컨텐츠 ID: {}, 유저ID: {}", contentType, contentId, userId);
         int result = bookmarkMapper.deleteBookmark(contentType, contentId, userId);
 
@@ -74,16 +81,17 @@ public class BookmarkServiceImpl implements BookmarkService {
         return result == 1;
     }
 
-    private void validateInput(String contentType, int userId) {
+    private void validateUserId(int userId) {
         // 파라미터 검증
         if (userId <= 0) {
             log.warn("유효하지 않은 유저 ID입니다. userId={}", userId);
             throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
         }
+    }
 
-        if (contentType == null || contentType.trim().isEmpty()) {
-            log.warn("contentType이 비어있습니다. userId: {}", userId);
-            throw new IllegalArgumentException("유효하지 않은 contentType입니다.");
+    private void validateContentId(int contentId) {
+        if (contentId <= 0) {
+            throw new BusinessException(ErrorCode.INVALID_CONTENT_ID, "유효하지 않은 컨텐츠 ID입니다.");
         }
     }
 }

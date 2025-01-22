@@ -11,7 +11,7 @@ public
 interface FinaleProjectMapper {
 
     // 프로젝트 리스트 조회
-    List<FinaleProjectList> selectFinaleProjectList();
+    List<FinaleProjectList> selectFinaleProjectList(@Param("generationId") int generationId);
 
     // 프로젝트 생성
     int insertFinaleProject(@Param("finaleProjectCreate")FinaleProjectCreate project);

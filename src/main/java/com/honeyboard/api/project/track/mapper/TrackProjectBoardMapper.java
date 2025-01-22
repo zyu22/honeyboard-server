@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper
 public interface TrackProjectBoardMapper {
-    TrackProjectBoardDetail selectTrackProjectBoard(@Param("boardId") Integer boardId);
+    TrackProjectBoardDetail selectTrackProjectBoard(@Param("trackProjectId") Integer trackProjectId, @Param("trackTeamId") Integer trackTeamId, @Param("boardId") Integer boardId);
 
     int insertTrackProjectBoard(@Param("trackProjectId") int trackProjectId, @Param("trackTeamId") int trackTeamId,
                                 @Param("userId") int userId,
@@ -22,5 +22,5 @@ public interface TrackProjectBoardMapper {
                                 @Param("boardId") int boardId, @Param("board") TrackProjectBoardRequest board
                                 );
 
-    int deleteTrackProjectBoard(@Param("boardId") Integer boardId);
+    int deleteTrackProjectBoard(@Param("boardId") int boardId);
 }

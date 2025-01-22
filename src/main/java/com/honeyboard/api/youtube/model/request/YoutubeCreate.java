@@ -1,4 +1,4 @@
-package com.honeyboard.api.user.model.bookmark;
+package com.honeyboard.api.youtube.model.request;
 
 import lombok.*;
 
@@ -7,11 +7,10 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookmarkedWebRecommendation {
+public class YoutubeCreate {
 
-    private int id;
+    private String videoId;
     private String title;
-    private String url;
+    private String channel;
     private String createdAt;
-
 }

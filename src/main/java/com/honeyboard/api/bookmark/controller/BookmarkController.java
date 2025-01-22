@@ -1,17 +1,18 @@
 package com.honeyboard.api.bookmark.controller;
 
 import com.amazonaws.Response;
+import com.honeyboard.api.bookmark.model.BookmarkListResponse;
 import com.honeyboard.api.bookmark.model.BookmarkResponse;
 import com.honeyboard.api.bookmark.service.BookmarkService;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
-import com.honeyboard.api.user.model.bookmark.Bookmark;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,14 +30,16 @@ public class BookmarkController {
 
         log.info("북마크 전체 조회 요청 - 타입: {}, 유저 ID: {}", contentType, user.getUserId());
 
+        BookmarkListResponse bookmarkListResponse = new BookmarkListResponse();
         List<?> bookmarkList = bookmarkService.getAllBookmarks(contentType, user.getUserId());
         if(bookmarkList.isEmpty() || bookmarkList == null) {
             log.info("북마크 전체 조회 완료 - 데이터 없음");
             return ResponseEntity.noContent().build();
         }
 
+        bookmarkListResponse.setBookmarkListResponse(bookmarkList);
         log.info("북마크 전체 조회 완료 - 조회된 개수: {}", bookmarkList.size());
-        return ResponseEntity.ok(bookmarkList);
+        return ResponseEntity.ok(bookmarkListResponse);
     }
 
 

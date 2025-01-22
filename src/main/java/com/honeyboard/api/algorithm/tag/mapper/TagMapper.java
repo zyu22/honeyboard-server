@@ -8,12 +8,17 @@ import java.util.List;
 
 @Mapper
 public interface TagMapper {
-    List<TagResponse> selectAllTag();
 
-    List<TagResponse> selectSearchTag(@Param("name") String input);
+    // 전체 Tag 조회
+    //List<TagResponse> selectAllTag();
 
+    // Tag 검색
+    List<TagResponse> selectSearchTag(@Param("keyword") String keyword);
+
+    // Tag 추가
     int insertTag(TagResponse tag);
 
+    // Tag 검색
     TagResponse selectTagByName(String name);
 
     // Algorithm Problem에 해당하는 tag 리스트 반환

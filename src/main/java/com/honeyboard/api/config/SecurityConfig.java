@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -59,7 +60,6 @@ public class SecurityConfig {
                     log.debug("URL 기반 보안 설정 구성");
                     auth.requestMatchers(
                                     "/ws/**",
-                                    "/api/v1/**",
                                     "/api/v1/auth/**",
                                     "/oauth2/**",
                                     "/login/oauth2/**",
@@ -68,6 +68,10 @@ public class SecurityConfig {
                                     "/v3/api-docs/**",
                                     "/swagger-ui/**"
                             ).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/project/track").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/web/guide").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/web/guide").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/web/guide").hasRole("ADMIN")
                             .requestMatchers("/api/v1/admin").hasRole("ADMIN")
                             .requestMatchers("/api/v1/user").hasRole("USER")
                             .anyRequest()
@@ -125,7 +129,7 @@ public class SecurityConfig {
                             log.debug("CORS 설정 생성 - 요청 URI: {}", request.getRequestURI());
 
                             CorsConfiguration configuration = new CorsConfiguration();
-                            configuration.setAllowedOrigins(List.of(frontendUrl));
+                            configuration.setAllowedOriginPatterns(List.of(frontendUrl));
                             configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                             configuration.setAllowCredentials(true);
                             configuration.addAllowedHeader("*");

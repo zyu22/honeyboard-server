@@ -1,5 +1,7 @@
 package com.honeyboard.api.project.track.service;
 
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.project.model.TeamRequest;
 import com.honeyboard.api.project.track.mapper.TrackTeamMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,19 @@ public class TrackTeamServiceImpl implements TrackTeamService {
     public void addTrackTeam(int trackProjectId, TeamRequest trackTeam) {
         // 입력값 검증
         if (trackProjectId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 프로젝트 ID 입니다.");
+            throw new BusinessException(ErrorCode.INVALID_PROJECT_ID);
         }
-        if (trackTeam == null || trackTeam.getLeaderId() <= 0) {
-            throw new IllegalArgumentException("팀장 정보가 유효하지 않습니다.");
+        if (trackTeam == null) {
+            throw new BusinessException(ErrorCode.TEAM_NOT_FOUND);
+        }
+
+        if (trackTeam.getLeaderId() <= 0) {
+            throw new BusinessException(ErrorCode.PROJECT_LEADER_REQUIRED);
         }
 
         // 팀장이나 팀원이 이미 다른 팀에 속해있는지 체크
         if (trackTeamMapper.existsByProjectIdAndUserId(trackProjectId, trackTeam.getLeaderId())) {
-            throw new IllegalStateException("팀장이 이미 다른 팀에 속해있습니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_TEAM_MEMBER);
         }
 
         log.info("팀 생성 시작 - 프로젝트 ID: {}", trackProjectId);
@@ -34,7 +40,7 @@ public class TrackTeamServiceImpl implements TrackTeamService {
 
         if(insertResult == 0) {
             log.info("팀 생성 실패 - 프로젝트 ID: {}", trackProjectId);
-            throw new RuntimeException("팀 생성에 실패하였습니다.");
+            throw new BusinessException(ErrorCode.TEAM_CREATE_FAILED);
         }
         log.info("팀 생성 성공 및 팀 ID 조회");
         int teamId = trackTeamMapper.getLastInsertedTeamId();
@@ -43,7 +49,7 @@ public class TrackTeamServiceImpl implements TrackTeamService {
         int result = trackTeamMapper.insertTeamLeader(teamId, trackTeam.getLeaderId());
         if(result == 0) {
             log.info("팀장 추가 실패 - 팀장 ID: {}", trackTeam.getLeaderId());
-            throw new RuntimeException("팀장 추가에 실패하였습니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_TEAM_MEMBER);
         }
         log.info("팀장 추가 성공 - 팀장 ID: {}", trackTeam.getLeaderId());
 
@@ -51,8 +57,8 @@ public class TrackTeamServiceImpl implements TrackTeamService {
         if (trackTeam.getMemberIds() != null && !trackTeam.getMemberIds().isEmpty()) {
             int membersResult = trackTeamMapper.insertTeamMembers(teamId, trackTeam.getMemberIds());
             if (membersResult != trackTeam.getMemberIds().size()) {
-                log.error("팀원 추가 실패 - 예상: {}, 실제: {}", trackTeam.getMemberIds().size(), membersResult);
-                throw new RuntimeException("일부 팀원 추가에 실패하였습니다.");
+                log.info("팀원 추가 실패 - 예상: {}, 실제: {}", trackTeam.getMemberIds().size(), membersResult);
+                throw new BusinessException(ErrorCode.TEAM_INSERT_FAILED);
             }
         }
         log.info("팀원 추가 성공");
@@ -68,7 +74,7 @@ public class TrackTeamServiceImpl implements TrackTeamService {
         if (currentLeaderId != trackTeam.getLeaderId()) {
             // 새 팀장이 이미 다른 팀에 속해있는지 확인
             if (trackTeamMapper.existsByProjectIdAndUserId(trackTeamId, trackTeam.getLeaderId())) {
-                throw new IllegalStateException("새 팀장이 이미 다른 팀에 속해있습니다.");
+                throw new BusinessException(ErrorCode.DUPLICATE_TEAM_LEADER_ID);
             }
             // 팀장 변경
             trackTeamMapper.updateTeamLeader(trackTeamId, currentLeaderId, trackTeam.getLeaderId());
@@ -82,7 +88,8 @@ public class TrackTeamServiceImpl implements TrackTeamService {
             // 새 팀원들이 이미 다른 팀에 속해있는지 확인
             for (Integer memberId : trackTeam.getMemberIds()) {
                 if (trackTeamMapper.existsByProjectIdAndUserId(trackTeamId, memberId)) {
-                    throw new IllegalStateException("팀원(ID: " + memberId + ")이 이미 다른 팀에 속해있습니다.");
+                    throw new BusinessException(  ErrorCode.DUPLICATE_TEAM_MEMBER_ID,
+                            "팀원(ID: " + memberId + ")이 이미 다른 팀에 속해있습니다.");
                 }
             }
             // 새 팀원 추가

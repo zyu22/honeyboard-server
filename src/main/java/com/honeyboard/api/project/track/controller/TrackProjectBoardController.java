@@ -24,7 +24,7 @@ public class TrackProjectBoardController {
             @PathVariable int trackProjectId,
             @PathVariable int trackTeamId,
             @PathVariable int boardId) {
-        TrackProjectBoardDetail board = trackProjectBoardService.getBoard(boardId);
+        TrackProjectBoardDetail board = trackProjectBoardService.getBoard(trackProjectId, trackTeamId, boardId);
         return board == null ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(board);
     }
@@ -57,11 +57,12 @@ public class TrackProjectBoardController {
     }
 
     // 관통 게시글 삭제
-    @DeleteMapping("/{trackProjectId}/board/{boardId}")
+    @DeleteMapping("/{trackProjectId}/team/{trackTeamId}/board/{boardId}")
     public ResponseEntity<Void> deleteTrackProjectBoard(
             @PathVariable int trackProjectId,
+            @PathVariable int trackTeamId,
             @PathVariable int boardId) {
-        trackProjectBoardService.softDeleteBoard(boardId);
+        trackProjectBoardService.softDeleteBoard(trackProjectId, trackTeamId, boardId);
         return ResponseEntity.ok().build();
     }
 

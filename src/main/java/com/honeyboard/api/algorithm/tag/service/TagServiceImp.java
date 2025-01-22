@@ -1,9 +1,12 @@
 package com.honeyboard.api.algorithm.tag.service;
 
 import com.honeyboard.api.algorithm.tag.mapper.TagMapper;
+import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -11,21 +14,34 @@ import org.springframework.stereotype.Service;
 public class TagServiceImp implements TagService {
     private final TagMapper tm;
 
+    // 전체 Tag 조회
 //    @Override
 //    public List<TagResponse> getAllTag() {
 //        log.debug("전체 태그 조회 시작");
+//
 //        List<TagResponse> tags = tm.selectAllTag();
+//
+//        if (tags.isEmpty()) {
+//            throw new IllegalArgumentException("조회된 태그 정보가 없습니다.");
+//        }
+//
 //        log.debug("전체 태그 조회 완료 - 조회된 태그 수: {}", tags.size());
 //        return tags;
 //    }
 //
-//    @Override
-//    public List<TagResponse> searchTag(String input) {
-//        log.debug("태그 검색 시작 - 검색어: {}", input);
-//        List<TagResponse> tags = tm.selectSearchTag(input);
-//        log.debug("태그 검색 완료 - 검색어: {}, 검색된 태그 수: {}", input, tags.size());
-//        return tags;
-//    }
+    // Tag 검색
+    @Override
+    public List<TagResponse> searchTag(String keyword) {
+        log.info("태그 검색 시작 - 검색어: {}", keyword);
+        List<TagResponse> tags = tm.selectSearchTag(keyword);
+
+        if (tags.isEmpty()) {
+            throw new IllegalArgumentException("조회된 태그 정보가 없습니다.");
+        }
+
+        log.info("태그 검색 완료 - 검색어: {}, 검색된 태그 수: {}", keyword, tags.size());
+        return tags;
+    }
 //
 //    @Override
 //    public TagResponse addTag(TagResponse tag) {

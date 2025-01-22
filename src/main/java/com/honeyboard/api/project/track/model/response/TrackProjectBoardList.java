@@ -16,6 +16,6 @@ public class TrackProjectBoardList {
     private int id;
     private String title;
     private String createdAt;
-    private String thumbnailUrl;
+    private String thumbnail;
     List<ProjectUserInfo> members;
 }
