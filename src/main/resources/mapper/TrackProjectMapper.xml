@@ -104,7 +104,7 @@
                  LEFT JOIN user u ON tm.user_id = u.id
                  LEFT JOIN track_project_board pb ON tt.id = pb.track_team_id
         WHERE tp.id = #{trackProjectId}
-          AND tp.is_deleted = 0
+          AND tp.is_deleted = FALSE
         ORDER BY tt.id, tm.id, pb.created_at DESC
     </select>
 
