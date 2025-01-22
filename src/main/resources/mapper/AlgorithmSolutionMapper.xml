@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper">
+
+	<resultMap id="algorithmSolutionDetailMap" type="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
+		<id property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="summary" column="summary"/>
+		<result property="content" column="content"/>
+		<result property="authorId" column="user_id"/>
+		<result property="name" column="name"/>
+		<result property="runtime" column="runtime"/>
+		<result property="memory" column="memory"/>
+		<result property="languageId" column="language_id"/>
+		<result property="languageName" column="language_name"/>
+		<result property="createdAt" column="created_at"/>
+		<association property="bookmarked" javaType="com.honeyboard.api.bookmark.model.BookmarkResponse">
+			<result property="bookmarked" column="bookmarked"/>
+		</association>
+	</resultMap>
+
+	<!-- 전체 조회 + 정렬 + 삭제 여부 + 내 기수만 + 페이지네이션 -->
+	<select id="selectAllProblemSolutions" resultType="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionList">
+		SELECT
+			s.id,
+			s.language_id,
+			s.memory,
+			s.runtime,
+			s.title,
+			u.name AS subtitle,
+			p.name AS languageName
+		FROM algorithm_problem_solution s
+		INNER JOIN user u ON s.user_id = u.id
+		INNER JOIN programming_language p ON s.language_id = p.id
+		WHERE s.is_deleted = false
+			AND s.problem_id = #{problemId}
+		<if test="generationId != 0">
+        	AND s.generation_id = #{generationId}
+    	</if>
+    	<if test="languages != null and languages.size > 0">
+        	AND p.name IN
+        	<foreach collection="languages" item="language" open="(" separator="," close=")">
+            	#{language}
+        	</foreach>
+    	</if>
+		ORDER BY
+		<choose>
+			<when test="sortType == 'runtime'">
+				s.runtime ASC
+			</when>
+			<when test="sortType == 'memory'">
+				s.memory ASC
+			</when>
+			<otherwise>
+				s.id DESC
+			</otherwise>
+		</choose>
+		LIMIT #{pageSize} OFFSET #{offset}
+	</select>
+	
+	<!-- 알고리즘 풀이 상세 조회	 -->
+	<select id="selectAlgorithmSolution" resultType="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
+		SELECT
+			s.id,
+			s.title,
+			s.summary,
+			s.content,
+			s.user_id AS authorId,
+			u.name,
+			s.runtime,
+			s.memory,
+			s.language_id,
+			p.name AS languageName,
+			s.created_at,
+			CASE
+            	WHEN b.id IS NOT NULL THEN true 
+            	ELSE false 
+        	END as bookmarked
+        FROM algorithm_problem_solution s
+		INNER JOIN user u ON s.user_id = u.id
+		INNER JOIN programming_language p ON s.language_id = p.id
+		LEFT JOIN bookmark b ON b.content_id = s.id
+			AND b.content_type = 'ALGO_SOLUTION'
+        WHERE s.id = #{id}
+        	AND s.is_deleted = false
+	</select>
+	
+	<!-- 알고리즘 풀이 작성 -->
+	<insert id="insertAlgorithmSolution" useGeneratedKeys="true" keyProperty="createResponse.id">
+		INSERT INTO algorithm_problem_solution (
+			problem_id,
+			title,
+			summary,
+			content,
+			user_id,
+			runtime,
+			memory,
+			language_id,
+			generation_id,
+			created_at,
+			updated_at,
+			is_deleted
+			)
+		VALUES (
+			#{problemId},
+			#{algorithmSolution.title},
+			#{algorithmSolution.summary},
+			#{algorithmSolution.content},
+			#{userId},
+			#{algorithmSolution.runtime},
+			#{algorithmSolution.memory},
+			#{algorithmSolution.languageId},
+			#{generationId},
+			CURRENT_TIMESTAMP,
+			CURRENT_TIMESTAMP,
+			false
+			)
+	</insert>
+	
+	<!-- 알고리즘 풀이 수정 -->
+	<update id="updateAlgorithmSolution">
+		UPDATE algorithm_problem_solution
+		SET
+			title = #{algorithmSolution.title},
+			summary = #{algorithmSolution.summary},
+			content = #{algorithmSolution.content},
+			runtime = #{algorithmSolution.runtime},
+			memory = #{algorithmSolution.memory},
+			language_id = #{algorithmSolution.languageId},
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = #{solutionId}
+        	AND is_deleted = false
+	</update>
+	
+	<!-- 알고리즘 풀이 삭제 -->
+	<update id="deleteAlgorithmSolution">
+    	UPDATE algorithm_problem_solution
+    	SET 
+        	is_deleted = true,
+        	updated_at = NOW()
+    	WHERE id = #{solutionId}
+        	AND is_deleted = false
+	</update>
+	
+	
+	<!-- 페이지네이션 -->
+	<select id="countAlgorithmSolutions" resultType="int">
+	   SELECT COUNT(*)
+	   FROM algorithm_problem_solution s
+	   INNER JOIN user u ON s.user_id = u.id
+	   INNER JOIN programming_language p ON s.language_id = p.id
+	   WHERE s.is_deleted = false
+	   AND s.problem_id = #{problemId}
+	   <if test="generationId != 0">
+	       AND s.generation_id = #{generationId}
+	   </if>
+	   <if test="languages != null and languages.size > 0">
+	       AND p.name IN
+	       <foreach collection="languages" item="language" open="(" separator="," close=")">
+	           #{language}
+	       </foreach>
+	   </if>
+	</select>
+
+</mapper>
+

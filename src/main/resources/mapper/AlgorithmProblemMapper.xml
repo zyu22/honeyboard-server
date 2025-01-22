@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honeyboard.api.algorithm.problem.mapper.AlgorithmProblemMapper">
+
+    <resultMap id="AlgorithmProblemWithTags" type="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemList">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="url" column="url"/>
+        <result property="createdAt" column="created_at"/>
+        <collection property="tags" ofType="com.honeyboard.api.algorithm.tag.model.response.TagResponse">
+            <id property="id" column="tag_id"/>
+            <result property="name" column="tag_name"/>
+        </collection>
+    </resultMap>
+
+    <!--  Algorithm Problem 전체 조회 + 검색  -->
+    <select id="selectAllAlgorithmProblem" resultMap="AlgorithmProblemWithTags">
+        SELECT DISTINCT ap.id,
+                        ap.title,
+                        ap.url,
+                        ap.created_at,
+                        t.id AS tag_id,
+                        t.name AS tag_name
+        FROM algorithm_problem ap
+                 LEFT JOIN (
+            SELECT apt.algorithm_problem_id, apt.tag_id, t.name
+            FROM algorithm_problem_tag apt
+                     JOIN tag t ON apt.tag_id = t.id
+            WHERE #{searchType} != 'tag'
+               OR #{keyword} IS NULL
+               OR t.name LIKE CONCAT('%', #{keyword}, '%')
+        ) combined_tags ON ap.id = combined_tags.algorithm_problem_id
+                 LEFT JOIN tag t ON t.id = combined_tags.tag_id
+        WHERE ap.is_deleted = false
+          AND (
+            #{keyword} IS NULL
+                OR #{searchType} = 'tag'
+                OR ap.title LIKE CONCAT('%', #{keyword}, '%')
+            )
+        ORDER BY ap.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countAlgorithmProblem" resultType="int">
+        SELECT COUNT(DISTINCT ap.id)
+        FROM algorithm_problem ap
+                 LEFT JOIN (
+            SELECT apt.algorithm_problem_id, apt.tag_id, t.name
+            FROM algorithm_problem_tag apt
+                     JOIN tag t ON apt.tag_id = t.id
+            WHERE #{searchType} != 'tag'
+               OR #{keyword} IS NULL
+               OR t.name LIKE CONCAT('%', #{keyword}, '%')
+        ) combined_tags ON ap.id = combined_tags.algorithm_problem_id
+                 LEFT JOIN tag t ON t.id = combined_tags.tag_id
+        WHERE ap.is_deleted = false
+          AND (
+            #{keyword} IS NULL
+                OR #{searchType} = 'tag'
+                OR ap.title LIKE CONCAT('%', #{keyword}, '%')
+            )
+    </select>
+
+
+    <!--  Algorithm Problem 상세조회  -->
+    <select id="selectAlgorithmProblem" resultType="com.honeyboard.api.algorithm.problem.model.response.AlgorithmProblemDetail">
+        SELECT id,
+               title,
+               url,
+               created_at
+        FROM algorithm_problem
+        WHERE id = #{problemId}
+    </select>
+
+    <!--  Algorithm Problem 작성  -->
+    <insert id="insertAlgorithmProblem" useGeneratedKeys="true" keyProperty="createResponse.id">
+        INSERT INTO algorithm_problem (title, url, user_id, created_at)
+        VALUES (#{request.title}, #{request.url}, #{userId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <select id="existsByUrl" resultType="int">
+        SELECT EXISTS (SELECT 1
+                       FROM algorithm_problem
+                       WHERE url = #{request.url}
+                         AND is_deleted = false)
+    </select>
+
+
+    <!--  Algorithm Problem 수정  -->
+    <update id="updateAlgorithmProblem">
+        UPDATE algorithm_problem
+        SET title = #{request.title},
+            url = #{request.url},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+          AND is_deleted = false
+    </update>
+
+
+    <!--  Algorithm Problem 삭제  -->
+    <update id="deleteAlgorithmProblem">
+        UPDATE algorithm_problem
+        SET is_deleted = true,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{problemId}
+          AND is_deleted = false
+    </update>
+
+
+
+
+</mapper>

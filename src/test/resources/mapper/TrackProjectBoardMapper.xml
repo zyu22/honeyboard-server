@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectBoardMapper">
+    <!-- TrackProjectBoardList resultMap -->
+    <resultMap id="boardListMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardList">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="thumbnail" column="thumbnail"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- TrackProjectBoardDetail resultMap -->
+    <resultMap id="boardDetailMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail">
+        <id property="id" column="id"/>
+        <result property="trackTeamId" column="track_team_id"/>
+        <result property="title" column="title"/>
+        <result property="url" column="url"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- 게시글 상세 조회 -->
+    <select id="selectTrackProjectBoard" parameterType="int" resultMap="boardDetailMap">
+        SELECT
+            id,
+            track_team_id,
+            title,
+            url,
+            content,
+            created_at
+        FROM track_project_board
+        WHERE id = #{boardId}
+          AND is_deleted = false
+    </select>
+
+    <!-- 게시글 생성 -->
+    <insert id="insertTrackProjectBoard" useGeneratedKeys="true" keyProperty="createResponse.id">
+        INSERT INTO track_project_board (
+            track_project_id,
+            track_team_id,
+            title,
+            url,
+            content,
+            thumbnail,
+            user_id,
+            created_at,
+            updated_at,
+            is_deleted
+        ) VALUES (
+                     #{trackProjectId},
+                     #{trackTeamId},
+                     #{board.title},
+                     #{board.url},
+                     #{board.content},
+                     #{board.thumbnail},
+                     #{userId},
+                     NOW(),
+                     NOW(),
+                     false
+                 )
+    </insert>
+
+
+    <!-- 게시글 수정 -->
+    <update id="updateTrackProjectBoard">
+        UPDATE track_project_board
+        SET
+        title = #{board.title},
+        url = #{board.url},
+        content = #{board.content},
+        thumbnail = #{board.thumbnail},
+        updated_at = NOW()
+        WHERE id = #{boardId}
+        AND track_project_id = #{trackProjectId}
+        AND track_team_id = #{trackTeamId}
+        AND is_deleted = false
+    </update>
+
+    <!-- 게시글 삭제 (논리적 삭제) -->
+    <update id="deleteTrackProjectBoard" parameterType="int">
+        UPDATE track_project_board
+        SET
+            is_deleted = true,
+            updated_at = NOW()
+        WHERE id = #{boardId}
+          AND is_deleted = false
+    </update>
+</mapper>

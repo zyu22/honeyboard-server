@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.honeyboard.api.algorithm.guide.mapper.AlgorithmGuideMapper">
+
+    <!-- 알고리즘 가이드 목록 조회 -->
+    <select id="getAlgorithmGuides" resultType="AlgorithmGuideList">
+        SELECT id, title, thumbnail, created_at
+        FROM algorithm_guide
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 알고리즘 가이드 검색 -->
+    <select id="searchAlgorithmGuide" resultType="AlgorithmGuideList">
+        SELECT id, title, thumbnail, created_at
+        FROM algorithm_guide
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
+        AND title LIKE CONCAT('%', #{title}, '%')
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 알고리즘 가이드 상세 조회 -->
+    <select id="getAlgorithmGuideDetail" resultType="AlgorithmGuideDetail">
+        SELECT
+            ag.id,
+            ag.title,
+            ag.content,
+            ag.created_at as createdAt,
+            ag.user_id as authorId,
+            u.name as authorName,
+            CASE
+                WHEN b.id IS NOT NULL THEN TRUE
+                ELSE FALSE
+                END as bookmarked
+        FROM algorithm_guide ag
+                 JOIN user u ON ag.user_id = u.id
+                 LEFT JOIN bookmark b ON b.content_id = ag.id
+            AND b.content_type = 'ALGO_GUIDE'
+            AND b.user_id = #{userId}
+        WHERE ag.id = #{id}
+          AND ag.is_deleted = 0
+    </select>
+
+
+    <!-- 알고리즘 가이드 작성 -->
+    <insert id="addAlgorithmGuide" useGeneratedKeys="true" keyProperty="createResponse.id">
+        INSERT INTO algorithm_guide (
+            title,
+            content,
+            thumbnail,
+            user_id,
+            generation_id
+        )
+        SELECT
+            #{algorithmGuideRequest.title},
+            #{algorithmGuideRequest.content},
+            #{algorithmGuideRequest.thumbnail},
+            #{userId},
+            g.id
+        FROM generation g
+        WHERE g.is_active = 1
+    </insert>
+
+    <!-- 알고리즘 가이드 수정 -->
+    <update id="updateAlgorithmGuide">
+        UPDATE algorithm_guide
+        SET
+            title = #{algorithmGuideRequest.title},
+            content = #{algorithmGuideRequest.content},
+            thumbnail = #{algorithmGuideRequest.thumbnail},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND is_deleted = 0
+    </update>
+
+    <!-- 알고리즘 가이드 삭제 (soft delete) -->
+    <delete id="softDeleteAlgorithmGuide">
+        UPDATE algorithm_guide
+        SET
+            is_deleted = 1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+          AND is_deleted = 0
+    </delete>
+
+	<!-- 검색된 알고리즘 가이드 수 -->
+    <select id="countSearchAlgorithmGuide" resultType="int">
+        SELECT COUNT(*)
+        FROM algorithm_guide
+        WHERE is_deleted = false
+        <if test="title != null">
+            AND title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
+    </select>
+
+    <!-- 전체 알고리즘 가이드 수 -->
+    <select id="countAlgorithmGuide" resultType="int">
+        SELECT COUNT(*)
+        FROM algorithm_guide
+        WHERE is_deleted = false
+        <if test="generationId != 0">
+            AND generation_id = #{generationId}
+        </if>
+    </select>
+
+</mapper>

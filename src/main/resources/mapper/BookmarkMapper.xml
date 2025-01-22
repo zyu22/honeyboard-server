@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.honeyboard.api.bookmark.mapper.BookmarkMapper">
+
+    <!-- 1) 알고리즘 가이드 북마크 조회 -->
+    <select id="selectAllAlgorithmGuideBookmarks"  resultType="AlgorithmGuideList">
+        SELECT a.id,
+               a.title,
+               a.user_id       AS userId,
+               a.thumbnail    AS thumbnail,
+               a.created_at    AS createdAt
+        FROM bookmark b
+                 JOIN algorithm_guide a ON b.content_id = a.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'ALGO_GUIDE'
+          AND a.is_deleted = FALSE
+        ORDER BY a.created_at DESC
+    </select>
+
+    <!-- 2) 알고리즘 문제풀이(솔루션) 북마크 조회 -->
+    <select id="selectAllAlgorithmSolutionBookmarks" resultType="AlgorithmProblemList">
+        SELECT
+            s.id            AS solutionId,
+            s.title AS solutionTitle,
+            s.runtime,
+            s.memory,
+            s.language_id   AS languageId,
+            u.name          AS author
+
+        FROM bookmark b
+                 JOIN algorithm_problem_solution s ON b.content_id = s.id
+                 JOIN user u ON s.user_id = u.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'ALGO_SOLUTION'
+          AND s.is_deleted = FALSE
+        ORDER BY s.created_at DESC
+    </select>
+
+
+    <!-- 3) 웹 가이드 북마크 조회 -->
+    <select id="selectAllWebGuideBookmarks" resultType="WebGuideList">
+        SELECT w.id,
+               w.title,
+               w.created_at    AS createdAt,
+               w.thumbnail AS thumbnail
+        FROM bookmark b
+                 JOIN web_guide w ON b.content_id = w.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'WEB_GUIDE'
+          AND w.is_deleted = FALSE
+        ORDER BY w.created_at DESC
+    </select>
+
+    <!-- 4) 웹 추천(링크) 북마크 조회 -->
+    <select id="selectAllWebRecommendBookmarks" resultType="WebRecommendList">
+        SELECT r.id,
+               r.title,
+               r.url,
+               r.created_at    AS createdAt
+        FROM bookmark b
+                 JOIN web_recommend r ON b.content_id = r.id
+        WHERE b.user_id = #{userId}
+          AND b.content_type = 'WEB_RECOMMEND'
+          AND r.is_deleted = FALSE
+        ORDER BY r.created_at DESC
+    </select>
+
+    <!-- bookmark 추가 (중복 시 무시) -->
+    <insert id="insertBookmark">
+        INSERT IGNORE INTO bookmark (user_id, content_type, content_id, created_at)
+    VALUES (#{userId}, #{contentType}, #{contentId}, CURRENT_DATE)
+    </insert>
+
+    <!-- bookmark 삭제 -->
+    <delete id="deleteBookmark" parameterType="map">
+        DELETE FROM bookmark
+        WHERE user_id = #{userId}
+          AND content_type = #{contentType}
+          AND content_id = #{contentId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.honeyboard.api.schedule.mapper.ScheduleMapper">
+	<!-- 일정 조회 + role로 필터링 + 연도/월로 조회-->
+	<!-- 인덱스 처리하면 좋음-->
+	<select id="selectScheduleByMonth" resultType="com.honeyboard.api.schedule.model.response.ScheduleList">
+		SELECT
+	        id,
+			content,
+	        start_date,
+	        end_date,
+	        schedule_type
+	    FROM schedule
+	    WHERE 1=1
+	    AND YEAR(start_date) = #{year}
+		AND MONTH(start_date) = #{month}
+	   <choose>
+	       <when test="role != 'ADMIN'">
+	           AND generation_id = #{generationId}
+	           AND is_public = 1
+	       </when>
+	   </choose>
+	   ORDER BY start_date DESC
+	</select>
+
+	<!-- 관통 프로젝트에서 일정 조회-->
+	<select id="selectTrackProjectByMonth" resultType="com.honeyboard.api.schedule.model.response.ScheduleList">
+		SELECT id,
+               title AS  content,
+               created_at as startDate,
+               created_at as endDate,
+               'Track' as scheduleType
+		FROM track_project
+		WHERE YEAR(created_at) = #{year}
+		  AND MONTH(created_at) = #{month}
+		  AND generation_id = #{generationId}
+		  AND is_deleted = false
+		ORDER BY created_at
+	</select>
+
+	<!-- 일정 등록 -->
+	<insert id="insertSchedule" parameterType="com.honeyboard.api.schedule.model.request.SceduleRequest">
+		INSERT INTO schedule (
+			content,
+	        start_date,
+	        end_date,
+			schedule_type,
+		    is_public,
+	        user_id,
+	        generation_id
+    	)
+    	VALUES (#{schedule.content},
+                #{schedule.startDate},
+                #{schedule.endDate},
+                #{schedule.scheduleType},
+				<choose>
+					<when test="schedule.publicAccess">1</when>
+					<otherwise>0</otherwise>
+				</choose>,
+                #{userId},
+                #{generationId}
+		)
+	</insert>
+
+	<!-- 일정 수정 -->
+	<update id="updateSchedule" parameterType="com.honeyboard.api.schedule.model.request.SceduleRequest">
+		UPDATE schedule
+		SET
+			content = #{schedule.content},
+			start_date = #{schedule.startDate},
+			end_date = #{schedule.endDate},
+			schedule_type = #{schedule.scheduleType},
+			is_public = <choose>
+							<when test="schedule.publicAccess">1</when>
+							<otherwise>0</otherwise>
+						</choose>
+		WHERE id = #{id}
+	</update>
+
+	<!-- 일정 삭제 -->
+	<delete id="deleteSchedule">
+    	DELETE FROM schedule
+    	WHERE id = #{id}
+	</delete>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.honeyboard.api.project.finale.mapper.FinaleTeamMapper">
+    <!-- 팀이 없는 유저를 위한 ResultMap -->
+    <resultMap id="projectUserInfoMap" type="ProjectUserInfo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+    <resultMap id="finaleTeamListMap" type="FinaleTeamList">
+        <id property="id" column="team_id"/>
+        <result property="submitted" column="submitted"/>
+        <result property="projectBoardId" column="projectBoardId"/>
+        <collection property="members" ofType="TeamMemberInfo">
+            <id property="id" column="member_id"/>
+            <result property="name" column="member_name"/>
+            <result property="role" column="member_role"/>
+        </collection>
+    </resultMap>
+
+    <!-- 팀이 없는 유저 조회 -->
+    <select id="selectNoFinaleTeamUsers" parameterType="int" resultMap="projectUserInfoMap">
+        SELECT DISTINCT
+            u.id,
+            u.name
+        FROM user u
+        WHERE u.generation_id = (
+            SELECT ft.generation_id
+            FROM finale_team ft
+                     JOIN finale_project fp ON ft.id = fp.team_id
+            WHERE fp.id = #{finaleProjectId}
+        )
+          AND u.id NOT IN (
+            SELECT ftm.user_id
+            FROM finale_team_member ftm
+                     JOIN finale_project fp ON ftm.finale_team_id = fp.team_id
+            WHERE fp.id = #{finaleProjectId}
+              AND fp.is_deleted = 0
+        )
+    </select>
+
+    <!-- 팀 리스트 조회 -->
+    <select id="selectFinaleTeamList" parameterType="int" resultMap="finaleTeamListMap">
+        SELECT
+            ft.id as team_id,
+            CASE
+                WHEN ft.submitted_at IS NOT NULL THEN true
+                ELSE false
+                END as submitted,
+            fp.id as projectBoardId,
+            u.id as member_id,
+            u.name as member_name,
+            ftm.role as member_role
+        FROM finale_team ft
+                 JOIN finale_project fp ON ft.id = fp.team_id
+                 LEFT JOIN finale_team_member ftm ON ft.id = ftm.finale_team_id
+                 LEFT JOIN user u ON ftm.user_id = u.id
+        WHERE fp.is_deleted = 0
+        ORDER BY
+            ft.id,
+            CASE ftm.role
+                WHEN 'LEADER' THEN 1
+                WHEN 'MEMBER' THEN 2
+                END
+    </select>
+
+    <!-- 프로젝트 상세 팀 인원 조회 -->
+    <select id="selectFinaleProjectDetailMembers" parameterType="int" resultType="TeamMemberInfo">
+        SELECT
+            u.id,
+            u.name,
+            ftm.role
+        FROM finale_team_member ftm
+                 JOIN user u ON ftm.user_id = u.id
+        WHERE ftm.finale_team_id = #{finaleTeamId}
+        ORDER BY
+            CASE ftm.role
+                WHEN 'LEADER' THEN 1
+                WHEN 'MEMBER' THEN 2
+                END
+    </select>
+
+    <!-- 팀 ID 조회 -->
+    <select id="selectFinaleTeamId" parameterType="int" resultType="int">
+        SELECT team_id
+        FROM finale_project
+        WHERE id = #{finaleProjectId}
+          AND is_deleted = 0
+    </select>
+
+    <!-- 팀 멤버 확인 -->
+    <select id="checkTeamMember" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM finale_team_member
+            WHERE finale_team_id = #{teamId}
+              AND user_id = #{userId}
+        )
+    </select>
+
+    <!-- 게시글 작성자 확인을 위한 팀 멤버 체크 -->
+    <select id="checkBoardTeamMember" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM finale_project_board fpb
+                     JOIN finale_project fp ON fpb.finale_project_id = fp.id
+                     JOIN finale_team_member ftm ON fp.team_id = ftm.finale_team_id
+            WHERE fpb.id = #{finaleProjectBoardId}
+              AND fp.id = #{finaleProjectId}
+              AND ftm.user_id = #{userId}
+        )
+    </select>
+
+    <!-- 팀 프로젝트 수정 -->
+    <update id="updateFinaleProjectTeam">
+        UPDATE finale_project
+        SET
+            title = #{request.title},
+            description = #{request.description},
+            url = #{request.url}
+        WHERE id = #{finaleProjectId}
+          AND team_id = #{finaleTeamId}
+          AND is_deleted = 0
+    </update>
+</mapper>
