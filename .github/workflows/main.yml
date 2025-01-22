@@ -35,6 +35,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22  # SSH 포트 명시
+          script_stop: true  # 스크립트 실패시 중단
           script: |
             cd /home/ubuntu/deploy
             docker compose pull backend
