@@ -1,131 +1,23 @@
-package com.honeyboard.api.integration;
+package com.honeyboard.api.project.track;
 
-import java.util.Collections;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.honeyboard.api.util.BaseIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import com.honeyboard.api.common.model.CreateResponse;
-import com.honeyboard.api.config.TestConfig;
-import com.honeyboard.api.config.TestRedisConfig;
-import com.honeyboard.api.config.TestSecurityConfig;
-import com.honeyboard.api.jwt.model.service.JwtService;
 import com.honeyboard.api.project.track.model.request.TrackProjectBoardRequest;
 import com.honeyboard.api.project.track.model.response.TrackProjectBoardDetail;
-import com.honeyboard.api.user.model.User;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@Testcontainers
-@AutoConfigureMockMvc
-@Sql(scripts = "classpath:sql/test-clean.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(scripts = "classpath:sql/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Import({TestConfig.class,
-        TestSecurityConfig.class,
-        TestRedisConfig.class,
-})
-public class TrackProjectBoardIntegrationTest {
-
-    @Container
-    @ServiceConnection
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
-            .withInitScript("sql/test-init.sql");
-
-    @Container
-    @ServiceConnection
-    static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:latest"))
-            .withExposedPorts(6379);
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @LocalServerPort
-    private int port;
-
-    HttpHeaders headers = new HttpHeaders();
-    String baseUrl;
-
-    @BeforeEach
-    void setup() {
-        // 기본 헤더만 설정
-        headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // 테스트용 사용자 생성
-        User user = User.builder()
-                .email("test3@test.com")
-                .userId(3)
-                .role("USER")
-                .generationId(2)
-                .build();
-
-        // JWT 토큰 생성
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        // RestTemplate에 토큰 설정
-        restTemplate.getRestTemplate().getInterceptors().clear();
-        restTemplate.getRestTemplate().getInterceptors().add((request, body, execution) -> {
-            String cookieValue = String.format("access_token=%s; refresh_token=%s",
-                    accessToken, refreshToken);
-            request.getHeaders().add("Cookie", cookieValue);
-            return execution.execute(request, body);
-        });
-
-        // SecurityContext에 인증 정보 설정
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-
-        // baseUrl 설정
-        baseUrl = "http://localhost:" + port + "/api/v1/project/track";
-    }
-
-    @Test
-    @DisplayName("default: 컨테이너 실행 확인")
-    void defaultTest() {
-        // given: MySQL 컨테이너가 실행 중일 때(컨테이너는 이 클래스가 로드될 때 실행됨)
-        // when & then: 컨테이너가 실행 중인지 확인
-        assertThat(mysql.isRunning())
-                .isTrue();
-    }
+class TrackProjectBoardIntegrationTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("1. 관통 게시글 조회: 성공")
