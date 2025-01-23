@@ -98,6 +98,7 @@
                           LEFT JOIN track_team_member btm ON pb.track_team_id = btm.track_team_id
                           LEFT JOIN user bu ON btm.user_id = bu.id
                  WHERE pb.is_deleted = FALSE
+                 AND pb.track_project_id = #{trackProjectId}
              )
         SELECT
             tp.id AS id,
