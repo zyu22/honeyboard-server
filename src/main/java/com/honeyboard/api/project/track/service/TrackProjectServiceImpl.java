@@ -40,7 +40,17 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     public TrackProjectDetail getTrackProjectById(int trackProjectId) {
         validateTrackProjectId(trackProjectId);
         log.info("관통 프로젝트 상세 조회 시작 - ID: {}", trackProjectId);
-        return trackProjectMapper.selectTrackProjectById(trackProjectId);
+        TrackProjectDetail projectDetail = trackProjectMapper.selectTrackProjectById(trackProjectId);
+        if (projectDetail.getNoTeamUsers() == null) {
+            projectDetail.setNoTeamUsers(new ArrayList<>());
+        }
+        if (projectDetail.getTeams() == null) {
+            projectDetail.setTeams(new ArrayList<>());
+        }
+        if (projectDetail.getBoards() == null) {
+            projectDetail.setBoards(new ArrayList<>());
+        }
+        return projectDetail;
     }
 
     // 관통 프로젝트 가능한 멤버 조회
@@ -66,13 +76,15 @@ public class TrackProjectServiceImpl implements TrackProjectService {
         }
 
         int trackId = createResponse.getId();
-        // 제외 인원 추가
-        List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
-        if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
-            validateExcludedMembers(excludedMemberIds);
-            trackProjectMapper.insertExcludedMembers(trackId, excludedMemberIds);
-        } else {
-            throw new BusinessException(ErrorCode.BOARD_EXCLUDED_FAILED);
+        if(!trackProject.getExcludedMembers().isEmpty() || trackProject.getExcludedMembers().size() != 0) {
+            // 제외 인원 추가
+            List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
+            if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
+                validateExcludedMembers(excludedMemberIds);
+                trackProjectMapper.insertExcludedMembers(trackId, excludedMemberIds);
+            } else {
+                throw new BusinessException(ErrorCode.BOARD_EXCLUDED_FAILED);
+            }
         }
 
         log.info("관통 프로젝트 생성 완료 - ID: {}", trackId);

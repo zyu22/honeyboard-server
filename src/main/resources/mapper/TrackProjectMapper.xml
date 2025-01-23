@@ -73,47 +73,58 @@
                 SELECT user_id FROM track_excluded_member
                 WHERE project_id = #{trackProjectId}
             )
-        )
+        ),
+             Teams AS (
+                 SELECT
+                     tt.id AS team_id,
+                     tt.is_completed,
+                     tm.user_id AS member_id,
+                     u.name AS member_name,
+                     tm.role AS member_role
+                 FROM track_team tt
+                          LEFT JOIN track_team_member tm ON tt.id = tm.track_team_id
+                          LEFT JOIN user u ON tm.user_id = u.id
+                 WHERE tt.track_project_id = #{trackProjectId}
+             ),
+             Boards AS (
+                 SELECT
+                     pb.id AS board_id,
+                     pb.title AS board_title,
+                     pb.created_at AS board_created_at,
+                     pb.thumbnail AS board_thumbnail,
+                     bu.id AS board_member_id,
+                     bu.name AS board_member_name
+                 FROM track_project_board pb
+                          LEFT JOIN track_team_member btm ON pb.track_team_id = btm.track_team_id
+                          LEFT JOIN user bu ON btm.user_id = bu.id
+                 WHERE pb.is_deleted = FALSE
+             )
         SELECT
-            /* 프로젝트 정보 */
             tp.id AS id,
             tp.title AS title,
             tp.objective AS objective,
             tp.description AS description,
             tp.created_at AS created_at,
-
-            /* 팀이 없는 사용자 */
             ntu.id AS no_team_user_id,
             ntu.name AS no_team_user_name,
-
-            /* 팀 정보 */
-            tt.id AS team_id,
-            tt.is_completed,
-
-            /* 팀 멤버 정보 */
-            u.id AS member_id,
-            u.name AS member_name,
-            tm.role AS member_role,
-
-            /* 게시글 정보 */
-            pb.id AS board_id,
-            pb.title AS board_title,
-            pb.created_at AS board_created_at,
-            pb.thumbnail AS board_thumbnail,
-
-            /* 게시글 멤버 정보 */
-            u.id AS board_member_id,
-            u.name AS board_member_name
-
+            t.team_id,
+            t.is_completed,
+            t.member_id,
+            t.member_name,
+            t.member_role,
+            b.board_id,
+            b.board_title,
+            b.board_created_at,
+            b.board_thumbnail,
+            b.board_member_id,
+            b.board_member_name
         FROM track_project tp
                  LEFT JOIN NoTeamUsers ntu ON 1=1
-                 LEFT JOIN track_team tt ON tp.id = tt.track_project_id
-                 LEFT JOIN track_team_member tm ON tt.id = tm.track_team_id
-                 LEFT JOIN user u ON tm.user_id = u.id
-                 LEFT JOIN track_project_board pb ON tt.id = pb.track_team_id
+                 LEFT JOIN Teams t ON 1=1
+                 LEFT JOIN Boards b ON 1=1
         WHERE tp.id = #{trackProjectId}
-          AND tp.is_deleted = FALSE
-        ORDER BY tt.id, tm.id, pb.created_at DESC
+        ORDER BY t.team_id, t.member_id, b.board_created_at DESC;
+
     </select>
 
     <!-- 관통 프로젝트 가능한 인원 조회 -->
