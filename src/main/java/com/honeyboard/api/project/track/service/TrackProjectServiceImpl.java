@@ -40,7 +40,17 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     public TrackProjectDetail getTrackProjectById(int trackProjectId) {
         validateTrackProjectId(trackProjectId);
         log.info("관통 프로젝트 상세 조회 시작 - ID: {}", trackProjectId);
-        return trackProjectMapper.selectTrackProjectById(trackProjectId);
+        TrackProjectDetail projectDetail = trackProjectMapper.selectTrackProjectById(trackProjectId);
+        if (projectDetail.getNoTeamUsers() == null) {
+            projectDetail.setNoTeamUsers(new ArrayList<>());
+        }
+        if (projectDetail.getTeams() == null) {
+            projectDetail.setTeams(new ArrayList<>());
+        }
+        if (projectDetail.getBoards() == null) {
+            projectDetail.setBoards(new ArrayList<>());
+        }
+        return projectDetail;
     }
 
     // 관통 프로젝트 가능한 멤버 조회

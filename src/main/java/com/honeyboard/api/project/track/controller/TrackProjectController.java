@@ -44,7 +44,7 @@ public class TrackProjectController {
         log.info("관통 프로젝트 상세 조회 요청 - ID: {}", trackProjectId);
         TrackProjectDetail project = trackProjectService.getTrackProjectById(trackProjectId);
         if(project == null) {
-            log.info("관통 프로젝트 상세 조회 실패 - ID: {}", trackProjectId);
+            log.info("관통 프로젝트 상세 조회 완료, 게시글 없음 - ID: {}", trackProjectId);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(project);
