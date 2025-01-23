@@ -37,6 +37,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         }
         log.info("FinaleResponse 가져오기 성공");
         int finaleProjectId = projects.get(0).getId();
+        log.info("FinaleProjectId : {}", finaleProjectId);
         fpr.setProjects(projects);
         fpr.setNoTeamUsers(getNoFinaleTeamUsers(finaleProjectId));
         fpr.setTeams(finaleTeamMapper.selectFinaleTeamList(finaleProjectId));
