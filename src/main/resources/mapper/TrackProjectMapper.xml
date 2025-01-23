@@ -102,8 +102,8 @@
             pb.thumbnail AS board_thumbnail,
 
             /* 게시글 멤버 정보 */
-            u.id AS board_member_id,
-            u.name AS board_member_name
+            bu.id AS board_member_id,
+            bu.name AS board_member_name
 
         FROM track_project tp
                  LEFT JOIN NoTeamUsers ntu ON 1=1
@@ -111,8 +111,10 @@
                  LEFT JOIN track_team_member tm ON tt.id = tm.track_team_id
                  LEFT JOIN user u ON tm.user_id = u.id
                  LEFT JOIN track_project_board pb ON tt.id = pb.track_team_id
+                 LEFT JOIN track_team_member btm ON tt.id = btm.track_team_id
+                 LEFT JOIN user bu ON btm.user_id = bu.id
         WHERE tp.id = #{trackProjectId}
-          AND tp.is_deleted = FALSE
+          AND pb.is_deleted = FALSE
         ORDER BY tt.id, tm.id, pb.created_at DESC
     </select>
 
