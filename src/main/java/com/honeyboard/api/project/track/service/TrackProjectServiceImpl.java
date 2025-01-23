@@ -66,13 +66,15 @@ public class TrackProjectServiceImpl implements TrackProjectService {
         }
 
         int trackId = createResponse.getId();
-        // 제외 인원 추가
-        List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
-        if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
-            validateExcludedMembers(excludedMemberIds);
-            trackProjectMapper.insertExcludedMembers(trackId, excludedMemberIds);
-        } else {
-            throw new BusinessException(ErrorCode.BOARD_EXCLUDED_FAILED);
+        if(!trackProject.getExcludedMembers().isEmpty() || trackProject.getExcludedMembers().size() != 0) {
+            // 제외 인원 추가
+            List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
+            if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
+                validateExcludedMembers(excludedMemberIds);
+                trackProjectMapper.insertExcludedMembers(trackId, excludedMemberIds);
+            } else {
+                throw new BusinessException(ErrorCode.BOARD_EXCLUDED_FAILED);
+            }
         }
 
         log.info("관통 프로젝트 생성 완료 - ID: {}", trackId);
