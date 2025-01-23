@@ -66,6 +66,7 @@ public enum ErrorCode {
     TEAM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 수정에 실패하였습니다."),
     TEAM_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 인원 변경에 실패하였습니다."),
     INVALID_TEAM_ID(HttpStatus.BAD_REQUEST, "잘못된 팀 아이디를 입력했습니다."),
+    TEAM_STATUS_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 제출현황 변경에 실패하였습니다."),
 	
 	// 북마크 관련 에러
 
