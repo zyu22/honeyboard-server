@@ -12,10 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MyTrackProjectList {
-    private int id;
+    private int boardId;
+    private int trackProjectId;
+    private int trackTeamId;
     private String title;
     private String thumbnail;
-    private int trackTeamId;
     private String trackProjectName;
     private List<TeamMemberInfo> trackTeam;
 }

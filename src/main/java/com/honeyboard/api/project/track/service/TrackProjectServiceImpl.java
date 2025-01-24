@@ -39,18 +39,37 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     @Override
     public TrackProjectDetail getTrackProjectById(int trackProjectId) {
         validateTrackProjectId(trackProjectId);
+
         log.info("관통 프로젝트 상세 조회 시작 - ID: {}", trackProjectId);
-        TrackProjectDetail projectDetail = trackProjectMapper.selectTrackProjectById(trackProjectId);
-        if (projectDetail.getNoTeamUsers() == null) {
-            projectDetail.setNoTeamUsers(new ArrayList<>());
-        }
-        if (projectDetail.getTeams() == null) {
-            projectDetail.setTeams(new ArrayList<>());
-        }
-        if (projectDetail.getBoards() == null) {
-            projectDetail.setBoards(new ArrayList<>());
-        }
-        return projectDetail;
+
+        // 기본 정보 조회
+        TrackProjectDetail projectDetail = trackProjectMapper.selectTrackProject(trackProjectId);
+        log.debug("프로젝트 기본 정보 조회 완료 - {}", projectDetail);
+
+        // 팀 미배정 사용자 조회
+        projectDetail.setNoTeamUsers(trackProjectMapper.selectNoTeamUsers(trackProjectId));
+        log.debug("팀 미배정 사용자 조회 완료 - 인원: {}", projectDetail.getNoTeamUsers().size());
+
+        // 팀 목록 조회
+        projectDetail.setTeams(trackProjectMapper.selectTeams(trackProjectId));
+        log.debug("팀 목록 조회 완료 - 팀 수: {}", projectDetail.getTeams().size());
+
+        // 게시글 목록 조회
+        projectDetail.setBoards(trackProjectMapper.selectBoards(trackProjectId));
+        log.debug("게시글 목록 조회 완료 - 게시글 수: {}", projectDetail.getBoards().size());
+
+        return Optional.of(projectDetail)
+                .map(detail -> {
+                    detail.setNoTeamUsers(detail.getNoTeamUsers() != null ? detail.getNoTeamUsers() : new ArrayList<>());
+                    detail.setTeams(detail.getTeams() != null ? detail.getTeams() : new ArrayList<>());
+                    detail.setBoards(detail.getBoards() != null ? detail.getBoards() : new ArrayList<>());
+                    log.info("관통 프로젝트 상세 조회 완료 - ID: {}", trackProjectId);
+                    return detail;
+                })
+                .orElseThrow(() -> {
+                    log.error("관통 프로젝트를 찾을 수 없음 - ID: {}", trackProjectId);
+                    return new BusinessException(ErrorCode.PROJECT_NOT_FOUND);
+                });
     }
 
     // 관통 프로젝트 가능한 멤버 조회

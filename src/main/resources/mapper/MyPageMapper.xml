@@ -4,9 +4,10 @@
 
     <!-- MyTrackProjectList 결과 매핑 -->
     <resultMap id="MyTrackProjectListResult" type="MyTrackProjectList">
-        <result property="id" column="id"/>
+        <result property="boardId" column="id"/>
         <result property="title" column="title"/>
         <result property="thumbnail" column="thumbnail"/>
+        <result property="trackProjectId" column="track_project_id"/>
         <result property="trackTeamId" column="track_team_id"/>
         <result property="trackProjectName" column="track_project_name"/>
         <collection
@@ -30,6 +31,7 @@
             tpb.id,
             tp.title,
             tpb.thumbnail,
+            tp.id AS track_project_id,
             tpb.title AS track_project_name,
             tt.id AS track_team_id
         FROM
