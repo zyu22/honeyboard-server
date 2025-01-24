@@ -18,4 +18,6 @@ public interface AdminMapper {
     int updateGenerationIsActive(int generationId);
 
     int deleteGenerationById(int generationId);
+
+    int selectUserByGenerationId(int generationId);
 }
