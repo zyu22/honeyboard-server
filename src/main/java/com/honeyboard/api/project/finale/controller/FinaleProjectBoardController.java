@@ -7,7 +7,13 @@ import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.honeyboard.api.project.finale.service.FinaleProjectBoardService;
 
@@ -57,19 +63,6 @@ public class FinaleProjectBoardController {
                 finaleProjectId, finaleProjectBoardId, currentUser.getUserId());
 
         finaleProjectBoardService.updateFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, request, currentUser);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{finaleProjectId}/board/{finaleProjectBoardId}")
-    public ResponseEntity<Void> deleteFinaleProjectBoard(
-            @PathVariable int finaleProjectId,
-            @PathVariable int finaleProjectBoardId,
-            @CurrentUser User currentUser
-    ) {
-        log.info("게시글 삭제 요청 - finaleProjectId: {}, boardId: {}, userId: {}",
-                finaleProjectId, finaleProjectBoardId, currentUser.getUserId());
-
-        finaleProjectBoardService.deleteFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, currentUser);
         return ResponseEntity.ok().build();
     }
 

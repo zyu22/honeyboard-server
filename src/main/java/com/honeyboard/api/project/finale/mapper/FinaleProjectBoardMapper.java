@@ -30,6 +30,4 @@ public interface FinaleProjectBoardMapper {
 
     int selectLastInsertedBoardId();
 
-    int deleteFinaleProjectBoard(@Param("finaleProjectId") int finaleProjectId,
-                                 @Param("finaleProjectBoardId") int finaleProjectBoardId);
 }

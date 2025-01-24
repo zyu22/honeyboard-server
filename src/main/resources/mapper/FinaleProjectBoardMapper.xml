@@ -101,15 +101,6 @@
           AND finale_project_id = #{finaleProjectId}
     </update>
 
-    <!-- 게시글 삭제 -->
-    <update id="deleteFinaleProjectBoard">
-        UPDATE finale_project_board
-        SET
-            is_deleted = 1
-        WHERE id = #{finaleProjectBoardId}
-        AND finale_project_id = #{finaleProjectId}
-    </update>
-
     <!-- 마지막 생성된 게시글 ID 조회 -->
     <select id="selectLastInsertedBoardId" resultType="int">
         SELECT LAST_INSERT_ID()
