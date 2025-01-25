@@ -26,7 +26,7 @@
             thumbnail
         FROM finale_project_board
         WHERE finale_project_id = #{finaleProjectId}
-        AND is_deleted = 1
+        AND is_deleted = 0
         ORDER BY created_at DESC
     </select>
 
