@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class MyAlgorithmSolutionList {
     private int id;
+    private int problemId;
     private String title;
     private String problemTitle;
     private int runtime;

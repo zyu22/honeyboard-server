@@ -21,19 +21,18 @@
     </select>
 
     <!-- 2) 알고리즘 문제풀이(솔루션) 북마크 조회 -->
-    <select id="selectAllAlgorithmSolutionBookmarks" resultType="AlgorithmProblemList">
+    <select id="selectAllAlgorithmSolutionBookmarks" resultType="AlgorithmSolutionList">
         SELECT
-            s.id            AS solutionId,
-            s.title AS solutionTitle,
-            p.title AS subTitle,
+            s.id,
+            s.title,
+            p.title AS subtitle,
             s.runtime,
             s.memory,
             s.language_id   AS languageId,
-            u.name          AS author
-
+            s.language_name AS languageName
         FROM bookmark b
                  JOIN algorithm_problem_solution s ON b.content_id = s.id
-                 JOIN user u ON s.user_id = u.id
+                 JOIN programming_language l ON l.id = s.language_id
                  JOIN algorithm_problem p ON s.problem_id = p.id
         WHERE b.user_id = #{userId}
           AND b.content_type = 'ALGO_SOLUTION'

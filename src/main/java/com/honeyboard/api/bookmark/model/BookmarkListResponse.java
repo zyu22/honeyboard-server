@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookmarkListResponse {
-    List<?> bookmarkListResponse;
+public class BookmarkListResponse<T> {
+    List<T> bookmarkListResponse;
 }
