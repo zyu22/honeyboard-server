@@ -1,7 +1,7 @@
 package com.honeyboard.api.bookmark.service;
 
 import com.honeyboard.api.bookmark.mapper.BookmarkMapper;
-import com.honeyboard.api.bookmark.model.BookmarkResponse;
+import com.honeyboard.api.bookmark.model.BookmarkListResponse;
 import com.honeyboard.api.bookmark.model.ContentType;
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -20,24 +19,22 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     // 북마크 조회
     @Override
-    public List<?> getAllBookmarks(String contentType, int userId) {
-        // 유효성 검증
+    public BookmarkListResponse getAllBookmarks(String contentType, int userId) {
         validateUserId(userId);
         ContentType type = ContentType.from(contentType);
         log.info("북마크 전체 조회 시작 - 유저ID: {}, 컨텐츠 타입: {}", userId, contentType);
 
-        switch (type) {
-            case ALGO_GUIDE:
-                return bookmarkMapper.selectAllAlgorithmGuideBookmarks(userId);
-            case ALGO_SOLUTION:
-                return bookmarkMapper.selectAllAlgorithmSolutionBookmarks(userId);
-            case WEB_GUIDE:
-                return bookmarkMapper.selectAllWebGuideBookmarks(userId);
-            case WEB_RECOMMEND:
-                return bookmarkMapper.selectAllWebRecommendBookmarks(userId);
-            default:
-                throw new BusinessException(ErrorCode.INVALID_CONTENT_TYPE);
-        }
+        List<?> bookmarks = switch (type) {
+            case ALGO_GUIDE -> bookmarkMapper.selectAllAlgorithmGuideBookmarks(userId);
+            case ALGO_SOLUTION -> bookmarkMapper.selectAllAlgorithmSolutionBookmarks(userId);
+            case WEB_GUIDE -> bookmarkMapper.selectAllWebGuideBookmarks(userId);
+            case WEB_RECOMMEND -> bookmarkMapper.selectAllWebRecommendBookmarks(userId);
+            default -> throw new BusinessException(ErrorCode.INVALID_CONTENT_TYPE);
+        };
+
+        BookmarkListResponse response = new BookmarkListResponse();
+        response.setContent(bookmarks);
+        return response;
     }
 
     @Override
@@ -51,7 +48,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         log.info("북마크 추가 시작 - 타입: {}, 컨텐츠 ID: {}, 유저ID: {}", contentType, contentId, userId);
         int result = bookmarkMapper.insertBookmark(contentType, contentId, userId);
 
-        if(result <= 0) {
+        if (result <= 0) {
             log.error("북마크 추가 실패 - 유저ID: {}", userId);
             throw new RuntimeException("이미 추가된 북마크입니다.");
         }
@@ -71,7 +68,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         log.info("북마크 삭제 시작 - 타입: {}, 컨텐츠 ID: {}, 유저ID: {}", contentType, contentId, userId);
         int result = bookmarkMapper.deleteBookmark(contentType, contentId, userId);
 
-        if(result <= 0) {
+        if (result <= 0) {
             log.error("북마크 삭제 실패 - 유저ID: {}", userId);
             throw new RuntimeException("이미 삭제된 북마크입니다.");
         }

@@ -4,9 +4,11 @@
 
     <!-- MyTrackProjectList 결과 매핑 -->
     <resultMap id="MyTrackProjectListResult" type="MyTrackProjectList">
-        <result property="id" column="id"/>
+        <result property="boardId" column="id"/>
         <result property="title" column="title"/>
         <result property="thumbnail" column="thumbnail"/>
+        <result property="trackProjectId" column="track_project_id"/>
+        <result property="trackTeamId" column="track_team_id"/>
         <result property="trackProjectName" column="track_project_name"/>
         <collection
                 property="trackTeam"
@@ -29,24 +31,18 @@
             tpb.id,
             tp.title,
             tpb.thumbnail,
+            tp.id AS track_project_id,
             tpb.title AS track_project_name,
             tt.id AS track_team_id
         FROM
-            track_project tp
-                LEFT JOIN
-            track_team tt ON tp.id = tt.track_project_id
-                LEFT JOIN
-            track_project_board tpb ON tp.id = tpb.track_project_id
+            track_team_member ttm
+                JOIN track_team tt ON ttm.track_team_id = tt.id
+                JOIN track_project tp ON tt.track_project_id = tp.id
+                JOIN track_project_board tpb ON tt.id = tpb.track_team_id
         WHERE
-            tt.id IN (
-                SELECT
-                    track_team_id
-                FROM
-                    track_team_member
-                WHERE
-                    user_id = #{userId}
-            )
-        ORDER BY tp.created_at DESC
+            ttm.user_id = #{userId}
+        ORDER BY
+            tp.created_at DESC;
     </select>
 
     <!-- 팀원 정보 조회 -->
@@ -66,14 +62,14 @@
     <!-- 2) 나의 파이널 프로젝트 목록 조회 -->
     <select id="selectAllMyFinaleProjects"
             parameterType="int"
-            resultType="com.honeyboard.api.user.model.mypage.MyFinaleProjectList">
+            resultType="MyFinaleProjectList">
         SELECT
-            fpb.id        AS finaleProjectBoardId,
-            fpb.title     AS title,
-            fpb.created_at AS createdAt
+            fpb.id,
+            fpb.title,
+            fpb.created_at
         FROM finale_team_member ftm
                  JOIN finale_project_board fpb
-                      ON ftm.finale_team_id = fpb.team_id
+                      ON ftm.finale_team_id = fpb.finale_team_id
         WHERE ftm.user_id = #{userId}
           AND fpb.is_deleted = FALSE
         ORDER BY fpb.created_at DESC
@@ -82,17 +78,19 @@
     <!-- 3) 나의 알고리즘 풀이 목록 조회 -->
     <select id="selectAllMyAlgorithmSolutions"
             parameterType="int"
-            resultType="com.honeyboard.api.user.model.mypage.MyAlgorithmSolutionList">
+            resultType="MyAlgorithmSolutionList">
         SELECT
-            s.title       AS solutionTitle,
-            s.id  AS solutionId,
-            s.runtime     AS runtime,
-            s.memory      AS memory,
-            s.language_id AS languageId,
-            p.title       AS problemTitle
-
+            s.id,
+            s.title,
+            s.runtime,
+            s.memory,
+            s.language_id,
+            l.name AS languageName,
+            p.title AS problemTitle,
+            p.id AS problemId
         FROM algorithm_problem_solution s
                  JOIN algorithm_problem p ON s.problem_id = p.id
+                 JOIN programming_language l ON l.id = s.language_id
         WHERE s.user_id = #{userId}
           AND s.is_deleted = FALSE
           AND p.is_deleted = FALSE

@@ -1,5 +1,7 @@
 package com.honeyboard.api.user.service;
 
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.generation.model.GenerationList;
 import com.honeyboard.api.user.mapper.AdminMapper;
 import com.honeyboard.api.user.model.UserInfo;
@@ -75,6 +77,14 @@ public class AdminServiceimpl implements AdminService {
     @Override
     public void removeGeneration(int generationId) {
         log.info("기수 삭제 시작 - 기수 ID: {}", generationId);
+
+        // 유저 존재하는지 확인
+        int count = adminMapper.selectUserByGenerationId(generationId);
+        if(count >= 0) {
+            log.info("해당 기수에 유저 존재");
+            throw new BusinessException(ErrorCode.GENERATION_DELETE_RESTRICTED);
+        }
+
         int result = adminMapper.deleteGenerationById(generationId);
 
         if (result <= 0) {

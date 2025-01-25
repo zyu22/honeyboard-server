@@ -52,7 +52,17 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
             throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
         }
 
-        log.info("게시글 생성 완료 - 게시글 번호: {}", createResponse.getId());
+
+        log.info("게시글 생성 완료, 팀 제출 현황 업데이트 시작 - 게시글 ID: {}, 팀 ID: {}", createResponse.getId(), trackTeamId);
+        // is_completed 업데이트 추가
+        result = trackProjectBoardMapper.updateTeamCompleted(trackTeamId);
+
+        if(result <= 0) {
+            log.info("팀 제출 현황 업데이트 실패 - 팀 ID: {}", trackTeamId);
+            throw new BusinessException(ErrorCode.TEAM_STATUS_UPDATE_FAILED);
+        }
+
+        log.info("팀 제출 현황 업데이트 성공 - 팀 ID: {}", trackTeamId);
 
         return createResponse;
     }
