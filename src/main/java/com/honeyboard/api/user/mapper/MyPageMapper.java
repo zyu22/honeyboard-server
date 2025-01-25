@@ -13,8 +13,6 @@ public interface MyPageMapper {
 
     // 내 트랙프로젝트 조회
     List<MyTrackProjectList> selectAllMyTrackProjects(@Param("userId") int userId);
-    
-    List<String> selectTrackTeamMembers(@Param("trackTeamId") int trackTeamId);
 
     // 내 파이널프로젝트 조회
     List<MyFinaleProjectList> selectAllMyFinaleProjects(@Param("userId") int userId);
