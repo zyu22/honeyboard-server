@@ -12,7 +12,7 @@
         <if test="generationId != 0">
             AND generation_id = #{generationId}
         </if>
-        ORDER BY name
+        ORDER BY generation_id DESC, name
     </select>
 
     <select id="selectUserById" resultType="UserInfo">
