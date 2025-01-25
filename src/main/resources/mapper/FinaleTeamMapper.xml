@@ -38,6 +38,7 @@
             WHERE fp.id = #{finaleProjectId}
               AND fp.is_deleted = 0
         )
+          AND u.role = 'USER'
     </select>
 
     <!-- 팀 리스트 조회 -->

@@ -27,19 +27,17 @@ public class BookmarkController {
     @GetMapping("/{contentType}")
     public ResponseEntity<?> getAllBookmarks(@PathVariable String contentType,
                                              @CurrentUser User user) {
-
         log.info("북마크 전체 조회 요청 - 타입: {}, 유저 ID: {}", contentType, user.getUserId());
 
-        BookmarkListResponse bookmarkListResponse = new BookmarkListResponse();
-        List<?> bookmarkList = bookmarkService.getAllBookmarks(contentType, user.getUserId());
-        if(bookmarkList.isEmpty() || bookmarkList == null) {
+        BookmarkListResponse response = bookmarkService.getAllBookmarks(contentType, user.getUserId());
+        if(response.getBookmarkListResponse().isEmpty()) {
             log.info("북마크 전체 조회 완료 - 데이터 없음");
             return ResponseEntity.noContent().build();
         }
 
-        bookmarkListResponse.setBookmarkListResponse(bookmarkList);
-        log.info("북마크 전체 조회 완료 - 조회된 개수: {}", bookmarkList.size());
-        return ResponseEntity.ok(bookmarkListResponse);
+
+        log.info("북마크 전체 조회 완료 - 조회된 개수: {}", response.getBookmarkListResponse().size());
+        return ResponseEntity.ok(response);
     }
 
 
