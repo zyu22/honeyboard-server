@@ -2,7 +2,6 @@ package com.honeyboard.api.bookmark.service;
 
 import com.honeyboard.api.bookmark.mapper.BookmarkMapper;
 import com.honeyboard.api.bookmark.model.BookmarkListResponse;
-import com.honeyboard.api.bookmark.model.BookmarkResponse;
 import com.honeyboard.api.bookmark.model.ContentType;
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,7 +33,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         };
 
         BookmarkListResponse response = new BookmarkListResponse();
-        response.setBookmarkListResponse(bookmarks);
+        response.setContent(bookmarks);
         return response;
     }
 
@@ -50,7 +48,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         log.info("북마크 추가 시작 - 타입: {}, 컨텐츠 ID: {}, 유저ID: {}", contentType, contentId, userId);
         int result = bookmarkMapper.insertBookmark(contentType, contentId, userId);
 
-        if(result <= 0) {
+        if (result <= 0) {
             log.error("북마크 추가 실패 - 유저ID: {}", userId);
             throw new RuntimeException("이미 추가된 북마크입니다.");
         }
@@ -70,7 +68,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         log.info("북마크 삭제 시작 - 타입: {}, 컨텐츠 ID: {}, 유저ID: {}", contentType, contentId, userId);
         int result = bookmarkMapper.deleteBookmark(contentType, contentId, userId);
 
-        if(result <= 0) {
+        if (result <= 0) {
             log.error("북마크 삭제 실패 - 유저ID: {}", userId);
             throw new RuntimeException("이미 삭제된 북마크입니다.");
         }
