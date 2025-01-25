@@ -25,6 +25,7 @@
         SELECT
             s.id            AS solutionId,
             s.title AS solutionTitle,
+            p.title AS subTitle,
             s.runtime,
             s.memory,
             s.language_id   AS languageId,
@@ -33,8 +34,10 @@
         FROM bookmark b
                  JOIN algorithm_problem_solution s ON b.content_id = s.id
                  JOIN user u ON s.user_id = u.id
+                 JOIN algorithm_problem p ON s.problem_id = p.id
         WHERE b.user_id = #{userId}
           AND b.content_type = 'ALGO_SOLUTION'
+          AND s.is_deleted = FALSE
           AND s.is_deleted = FALSE
         ORDER BY s.created_at DESC
     </select>
