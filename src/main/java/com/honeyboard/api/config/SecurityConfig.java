@@ -68,12 +68,11 @@ public class SecurityConfig {
                                     "/v3/api-docs/**",
                                     "/swagger-ui/**"
                             ).permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/v1/project/track").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/api/v1/web/guide").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, "/api/v1/web/guide").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/api/v1/web/guide").hasRole("ADMIN")
-                            .requestMatchers("/api/v1/admin").hasRole("ADMIN")
-                            .requestMatchers("/api/v1/user").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/project/track").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/web/guide").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/web/guide").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/web/guide").hasAuthority("ADMIN")
+                            .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
                             .anyRequest()
                             .authenticated();
                     log.debug("URL 보안 설정 완료");

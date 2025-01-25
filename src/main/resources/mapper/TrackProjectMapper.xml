@@ -3,38 +3,28 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.honeyboard.api.project.track.mapper.TrackProjectMapper">
     <!-- TeamMemberInfo resultMap -->
-    <resultMap id="teamMemberInfoMap" type="com.honeyboard.api.project.model.TeamMemberInfo">
+    <resultMap id="teamMemberInfoMap" type="TeamMemberInfo">
         <id property="id" column="member_id"/>
         <result property="name" column="member_name"/>
         <result property="role" column="member_role"/>
     </resultMap>
 
-    <resultMap id="trackTeamListMap" type="com.honeyboard.api.project.track.model.response.TrackTeamList">
+    <resultMap id="trackTeamListMap" type="TrackTeamList">
         <id property="id" column="team_id"/>
         <result property="submitted" column="is_completed"/>
-        <result property="projectBoardId" column="board_id"/>
+        <result property="projectBoardId" column="project_board_id" jdbcType="INTEGER"/>
         <collection property="members" resultMap="teamMemberInfoMap"/>
     </resultMap>
 
-    <resultMap id="trackProjectBoardMap" type="com.honeyboard.api.project.track.model.response.TrackProjectBoardList">
+    <resultMap id="trackProjectBoardMap" type="TrackProjectBoardList">
         <id property="id" column="board_id"/>
         <result property="title" column="board_title"/>
         <result property="createdAt" column="board_created_at"/>
         <result property="thumbnail" column="board_thumbnail"/>
-    </resultMap>
-
-    <resultMap id="trackProjectDetailMap" type="com.honeyboard.api.project.track.model.response.TrackProjectDetail">
-        <id property="id" column="id"/>
-        <result property="title" column="title"/>
-        <result property="objective" column="objective"/>
-        <result property="description" column="description"/>
-        <result property="createdAt" column="created_at"/>
-        <collection property="noTeamUsers" ofType="com.honeyboard.api.project.model.ProjectUserInfo">
-            <id property="id" column="no_team_user_id"/>
-            <result property="name" column="no_team_user_name"/>
+        <collection property="members" ofType="ProjectUserInfo">
+            <id property="id" column="board_member_id"/>
+            <result property="name" column="board_member_name"/>
         </collection>
-        <collection property="teams" resultMap="trackTeamListMap"/>
-        <collection property="trackProjectBoardList" resultMap="trackProjectBoardMap"/>
     </resultMap>
 
     <!-- 관통 프로젝트 전체 조회 -->
@@ -50,62 +40,66 @@
             AND generation_id = #{generationId}
         </if>
     </select>
-    
-    <!-- 관통 프로젝트 상세 조회 -->
-    <select id="selectTrackProjectById" resultMap="trackProjectDetailMap">
-        WITH NoTeamUsers AS (
-            SELECT u.id, u.name
-            FROM user u
-            WHERE u.generation_id = (
-                SELECT generation_id FROM track_project WHERE id = #{trackProjectId}
-            )
-              AND u.id NOT IN (
-                SELECT tm.user_id
-                FROM track_team_member tm
-                         JOIN track_team t ON tm.track_team_id = t.id
-                WHERE t.track_project_id = #{trackProjectId}
-            )
-              AND u.id NOT IN (
-                SELECT user_id FROM track_excluded_member
-                WHERE project_id = #{trackProjectId}
-            )
+
+    <!-- 기본 프로젝트 정보 조회 -->
+    <select id="selectTrackProject" resultType="TrackProjectDetail">
+        SELECT id, title, objective, description, created_at
+        FROM track_project
+        WHERE id = #{trackProjectId}
+    </select>
+
+    <!-- 팀 미배정 사용자 조회 -->
+    <select id="selectNoTeamUsers" resultType="ProjectUserInfo">
+        SELECT u.id, u.name
+        FROM user u
+        WHERE u.generation_id = (SELECT generation_id FROM track_project WHERE id = #{trackProjectId})
+          AND u.id NOT IN (
+            SELECT tm.user_id
+            FROM track_team_member tm
+                     JOIN track_team t ON tm.track_team_id = t.id
+            WHERE t.track_project_id = #{trackProjectId}
         )
+          AND u.id NOT IN (
+            SELECT user_id
+            FROM track_excluded_member
+            WHERE project_id = #{trackProjectId}
+        ) AND u.role = 'USER'
+    </select>
+
+    <!-- 팀 목록 조회 -->
+    <select id="selectTeams" resultMap="trackTeamListMap">
         SELECT
-            /* 프로젝트 정보 */
-            tp.id AS id,
-            tp.title AS title,
-            tp.objective AS objective,
-            tp.description AS description,
-            tp.created_at AS created_at,
-
-            /* 팀이 없는 사용자 */
-            ntu.id AS no_team_user_id,
-            ntu.name AS no_team_user_name,
-
-            /* 팀 정보 */
             tt.id AS team_id,
             tt.is_completed,
-
-            /* 팀 멤버 정보 */
-            u.id AS member_id,
+            pb.id AS project_board_id,
+            tm.user_id AS member_id,
             u.name AS member_name,
-            tm.role AS member_role,
-
-            /* 게시글 정보 */
-            pb.id AS board_id,
-            pb.title AS board_title,
-            pb.created_at AS board_created_at,
-            pb.thumbnail AS board_thumbnail
-
-        FROM track_project tp
-                 LEFT JOIN NoTeamUsers ntu ON 1=1
-                 LEFT JOIN track_team tt ON tp.id = tt.track_project_id
+            tm.role AS member_role
+        FROM track_team tt
                  LEFT JOIN track_team_member tm ON tt.id = tm.track_team_id
                  LEFT JOIN user u ON tm.user_id = u.id
                  LEFT JOIN track_project_board pb ON tt.id = pb.track_team_id
-        WHERE tp.id = #{trackProjectId}
-          AND tp.is_deleted = 0
-        ORDER BY tt.id, tm.id, pb.created_at DESC
+            AND pb.track_project_id = #{trackProjectId}
+            AND pb.is_deleted = FALSE
+        WHERE tt.track_project_id = #{trackProjectId}
+        AND u.role = 'USER'
+    </select>
+
+    <!-- 게시글 목록 조회 -->
+    <select id="selectBoards" resultMap="trackProjectBoardMap">
+        SELECT
+            pb.id AS board_id,
+            pb.title AS board_title,
+            pb.created_at AS board_created_at,
+            pb.thumbnail AS board_thumbnail,
+            bu.id AS board_member_id,
+            bu.name AS board_member_name
+        FROM track_project_board pb
+                 LEFT JOIN track_team_member btm ON pb.track_team_id = btm.track_team_id
+                 LEFT JOIN user bu ON btm.user_id = bu.id
+        WHERE pb.is_deleted = FALSE
+          AND pb.track_project_id = #{trackProjectId}
+        ORDER BY pb.created_at DESC
     </select>
 
     <!-- 관통 프로젝트 가능한 인원 조회 -->
@@ -115,6 +109,7 @@
                  JOIN generation g ON u.generation_id = g.id
         WHERE g.is_active = true
           AND u.is_ssafy = true
+          AND u.role = 'USER'
     </select>
 
     <!-- 관통 프로젝트 생성 -->

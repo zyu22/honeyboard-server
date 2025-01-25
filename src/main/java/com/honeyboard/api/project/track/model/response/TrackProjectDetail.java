@@ -20,5 +20,5 @@ public class TrackProjectDetail {
     private String createdAt;
     private List<ProjectUserInfo> noTeamUsers;
     private List<TrackTeamList> teams;
-    private List<TrackProjectBoardList> trackProjectBoardList;
+    private List<TrackProjectBoardList> boards;
 }

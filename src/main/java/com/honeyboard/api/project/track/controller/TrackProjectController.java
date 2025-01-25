@@ -43,8 +43,11 @@ public class TrackProjectController {
     public ResponseEntity<TrackProjectDetail> getTrackProject(@PathVariable int trackProjectId) {
         log.info("관통 프로젝트 상세 조회 요청 - ID: {}", trackProjectId);
         TrackProjectDetail project = trackProjectService.getTrackProjectById(trackProjectId);
-        return project == null ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(project);
+        if(project == null) {
+            log.info("관통 프로젝트 상세 조회 완료, 게시글 없음 - ID: {}", trackProjectId);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(project);
     }
 
     // 관통 프로젝트 가능한 인원 검색
