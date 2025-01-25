@@ -63,7 +63,7 @@
             SELECT user_id
             FROM track_excluded_member
             WHERE project_id = #{trackProjectId}
-        )
+        ) AND u.role = 'USER'
     </select>
 
     <!-- 팀 목록 조회 -->
@@ -82,6 +82,7 @@
             AND pb.track_project_id = #{trackProjectId}
             AND pb.is_deleted = FALSE
         WHERE tt.track_project_id = #{trackProjectId}
+        AND u.role = 'USER'
     </select>
 
     <!-- 게시글 목록 조회 -->
@@ -108,6 +109,7 @@
                  JOIN generation g ON u.generation_id = g.id
         WHERE g.is_active = true
           AND u.is_ssafy = true
+          AND u.role = 'USER'
     </select>
 
     <!-- 관통 프로젝트 생성 -->
