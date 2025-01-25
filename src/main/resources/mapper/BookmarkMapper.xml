@@ -21,7 +21,7 @@
     </select>
 
     <!-- 2) 알고리즘 문제풀이(솔루션) 북마크 조회 -->
-    <select id="selectAllAlgorithmSolutionBookmarks" resultType="AlgorithmSolutionList">
+    <select id="selectAllAlgorithmSolutionBookmarks" resultType="MyAlgorithmSolutionList">
         SELECT
             s.id,
             s.title,
