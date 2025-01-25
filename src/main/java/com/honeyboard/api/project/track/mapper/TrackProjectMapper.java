@@ -3,8 +3,10 @@ package com.honeyboard.api.project.track.mapper;
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.track.model.request.TrackProjectRequest;
+import com.honeyboard.api.project.track.model.response.TrackProjectBoardList;
 import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
 import com.honeyboard.api.project.track.model.response.TrackProjectList;
+import com.honeyboard.api.project.track.model.response.TrackTeamList;
 import com.honeyboard.api.user.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,7 +19,17 @@ public interface TrackProjectMapper {
     List<TrackProjectList> selectAllTrackProjects(@Param("generationId") int generationId);
 
     // 관통 프로젝트 상세 조회
-    TrackProjectDetail selectTrackProjectById(@Param("trackProjectId") int trackProjectId);
+    TrackProjectDetail selectTrackProject(@Param("trackProjectId") int trackProjectId);
+
+    // 관통 프로젝트 상세 - 팀 없는사람들 조회
+    List<ProjectUserInfo> selectNoTeamUsers(@Param("trackProjectId") int trackProjectId);
+
+    // 관통 프로젝트 상세 - 팀인 사람들 조회
+    List<TrackTeamList> selectTeams(@Param("trackProjectId") int trackProjectId);
+
+    // 관통 프로젝트 상세 - 제출한 게시글
+    List<TrackProjectBoardList> selectBoards(@Param("trackProjectId") int trackProjectId);
+
 
     // 프로젝트 멤버 조회
     List<ProjectUserInfo> selectTrackProjectMembers(@Param("trackProjectId") int trackProjectId);

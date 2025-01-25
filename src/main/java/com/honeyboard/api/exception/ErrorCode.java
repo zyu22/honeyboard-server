@@ -35,6 +35,7 @@ public enum ErrorCode {
     INVALID_CONTENT_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 ID입니다."),
     INVALID_RPOBLEM_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 문제 ID입니다."),
     INVALID_SOLUTION_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 풀이 ID입니다."),
+    GENERATION_DELETE_RESTRICTED(HttpStatus.CONFLICT, "해당 기수에 소속된 사용자가 있어 삭제할 수 없습니다."),
 
 
     // 중복 관련 에러
@@ -69,6 +70,7 @@ public enum ErrorCode {
     TEAM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 수정에 실패하였습니다."),
     TEAM_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 인원 변경에 실패하였습니다."),
     INVALID_TEAM_ID(HttpStatus.BAD_REQUEST, "잘못된 팀 아이디를 입력했습니다."),
+    TEAM_STATUS_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 제출현황 변경에 실패하였습니다."),
 	
 	// 북마크 관련 에러
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),

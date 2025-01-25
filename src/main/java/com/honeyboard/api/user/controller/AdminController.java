@@ -19,7 +19,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/user")
-    public ResponseEntity<?> getUsersByGeneration(@RequestParam(value = "generationId", required = false) Integer generationId) {
+    public ResponseEntity<?> getUsersByGeneration(@RequestParam(required = false, defaultValue = "0") int generationId) {
         log.info("기수별 학생 정보 조회 요청 - 기수: {}", generationId);
         List<UserInfo> users = adminService.getUserByGeneration(generationId);
 

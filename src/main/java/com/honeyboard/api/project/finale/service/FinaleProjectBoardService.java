@@ -14,4 +14,5 @@ public interface FinaleProjectBoardService {
 
     boolean updateFinaleProjectBoard(int finaleProjectId, int finaleProjectBoardId, FinaleProjectBoardRequest request, User currentUser);
 
+    boolean deleteFinaleProjectBoard(int finaleProjectId, int finaleProjectBoardId, User currentUser);
 }

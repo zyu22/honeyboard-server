@@ -23,4 +23,6 @@ public interface TrackProjectBoardMapper {
                                 );
 
     int deleteTrackProjectBoard(@Param("boardId") int boardId);
+
+    int updateTeamCompleted(@Param("trackTeamId") int trackTeamId);
 }
