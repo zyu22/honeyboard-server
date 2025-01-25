@@ -21,7 +21,8 @@ public interface AlgorithmSolutionMapper {
                                                        @Param("pageSize") int pageSize);
 
 	// AlgorithmSolution 상세조회
-	AlgorithmSolutionDetail selectAlgorithmSolution(int solutionId);
+	AlgorithmSolutionDetail selectAlgorithmSolution(@Param("solutionId") int solutionId,
+													@Param("userId") int userId);
 	// AlgorithmSolution 작성
 	int insertAlgorithmSolution(@Param("problemId") int problemId,
 								@Param("algorithmSolution") AlgorithmSolutionRequest algorithmSolution,

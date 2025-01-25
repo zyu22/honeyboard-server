@@ -47,10 +47,12 @@ public class AlgorithmSolutionController {
 	@GetMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> getAlgorithmSolution(
 			@PathVariable int problemId,
-			@PathVariable int solutionId) {
-		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}", solutionId);
+			@PathVariable int solutionId,
+			@CurrentUser User user) {
+		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}, 검색자: {}", solutionId);
 
-		AlgorithmSolutionDetail solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
+		int userId = user.getUserId();
+		AlgorithmSolutionDetail solution = algorithmSolutionService.getAlgorithmSolution(solutionId, userId);
 
 		log.info("알고리즘 풀이 상세 조회 완료");
 		return ResponseEntity.ok(solution);

@@ -13,7 +13,7 @@ public interface AlgorithmSolutionService {
     // Alogorithm Solution 전체조회
 	PageResponse<AlgorithmSolutionList> getAllAlgorithmSolution(int problemId, int generationId, List<String> languages, String sortType, int currentPage, int pageSize);
     //Alogorithm Solution 상세조회
-    AlgorithmSolutionDetail getAlgorithmSolution(int solutionId);
+    AlgorithmSolutionDetail getAlgorithmSolution(int solutionId, int userId);
     //Alogorithm Solution 작성
     CreateResponse addAlgorithmSolution(int problemId, AlgorithmSolutionRequest algorithmSolution, int userId, int generationId);
 	//Alogorithm Solution 수정

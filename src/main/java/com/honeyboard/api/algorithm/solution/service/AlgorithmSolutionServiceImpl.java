@@ -53,10 +53,10 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 
 	// AlgorithmSolution 상세조회
 	@Override
-	public AlgorithmSolutionDetail getAlgorithmSolution(int solutionId) {
+	public AlgorithmSolutionDetail getAlgorithmSolution(int solutionId, int userId) {
 		log.info("알고리즘 솔루션 상세 조회 시작 - 솔루션 ID: {}", solutionId);
 
-		AlgorithmSolutionDetail solutionDetail = asm.selectAlgorithmSolution(solutionId);
+		AlgorithmSolutionDetail solutionDetail = asm.selectAlgorithmSolution(solutionId, userId);
 
 		if (solutionDetail == null) {
 			log.error("알고리즘 솔루션 조회 실패 - 존재하지 않는 솔루션 ID: {}", solutionId);
