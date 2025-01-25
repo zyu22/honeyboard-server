@@ -92,7 +92,7 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
             throw new IllegalArgumentException("해당 프로젝트의 팀 정보를 찾을 수 없습니다.");
         }
 
-        boolean isTeamMember = finaleTeamMapper.checkTeamMember(finaleTeamId, currentUser.getUserId());
+        boolean isTeamMember = finaleTeamMapper.checkTeamMember(finaleTeamId, currentUser.getUserId()) || currentUser.getRole().equals("ADMIN");
         if (!isTeamMember) {
             throw new IllegalArgumentException("해당 팀의 멤버만 게시글을 삭제할 수 있습니다.");
         }
