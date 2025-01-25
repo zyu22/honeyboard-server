@@ -64,9 +64,9 @@
             parameterType="int"
             resultType="MyFinaleProjectList">
         SELECT
-            fpb.id        AS finaleProjectBoardId,
-            fpb.title     AS title,
-            fpb.created_at AS createdAt
+            fpb.id,
+            fpb.title,
+            fpb.created_at
         FROM finale_team_member ftm
                  JOIN finale_project_board fpb
                       ON ftm.finale_team_id = fpb.finale_team_id
@@ -80,11 +80,11 @@
             parameterType="int"
             resultType="MyAlgorithmSolutionList">
         SELECT
-            s.title       AS solutionTitle,
-            s.id  AS solutionId,
-            s.runtime     AS runtime,
-            s.memory      AS memory,
-            s.language_id AS languageId,
+            s.id,
+            s.title ,
+            s.runtime,
+            s.memory,
+            s.language_id,
             p.title       AS problemTitle
 
         FROM algorithm_problem_solution s
