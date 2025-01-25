@@ -16,4 +16,5 @@ public class MyAlgorithmSolutionList {
     private int runtime;
     private int memory;
     private int languageId;
+    private String languageName;
 }

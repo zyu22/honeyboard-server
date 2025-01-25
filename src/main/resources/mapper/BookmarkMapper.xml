@@ -25,11 +25,12 @@
         SELECT
             s.id,
             s.title,
-            p.title AS subtitle,
+            p.title AS problemTitle,
+            p.id AS problemId,
             s.runtime,
             s.memory,
             s.language_id   AS languageId,
-            s.language_name AS languageName
+            l.name AS languageName
         FROM bookmark b
                  JOIN algorithm_problem_solution s ON b.content_id = s.id
                  JOIN programming_language l ON l.id = s.language_id

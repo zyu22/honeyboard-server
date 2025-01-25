@@ -81,14 +81,16 @@
             resultType="MyAlgorithmSolutionList">
         SELECT
             s.id,
-            s.title ,
+            s.title,
             s.runtime,
             s.memory,
             s.language_id,
-            p.title       AS problemTitle,
+            l.name AS languageName,
+            p.title AS problemTitle,
             p.id AS problemId
         FROM algorithm_problem_solution s
                  JOIN algorithm_problem p ON s.problem_id = p.id
+                 JOIN programming_language l ON l.id = s.language_id
         WHERE s.user_id = #{userId}
           AND s.is_deleted = FALSE
           AND p.is_deleted = FALSE
