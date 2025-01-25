@@ -54,6 +54,31 @@
         </foreach>
     </insert>
 
+    <!-- 팀원 가능한지 조회 -->
+    <select id="selectTrackProjectMembers" resultType="ProjectUserInfo">
+        SELECT DISTINCT u.id, u.name
+        FROM user u
+                 JOIN generation g ON u.generation_id = g.id
+        WHERE g.id IN (
+            SELECT generation_id
+            FROM track_team
+            WHERE track_project_id = #{trackProjectId}
+        )
+          AND NOT EXISTS (
+            SELECT 1
+            FROM track_excluded_member e
+            WHERE e.project_id = #{trackProjectId} AND e.user_id = u.id
+        )
+          AND NOT EXISTS (
+            SELECT 1
+            FROM track_team_member tm
+                     JOIN track_team t ON tm.track_team_id = t.id
+            WHERE t.track_project_id = #{trackProjectId} AND tm.user_id = u.id
+        )
+          AND u.role = 'USER';
+    </select>
+
+
     <!-- 팀 존재 여부 확인 -->
     <select id="existsByProjectIdAndUserId" resultType="int">
         SELECT EXISTS (

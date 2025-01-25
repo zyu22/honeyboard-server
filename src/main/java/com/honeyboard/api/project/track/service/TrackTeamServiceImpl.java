@@ -2,12 +2,15 @@ package com.honeyboard.api.project.track.service;
 
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
+import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.model.TeamRequest;
 import com.honeyboard.api.project.track.mapper.TrackTeamMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -106,5 +109,12 @@ public class TrackTeamServiceImpl implements TrackTeamService {
             // 새 팀원 추가
             trackTeamMapper.insertTeamMembers(trackTeamId, trackTeam.getMemberIds());
         }
+    }
+
+    // 팀이 아니고 제외된 인원이 아닌 팀원 조회
+    @Override
+    public List<ProjectUserInfo> getTrackProjectMembers(int trackProjectId) {
+        log.info("팀원 가능한 멤버 조회 시작 - 프로젝트 ID: {}", trackProjectId);
+        return trackTeamMapper.selectTrackProjectMembers(trackProjectId);
     }
 }

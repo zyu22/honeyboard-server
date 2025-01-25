@@ -1,5 +1,6 @@
 package com.honeyboard.api.project.track.mapper;
 
+import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.track.model.response.TrackTeamList;
 import com.honeyboard.api.user.model.UserName;
 import org.apache.ibatis.annotations.Param;
@@ -27,4 +28,5 @@ public interface TrackTeamMapper {
     int updateTeamCompleted(@Param("teamId") int teamId, @Param("isCompleted") boolean isCompleted);
 
 
+    List<ProjectUserInfo> selectTrackProjectMembers(int trackProjectId);
 }
