@@ -8,6 +8,8 @@ import com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionLis
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,30 +56,26 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 	public AlgorithmSolutionDetail getAlgorithmSolution(int solutionId) {
 		log.info("알고리즘 솔루션 상세 조회 시작 - 솔루션 ID: {}", solutionId);
 
-		AlgorithmSolutionDetail solution = asm.selectAlgorithmSolution(solutionId);
+		AlgorithmSolutionDetail solutionDetail = asm.selectAlgorithmSolution(solutionId);
 
-		if (solution == null) {
+		if (solutionDetail == null) {
 			log.error("알고리즘 솔루션 조회 실패 - 존재하지 않는 솔루션 ID: {}", solutionId);
-			throw new IllegalArgumentException("해당 알고리즘 솔루션을 찾을 수 없습니다.");
+			throw new BusinessException(ErrorCode.BOARD_NOT_FOUND);
 		}
 		log.info("알고리즘 솔루션 상세 조회 완료");
 
-		return solution;
+		return solutionDetail;
 	}
 
-	// AlgorithmSolution 등록
+	// AlgorithmSolution 작성
 	@Override
 	public CreateResponse addAlgorithmSolution(int problemId, AlgorithmSolutionRequest request, int userId, int generationId) {
 		log.info("알고리즘 솔루션 추가 시작 - 문제 title: {}", request.getTitle());
 
-		if (request == null) {
-			throw new IllegalArgumentException("알고리즘 솔루션 정보가 없습니다.");
-		}
-
 		// 문제 존재 여부 확인
 		if (apm.selectAlgorithmProblem(problemId) == null) {
 			log.error("존재하지 않는 문제 - ID: {}", problemId);
-			throw new IllegalArgumentException("존재하지 않는 문제입니다.");
+			throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
 		}
 
 		CreateResponse createResponse = new CreateResponse();
@@ -85,7 +83,7 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 
 		if (result != 1) {
 			log.error("풀이 생성 실패 - 제목: {}", request.getTitle());
-			throw new IllegalArgumentException("알고리즘 솔루션 추가에 실패했습니다.");
+			throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
 		}
 
 		log.info("알고리즘 솔루션 추가 완료 - 문제 title: {}", request.getTitle());
@@ -94,37 +92,37 @@ public class AlgorithmSolutionServiceImpl implements AlgorithmSolutionService {
 
 	// AlgorithmSolution 수정
 	@Override
-	public void updateAlgorithmSolution(int solutionId, AlgorithmSolutionRequest request) {
+	public void updateAlgorithmSolution(int solutionId, AlgorithmSolutionRequest request, int userId, String role) {
 		log.info("알고리즘 솔루션 수정 시작 - 솔루션 ID: {}", solutionId);
 
 		if (request == null) {
-			throw new IllegalArgumentException("알고리즘 솔루션 정보가 없습니다.");
+			throw new BusinessException(ErrorCode.INVALID_SOLUTION_ID);
 		}
 
-		int result = asm.updateAlgorithmSolution(solutionId, request);
+		int result = asm.updateAlgorithmSolution(solutionId, request, userId, role);
 
 		if (result != 1) {
 			log.error("알고리즘 솔루션 수정 실패 - 솔루션 ID: {}", solutionId);
-			throw new IllegalArgumentException("알고리즘 솔루션 수정에 실패했습니다.");
+			throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
 		}
 		log.info("알고리즘 솔루션 수정 완료");
 	}
 
 	// AlgorithmSolution 삭제
 	@Override
-	public void softDeleteAlgorithmSolution(int solutionId) {
+	public void softDeleteAlgorithmSolution(int solutionId, int userId, String role) {
 		log.info("알고리즘 솔루션 삭제 시작 - 솔루션 ID: {}", solutionId);
 
 		if (solutionId <= 0) {
 			log.error("잘못된 풀이 ID - ID: {}", solutionId);
-			throw new IllegalArgumentException("유효하지 않은 풀이 ID입니다.");
+			throw new BusinessException(ErrorCode.INVALID_SOLUTION_ID);
 		}
 
-		int result = asm.deleteAlgorithmSolution(solutionId);
+		int result = asm.deleteAlgorithmSolution(solutionId, userId, role);
 
 		if (result != 1) {
 			log.error("알고리즘 솔루션 삭제 실패 - 솔루션 ID: {}", solutionId);
-			throw new IllegalArgumentException("알고리즘 솔루션 삭제에 실패했습니다.");
+			throw new BusinessException(ErrorCode.BOARD_DELETE_FAILED);
 		}
 
 		log.info("알고리즘 솔루션 삭제 완료 - ID: {}", solutionId);

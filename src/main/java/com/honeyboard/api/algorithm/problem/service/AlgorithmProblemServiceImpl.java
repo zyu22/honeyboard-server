@@ -74,7 +74,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         return problemDetail;
     }
 
-    // AlgorithmProblem 문제 작성
+    // AlgorithmProblem 작성
     @Override
     @Transactional
     public CreateResponse addProblem(AlgorithmProblemRequest request, int userId) {
@@ -110,7 +110,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
-            throw new BusinessException(ErrorCode.INVALID_BOARD_ID);
+            throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
         }
 
         int updateResult = apm.updateAlgorithmProblem(request, problemId, userId, role);
@@ -133,7 +133,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
-            throw new BusinessException(ErrorCode.INVALID_BOARD_ID);
+            throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
         }
 
         int res = apm.deleteAlgorithmProblem(problemId, userId, role);
@@ -150,7 +150,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
     protected void updateProblemTags(int problemId, List<TagResponse> newTags) {
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
-            throw new BusinessException(ErrorCode.INVALID_BOARD_ID);
+            throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
         }
 
         if (newTags == null) return;

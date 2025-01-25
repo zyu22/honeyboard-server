@@ -33,6 +33,9 @@ public enum ErrorCode {
     INVALID_PROJECT_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 프로젝트 ID입니다."),
     INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 타입입니다."),
     INVALID_CONTENT_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 ID입니다."),
+    INVALID_RPOBLEM_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 문제 ID입니다."),
+    INVALID_SOLUTION_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 풀이 ID입니다."),
+
 
     // 중복 관련 에러
     UNAUTHORIZED_BOARD_UPDATE(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),

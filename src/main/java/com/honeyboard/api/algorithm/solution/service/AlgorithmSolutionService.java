@@ -17,7 +17,7 @@ public interface AlgorithmSolutionService {
     //Alogorithm Solution 작성
     CreateResponse addAlgorithmSolution(int problemId, AlgorithmSolutionRequest algorithmSolution, int userId, int generationId);
 	//Alogorithm Solution 수정
-    void updateAlgorithmSolution(int solutionId, AlgorithmSolutionRequest algorithmSolution);
+    void updateAlgorithmSolution(int solutionId, AlgorithmSolutionRequest algorithmSolution, int userId, String role);
 	//Algorithm Solution 삭제
-    void softDeleteAlgorithmSolution(int solutionId);
+    void softDeleteAlgorithmSolution(int solutionId, int userId, String role);
 }

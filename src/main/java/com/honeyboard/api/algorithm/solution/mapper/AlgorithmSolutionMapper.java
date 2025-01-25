@@ -29,8 +29,12 @@ public interface AlgorithmSolutionMapper {
 								@Param("generationId") int generationId,
 								@Param("createResponse") CreateResponse response);
 	int updateAlgorithmSolution(@Param("solutionId") int solutionId,
-								@Param("algorithmSolution") AlgorithmSolutionRequest algorithmSolution);
-	int deleteAlgorithmSolution(int solutionId);
+								@Param("algorithmSolution") AlgorithmSolutionRequest algorithmSolution,
+								@Param("userId") int userId,
+								@Param("role") String role);
+	int deleteAlgorithmSolution(@Param("solutionId") int solutionId,
+								@Param("userId") int userId,
+								@Param("role") String role);
 
 	//페이지네이션
 	int countAlgorithmSolutions(@Param("problemId") int problemId,

@@ -133,6 +133,7 @@
 			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{solutionId}
         	AND is_deleted = false
+			AND (user_id = #{userId} OR #{role} = 'ADMIN')
 	</update>
 	
 	<!-- 알고리즘 풀이 삭제 -->
@@ -143,6 +144,7 @@
         	updated_at = NOW()
     	WHERE id = #{solutionId}
         	AND is_deleted = false
+		  	AND (user_id = #{userId} OR #{role} = 'ADMIN')
 	</update>
 	
 	
