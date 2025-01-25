@@ -55,7 +55,7 @@
     </insert>
 
     <!-- 팀 존재 여부 확인 -->
-    <select id="existsByProjectIdAndUserId" resultType="boolean">
+    <select id="existsByProjectIdAndUserId" resultType="int">
         SELECT EXISTS (
             SELECT 1
             FROM track_team_member tm

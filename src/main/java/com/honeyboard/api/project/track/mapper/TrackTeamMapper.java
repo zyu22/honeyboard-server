@@ -16,7 +16,7 @@ public interface TrackTeamMapper {
 
     int insertTeamMembers(@Param("teamId") int teamId, @Param("memberIds") List<Integer> memberIds);
 
-    boolean existsByProjectIdAndUserId(@Param("trackProjectId") int trackProjectId, @Param("userId") int userId);
+    int existsByProjectIdAndUserId(@Param("trackProjectId") int trackProjectId, @Param("userId") int userId);
 
     int getTeamLeaderId(@Param("teamId") int teamId);
 
