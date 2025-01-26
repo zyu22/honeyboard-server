@@ -61,8 +61,36 @@
 		LIMIT #{pageSize} OFFSET #{offset}
 	</select>
 	
+<!--	&lt;!&ndash; 알고리즘 풀이 상세 조회	 &ndash;&gt;-->
+<!--	<select id="selectAlgorithmSolution" resultMap="algorithmSolutionDetailMap">-->
+<!--		SELECT-->
+<!--			s.id,-->
+<!--			s.title,-->
+<!--			s.summary,-->
+<!--			s.content,-->
+<!--			s.user_id AS authorId,-->
+<!--			u.name,-->
+<!--			s.runtime,-->
+<!--			s.memory,-->
+<!--			s.language_id,-->
+<!--			p.name AS languageName,-->
+<!--			s.created_at,-->
+<!--			CASE-->
+<!--            	WHEN b.id IS NOT NULL THEN true-->
+<!--            	ELSE false-->
+<!--        	END as bookmarked-->
+<!--        FROM algorithm_problem_solution s-->
+<!--		INNER JOIN user u ON s.user_id = u.id-->
+<!--		INNER JOIN programming_language p ON s.language_id = p.id-->
+<!--		LEFT JOIN bookmark b ON b.content_id = s.id-->
+<!--			AND b.content_type = 'ALGO_SOLUTION'-->
+<!--        	AND b.user_id = #{userId}-->
+<!--        WHERE s.id = #{solutionId}-->
+<!--        	AND s.is_deleted = false-->
+<!--	</select>-->
+
 	<!-- 알고리즘 풀이 상세 조회	 -->
-	<select id="selectAlgorithmSolution" resultMap="algorithmSolutionDetailMap">
+	<select id="selectAlgorithmSolution" resultType="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
 		SELECT
 			s.id,
 			s.title,
@@ -76,17 +104,17 @@
 			p.name AS languageName,
 			s.created_at,
 			CASE
-            	WHEN b.id IS NOT NULL THEN true 
-            	ELSE false 
-        	END as bookmarked
-        FROM algorithm_problem_solution s
-		INNER JOIN user u ON s.user_id = u.id
-		INNER JOIN programming_language p ON s.language_id = p.id
-		LEFT JOIN bookmark b ON b.content_id = s.id
+				WHEN b.id IS NOT NULL THEN true
+				ELSE false
+				END as bookmarked
+		FROM algorithm_problem_solution s
+				 INNER JOIN user u ON s.user_id = u.id
+				 INNER JOIN programming_language p ON s.language_id = p.id
+				 LEFT JOIN bookmark b ON b.content_id = s.id
 			AND b.content_type = 'ALGO_SOLUTION'
-        	AND b.user_id = #{userId}
-        WHERE s.id = #{solutionId}
-        	AND s.is_deleted = false
+			AND b.user_id = #{userId}
+		WHERE s.id = #{solutionId}
+		  AND s.is_deleted = false
 	</select>
 	
 	<!-- 알고리즘 풀이 작성 -->
