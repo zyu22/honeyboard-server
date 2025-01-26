@@ -170,7 +170,7 @@
     	UPDATE algorithm_problem_solution
     	SET 
         	is_deleted = true,
-        	updated_at = NOW()
+        	updated_at = CURRENT_TIMESTAMP
     	WHERE id = #{solutionId}
         	AND is_deleted = false
 		  	AND (user_id = #{userId} OR #{role} = 'ADMIN')

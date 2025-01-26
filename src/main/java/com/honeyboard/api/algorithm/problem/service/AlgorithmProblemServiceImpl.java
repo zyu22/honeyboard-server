@@ -81,7 +81,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         log.info("알고리즘 문제 생성 시작 - 제목: {}", request.getTitle());
 
         // 문제 중복 체크 - url
-        if (apm.existsByUrl(request) == 1) {
+        if (apm.existsByUrl(request.getUrl()) == 1) {
             throw new BusinessException(ErrorCode.DUPLICATE_PROBLEM_ID);
         }
 

@@ -28,7 +28,7 @@ public interface AlgorithmProblemMapper {
     int insertAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,
                                @Param("userId") int userId,
                                @Param("createResponse") CreateResponse response);
-    int existsByUrl(@Param("request") AlgorithmProblemRequest request);
+    int existsByUrl(@Param("url") String url);
 
     // AlgorithmProblem 수정
     int updateAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,
