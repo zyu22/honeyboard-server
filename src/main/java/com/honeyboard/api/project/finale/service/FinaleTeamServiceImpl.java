@@ -30,6 +30,13 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
     }
 
     @Override
+    public List<ProjectUserInfo> getFinaleTeamUsers() {
+        log.info("팀 생성 시 팀 안된 유저 조회");
+        return finaleTeamMapper.selectNoTeamFinaleTeamUsers();
+    }
+
+
+    @Override
     public List<FinaleTeamList> getFinaleTeamList(int finaleProjectId) {
         log.info("팀 리스트 조회 시작 - finaleProjectId: {}", finaleProjectId);
         return finaleTeamMapper.selectFinaleTeamList(finaleProjectId);
