@@ -13,8 +13,9 @@ interface FinaleTeamService {
 
     List<ProjectUserInfo> getNoFinaleTeamUsers(int finaleProjectId);
 
+    List<ProjectUserInfo> getFinaleTeamUsers();
+
     List<FinaleTeamList> getFinaleTeamList(int finaleProjectId);
 
     boolean updateFinaleProjectTeam(int finaleProjectId, int finaleTeamId, FinaleProjectTeamUpdate request);
-
 }

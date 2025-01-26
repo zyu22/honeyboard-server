@@ -13,6 +13,9 @@ public interface FinaleTeamMapper {
     // 팀이 없는 유저 조회
     List<ProjectUserInfo> selectNoFinaleTeamUsers(int finaleProjectId);
 
+    // 팀 없는 사람
+    List<ProjectUserInfo> selectNoTeamFinaleTeamUsers();
+
     // 팀 리스트 조회
     List<FinaleTeamList> selectFinaleTeamList(int finaleProjectId);
 

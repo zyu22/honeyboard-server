@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
     // 관통 게시글 추가
     @Override
+    @Transactional
     public CreateResponse addBoard(int trackProjectId, int trackTeamId, int userId, TrackProjectBoardRequest board) {
 
         if (trackProjectId <= 0) {
@@ -86,6 +88,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
     // 관통 게시글 삭제
     @Override
+    @Transactional
     public void softDeleteBoard(int trackProjectId, int trackTeamId, int boardId) {
         validateBoardId(trackProjectId, trackTeamId, boardId);
         log.info("게시글 삭제 시작 - ID: {}", boardId);
@@ -97,6 +100,16 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
         }
 
         log.info("게시글 삭제 완료 - ID: {}", boardId);
+
+        log.info("팀 삭제 처리 - ID: {}", trackTeamId);
+        result = trackProjectBoardMapper.updateTeamCompleted(trackTeamId);
+
+        if(result != 1) {
+            log.info("팀 삭제 처리 실패 - ID: {}", trackTeamId);
+            throw new BusinessException(ErrorCode.TEAM_STATUS_UPDATE_FAILED);
+        }
+
+        log.info("팀 삭제 처리 완료 - ID: {}", trackTeamId);
     }
 
     private void validateBoardId(int trackProjectId, int trackTeamId, int boardId) {

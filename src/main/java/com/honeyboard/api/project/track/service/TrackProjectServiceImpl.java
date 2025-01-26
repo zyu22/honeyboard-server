@@ -1,10 +1,5 @@
 package com.honeyboard.api.project.track.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
@@ -13,18 +8,22 @@ import com.honeyboard.api.project.track.mapper.TrackProjectMapper;
 import com.honeyboard.api.project.track.model.request.TrackProjectRequest;
 import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
 import com.honeyboard.api.project.track.model.response.TrackProjectList;
-import com.honeyboard.api.user.model.User;
-
+import com.honeyboard.api.user.model.UserName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class TrackProjectServiceImpl implements TrackProjectService {
-    
+
     private final TrackProjectMapper trackProjectMapper;
 
     // 관통 프로젝트 전체 조회
@@ -34,7 +33,7 @@ public class TrackProjectServiceImpl implements TrackProjectService {
         return trackProjectMapper.selectAllTrackProjects(generationId);
     }
 
-    
+
     // 관통프로젝트 상세조회
     @Override
     public TrackProjectDetail getTrackProjectById(int trackProjectId) {
@@ -95,7 +94,7 @@ public class TrackProjectServiceImpl implements TrackProjectService {
         }
 
         int trackId = createResponse.getId();
-        if(!trackProject.getExcludedMembers().isEmpty() || trackProject.getExcludedMembers().size() != 0) {
+        if (!trackProject.getExcludedMembers().isEmpty() || trackProject.getExcludedMembers().size() != 0) {
             // 제외 인원 추가
             List<Integer> excludedMemberIds = trackProject.getExcludedMembers();
             if (excludedMemberIds != null && !excludedMemberIds.isEmpty()) {
@@ -114,7 +113,7 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     @Transactional
     public void updateTrackProject(int trackProjectId, TrackProjectRequest trackProject) {
         validateTrackProjectId(trackProjectId);
-        
+
         // 유효성 검사
         validateTrackProject(trackProject);
 
@@ -173,6 +172,13 @@ public class TrackProjectServiceImpl implements TrackProjectService {
         log.info("관통 프로젝트 삭제 완료 - ID: {}", trackProjectId);
     }
 
+    // 관통프로젝트 제외 인원 조회
+    @Override
+    public List<UserName> getExcludeMembers(int trackProjectId) {
+        log.info("관통 프로젝트 제외 인원 조회 시작 - 프로젝트 ID: {}", trackProjectId);
+        return trackProjectMapper.selectExcludedMembersName(trackProjectId);
+    }
+
     private void validateTrackProject(TrackProjectRequest trackProject) {
         if (trackProject == null) {
             throw new BusinessException(ErrorCode.PROJECT_NOT_FOUND);
@@ -180,7 +186,7 @@ public class TrackProjectServiceImpl implements TrackProjectService {
     }
 
     private void validateTrackProjectId(int trackProjectId) {
-        if(trackProjectId <= 0) {
+        if (trackProjectId <= 0) {
             throw new BusinessException(ErrorCode.INVALID_PROJECT_ID);
         }
     }

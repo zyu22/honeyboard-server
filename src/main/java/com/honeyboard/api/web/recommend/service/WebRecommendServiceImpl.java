@@ -53,10 +53,10 @@ public class WebRecommendServiceImpl implements WebRecommendService {
     }
 
     @Override
-    public WebRecommendDetail getWebRecommend(int recommendId) {
+    public WebRecommendDetail getWebRecommend(int recommendId, int userId) {
         log.info("웹 추천 상세 조회 시작 - ID: {}", recommendId);
 
-        WebRecommendDetail webRecommendDetail = webRecommendMapper.selectWebRecommendById(recommendId);
+        WebRecommendDetail webRecommendDetail = webRecommendMapper.selectWebRecommendById(recommendId, userId);
 
         if (webRecommendDetail == null) {
             log.info("웹 추천 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", recommendId);
@@ -73,10 +73,9 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         log.info("웹 추천 등록 시작 - 제목: {}", webRecommend.getTitle());
 
         // URL 중복 확인
-        int count = webRecommendMapper.existByUrl(webRecommend.getUrl());
-        if (count > 0) {
-            log.warn("이미 존재하는 URL - {}", webRecommend.getUrl());
-            throw new BusinessException(DUPLICATE_URL);
+        if(webRecommendMapper.existByUrl(webRecommend.getUrl())) {
+            log.info("이미 존재하는 URL - {}", webRecommend.getUrl());
+            throw new BusinessException(ErrorCode.DUPLICATE_URL);
         }
 
         CreateResponse response = new CreateResponse();
@@ -84,7 +83,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
 
         if (result <= 0) {
             log.error("웹 추천 등록 실패 - 제목: {}", webRecommend.getTitle());
-            throw new IllegalArgumentException("웹 추천 등록에 실패했습니다.");
+            throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
         }
 
         log.info("웹 추천 등록 완료 - ID: {}", response.getId());
@@ -100,7 +99,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
 
         if (result <= 0) {
             log.error("웹 추천 수정 실패 - ID: {}", recommendId);
-            throw new IllegalArgumentException("웹 추천 수정에 실패했습니다.");
+            throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
         }
 
         log.info("웹 추천 수정 완료 - ID: {}", recommendId);
@@ -114,7 +113,7 @@ public class WebRecommendServiceImpl implements WebRecommendService {
 
         if (result <= 0) {
             log.error("웹 추천 삭제 실패 - ID: {}", recommendId);
-            throw new IllegalArgumentException("웹 추천 삭제에 실패했습니다.");
+            throw new BusinessException(ErrorCode.BOARD_DELETE_FAILED);
         }
 
         log.info("웹 추천 삭제 완료 - ID: {}", recommendId);

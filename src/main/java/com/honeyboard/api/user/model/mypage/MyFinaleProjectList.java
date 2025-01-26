@@ -11,7 +11,9 @@ import java.util.Date;
 @Builder
 @ToString
 public class MyFinaleProjectList {
-    private int id;
+    private int boardId;
+    private int finaleProjectId;
+    private String thumbnail;
     private String title;
     private String createdAt;
 }
