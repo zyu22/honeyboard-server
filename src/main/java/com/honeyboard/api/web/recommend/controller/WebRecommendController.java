@@ -56,9 +56,10 @@ public class WebRecommendController {
     }
 
     @GetMapping("/{recommendId}")
-    public ResponseEntity<?> getWebRecommend(@PathVariable int recommendId) {
+    public ResponseEntity<?> getWebRecommend(@PathVariable int recommendId,
+                                             @CurrentUser User user) {
         log.info("웹 추천 상세 조회 요청 - ID: {}", recommendId);
-        WebRecommendDetail webRecommend = webRecommendService.getWebRecommend(recommendId);
+        WebRecommendDetail webRecommend = webRecommendService.getWebRecommend(recommendId, user.getUserId());
         log.info("웹 추천 상세 조회 완료 - ID: {}", recommendId);
         return ResponseEntity.ok(webRecommend);
     }
