@@ -32,9 +32,13 @@ public interface AlgorithmProblemMapper {
 
     // AlgorithmProblem 수정
     int updateAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,
-                               @Param("id") int problemId);
+                               @Param("id") int problemId,
+                               @Param("userId") int userId,
+                               @Param("role") String role);
 
     // AlgorithmProblem 삭제
-    int deleteAlgorithmProblem(@Param("problemId") int problemId);
+    int deleteAlgorithmProblem(@Param("problemId") int problemId,
+                               @Param("userId") int userId,
+                               @Param("role") String role);
 
 }

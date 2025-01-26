@@ -9,6 +9,8 @@ import com.honeyboard.api.algorithm.tag.model.response.TagResponse;
 import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.common.model.PageInfo;
 import com.honeyboard.api.common.response.PageResponse;
+import com.honeyboard.api.exception.BusinessException;
+import com.honeyboard.api.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,7 +54,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
     @Override
     public  AlgorithmProblemDetail getProblem(int problemId) {
         if (problemId <= 0) {
-            throw new IllegalArgumentException("유효하지 않은 알고리즘 문제 ID입니다.");
+            throw new BusinessException(ErrorCode.INVALID_BOARD_ID);
         }
 
         log.info("알고리즘 문제 상세 조회 시작 - 문제ID: {}", problemId);
@@ -60,7 +62,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         // Problem 기본 정보 조회
         AlgorithmProblemDetail problemDetail = apm.selectAlgorithmProblem(problemId);
         if (problemDetail == null) {
-            throw new IllegalArgumentException("해당 알고리즘 문제를 찾을 수 없습니다.");
+            throw new BusinessException(ErrorCode.BOARD_NOT_FOUND);
         }
 
         // Tag list 조회
@@ -72,7 +74,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
         return problemDetail;
     }
 
-    // AlgorithmProblem 문제 작성
+    // AlgorithmProblem 작성
     @Override
     @Transactional
     public CreateResponse addProblem(AlgorithmProblemRequest request, int userId) {
@@ -80,7 +82,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
         // 문제 중복 체크 - url
         if (apm.existsByUrl(request) == 1) {
-            throw new IllegalArgumentException("이미 존재하는 문제입니다.");
+            throw new BusinessException(ErrorCode.DUPLICATE_PROBLEM_ID);
         }
 
         // 문제 생성
@@ -89,7 +91,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
         if (result != 1) {
             log.error("문제 생성 실패 - 제목: {}", request.getTitle());
-            throw new IllegalArgumentException("생성된 알고리즘 문제 ID를 가져오는데 실패했습니다.");
+            throw new BusinessException(ErrorCode.BOARD_CREATE_FAILED);
         }
 
         // 태그 정보 저장
@@ -103,19 +105,19 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
     // AlgorithmProblem 문제 수정
     @Override
-    public void updateProblem(int problemId, AlgorithmProblemRequest request) {
+    public void updateProblem(int problemId, AlgorithmProblemRequest request, int userId, String role) {
         log.info("알고리즘 문제 수정 시작 - ID: {}", problemId);
 
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
-            throw new IllegalArgumentException("유효하지 않은 문제 ID입니다.");
+            throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
         }
 
-        int updateResult = apm.updateAlgorithmProblem(request, problemId);
+        int updateResult = apm.updateAlgorithmProblem(request, problemId, userId, role);
 
         if (updateResult != 1) {
             log.error("문제 수정 실패 - ID: {}", problemId);
-            throw new RuntimeException("문제 수정에 실패했습니다.");
+            throw new BusinessException(ErrorCode.BOARD_UPDATE_FAILED);
         }
 
         // 태그 정보 업데이트
@@ -126,19 +128,19 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
 
     // AlgorithmProblem 문제 삭제
     @Override
-    public void softDeleteProblem(int problemId) {
+    public void softDeleteProblem(int problemId, int userId, String role) {
         log.info("알고리즘 문제 삭제 시작 - ID: {}", problemId);
 
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
-            throw new IllegalArgumentException("유효하지 않은 문제 ID입니다.");
+            throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
         }
 
-        int res = apm.deleteAlgorithmProblem(problemId);
+        int res = apm.deleteAlgorithmProblem(problemId, userId, role);
 
         if (res != 1) {
             log.error("문제 삭제 실패 - ID: {}", problemId);
-            throw new RuntimeException("문제 삭제에 실패했습니다.");
+            throw new BusinessException(ErrorCode.BOARD_DELETE_FAILED);
         }
 
         log.info("알고리즘 문제 삭제 완료 - ID: {}", problemId);
@@ -148,7 +150,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
     protected void updateProblemTags(int problemId, List<TagResponse> newTags) {
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
-            throw new IllegalArgumentException("유효하지 않은 문제 ID입니다.");
+            throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
         }
 
         if (newTags == null) return;
@@ -197,7 +199,7 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
             }
         } catch (Exception e) {
             log.error("태그 업데이트 실패 - 문제 ID: {}", problemId, e);
-            throw new RuntimeException("태그 업데이트에 실패했습니다.");
+            throw new BusinessException(ErrorCode.TAG_UPDATE_FAILED);
         }
     }
 }

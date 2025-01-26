@@ -18,9 +18,9 @@ public interface AlgorithmProblemService {
     CreateResponse addProblem(AlgorithmProblemRequest request, int userId);
 
     // AlgorithmProblem 수정
-    void updateProblem(int problemId, AlgorithmProblemRequest request);
+    void updateProblem(int problemId, AlgorithmProblemRequest request, int userId, String role);
 
     // AlgorithmProblem 삭제
-    void softDeleteProblem(int problemId);
+    void softDeleteProblem(int problemId, int userId, String role);
 
 }

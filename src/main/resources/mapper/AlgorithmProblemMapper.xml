@@ -94,6 +94,7 @@
             updated_at = CURRENT_TIMESTAMP
         WHERE id = #{id}
           AND is_deleted = false
+          AND (user_id = #{userId} OR #{role} = 'ADMIN')
     </update>
 
 
@@ -104,6 +105,7 @@
             updated_at = CURRENT_TIMESTAMP
         WHERE id = #{problemId}
           AND is_deleted = false
+          AND (user_id = #{userId} OR #{role} = 'ADMIN')
     </update>
 
 

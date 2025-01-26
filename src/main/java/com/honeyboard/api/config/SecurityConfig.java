@@ -70,8 +70,11 @@ public class SecurityConfig {
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/v1/project/track").hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/v1/web/guide").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/api/v1/schedule/**").hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/api/v1/web/guide").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/schedule/**").hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/api/v1/web/guide").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/schedule/**").hasAuthority("ADMIN")
                             .requestMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
                             .anyRequest()
                             .authenticated();
