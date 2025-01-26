@@ -15,7 +15,7 @@ public interface WebRecommendService {
     PageResponse<WebRecommendList> searchWebRecommend(String title, Integer generationId, int currentPage, int pageSize);
 
     // 웹추천 상세 조회
-    WebRecommendDetail getWebRecommend(int recommendId);
+    WebRecommendDetail getWebRecommend(int recommendId, int userId);
 
     // 웹추천 작성
     CreateResponse addWebRecommend(WebRecommendRequest webRecommend, int userId, int generationId);

@@ -45,14 +45,13 @@
             url,
             user_id AS authorId,
             (SELECT name FROM user WHERE id = user_id) AS authorName,
-            (SELECT name FROM user WHERE id = user_id) AS authorName,
             CASE WHEN EXISTS (
                 SELECT 1
                 FROM bookmark
                 WHERE user_id = #{userId}
                   AND content_type = 'WEB_RECOMMEND'
                   AND content_id = web_recommend.id
-            ) THEN true ELSE false END AS bookmark
+            ) THEN true ELSE false END AS bookmarked
         FROM web_recommend
         WHERE id = #{recommendId}
           AND is_deleted = false
@@ -90,7 +89,6 @@
             url = #{webRecommend.url},
             updated_at = NOW()
         WHERE id = #{recommendId}
-          AND user_id = #{userId}
           AND is_deleted = false
     </update>
 

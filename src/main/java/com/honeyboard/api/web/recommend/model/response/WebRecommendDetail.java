@@ -17,5 +17,5 @@ public class WebRecommendDetail {
     private String url;
     private int authorId;
     private String authorName;
-    private boolean bookmark;
+    private boolean bookmarked;
 }

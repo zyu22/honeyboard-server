@@ -53,10 +53,10 @@ public class WebRecommendServiceImpl implements WebRecommendService {
     }
 
     @Override
-    public WebRecommendDetail getWebRecommend(int recommendId) {
+    public WebRecommendDetail getWebRecommend(int recommendId, int userId) {
         log.info("웹 추천 상세 조회 시작 - ID: {}", recommendId);
 
-        WebRecommendDetail webRecommendDetail = webRecommendMapper.selectWebRecommendById(recommendId);
+        WebRecommendDetail webRecommendDetail = webRecommendMapper.selectWebRecommendById(recommendId, userId);
 
         if (webRecommendDetail == null) {
             log.info("웹 추천 상세 조회 실패 - 데이터가 존재하지 않습니다. ID: {}", recommendId);

@@ -17,7 +17,7 @@ public interface WebRecommendMapper {
     List<WebRecommendList> searchWebRecommendByTitle(@Param("title") String title, @Param("generationId") int generationId,  @Param("offset") int offset, @Param("pageSize") int pageSize);
     
     // 웹추천 상세 조회
-    WebRecommendDetail selectWebRecommendById(int recommendId);
+    WebRecommendDetail selectWebRecommendById(@Param("recommendId")int recommendId, @Param("userId")int userId);
 
     // 웹추천 작성
     int insertWebRecommend(@Param("webRecommend") WebRecommendRequest webRecommend, @Param("userId") int userId, @Param("generationId") int generationId,
