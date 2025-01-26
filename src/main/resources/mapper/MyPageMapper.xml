@@ -41,6 +41,8 @@
                 JOIN track_project_board tpb ON tt.id = tpb.track_team_id
         WHERE
             ttm.user_id = #{userId}
+            AND tpb.is_deleted = false
+            AND tp.is_deleted = false
         ORDER BY
             tp.created_at DESC;
     </select>
@@ -72,8 +74,11 @@
         FROM finale_team_member ftm
                  JOIN finale_project_board fpb
                       ON ftm.finale_team_id = fpb.finale_team_id
+                 JOIN finale_project fp
+                      ON fpb.finale_project_id = fp.id
         WHERE ftm.user_id = #{userId}
           AND fpb.is_deleted = FALSE
+          AND fp.is_deleted = FALSE
         ORDER BY fpb.created_at DESC
     </select>
 
