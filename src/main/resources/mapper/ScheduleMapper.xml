@@ -42,7 +42,7 @@
 	</select>
 
 	<!-- 일정 등록 -->
-	<insert id="insertSchedule" parameterType="com.honeyboard.api.schedule.model.request.SceduleRequest">
+	<insert id="insertSchedule" useGeneratedKeys="true" keyProperty="createResponse.id">
 		INSERT INTO schedule (
 			content,
 	        start_date,
@@ -53,13 +53,10 @@
 	        generation_id
     	)
     	VALUES (#{schedule.content},
-                #{schedule.startDate},
-                #{schedule.endDate},
+               #{schedule.startDate},
+               #{schedule.endDate},
                 #{schedule.scheduleType},
-				<choose>
-					<when test="schedule.publicAccess">1</when>
-					<otherwise>0</otherwise>
-				</choose>,
+				#{schedule.publicAccess},
                 #{userId},
                 #{generationId}
 		)
@@ -73,10 +70,7 @@
 			start_date = #{schedule.startDate},
 			end_date = #{schedule.endDate},
 			schedule_type = #{schedule.scheduleType},
-			is_public = <choose>
-							<when test="schedule.publicAccess">1</when>
-							<otherwise>0</otherwise>
-						</choose>
+			is_public = #{schedule.publicAccess}
 		WHERE id = #{id}
 	</update>
 
