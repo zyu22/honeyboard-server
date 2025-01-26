@@ -108,6 +108,11 @@ public class AlgorithmProblemServiceImpl implements AlgorithmProblemService {
     public void updateProblem(int problemId, AlgorithmProblemRequest request, int userId, String role) {
         log.info("알고리즘 문제 수정 시작 - ID: {}", problemId);
 
+        // 문제 중복 체크 - url
+        if (apm.existsByUrl(request.getUrl()) == 1) {
+            throw new BusinessException(ErrorCode.DUPLICATE_PROBLEM_ID);
+        }
+
         if (problemId <= 0) {
             log.error("잘못된 문제 ID - ID: {}", problemId);
             throw new BusinessException(ErrorCode.INVALID_RPOBLEM_ID);
