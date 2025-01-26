@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class TrackProjectBoardServiceImpl implements TrackProjectBoardService{
 
     // 관통 게시글 추가
     @Override
+    @Transactional
     public CreateResponse addBoard(int trackProjectId, int trackTeamId, int userId, TrackProjectBoardRequest board) {
 
         if (trackProjectId <= 0) {

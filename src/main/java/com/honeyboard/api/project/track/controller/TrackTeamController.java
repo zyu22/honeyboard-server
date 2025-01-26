@@ -1,6 +1,7 @@
 package com.honeyboard.api.project.track.controller;
 
 import com.honeyboard.api.common.model.CreateResponse;
+import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.model.TeamRequest;
 import com.honeyboard.api.project.track.service.TrackTeamService;
 import com.honeyboard.api.user.model.UserName;
@@ -38,5 +39,13 @@ public class TrackTeamController {
         trackTeamService.updateTrackTeam(trackProjectId, trackTeamId, trackTeam);
         log.info("관통 팀 수정 완료 - 팀 ID : {}", trackTeamId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("{trackProjectId}/available-members")
+    public ResponseEntity<?> getAvailableMembers(@PathVariable int trackProjectId) {
+        log.info("관통 프로젝트 멤버 조회 요청 - 프로젝트 ID: {}", trackProjectId);
+        List<ProjectUserInfo> members = trackTeamService.getTrackProjectMembers(trackProjectId);
+        return members.isEmpty() ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(members);
     }
 }
