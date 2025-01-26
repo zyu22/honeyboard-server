@@ -1,6 +1,5 @@
 package com.honeyboard.api.schedule.mapper;
 
-import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.schedule.model.request.SceduleRequest;
 import com.honeyboard.api.schedule.model.response.ScheduleList;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,8 +13,7 @@ public interface ScheduleMapper {
 	// 일정 추가
 	int insertSchedule(@Param("schedule") SceduleRequest schedule,
 					   @Param("userId") int userId,
-					   @Param("generationId") int generationId,
-					   @Param("createResponse") CreateResponse response);
+					   @Param("generationId") int generationId);
 
 	// 일정 조회
 	List<ScheduleList> selectScheduleByMonth(@Param("year") int year,

@@ -1,6 +1,5 @@
 package com.honeyboard.api.schedule.service;
 
-import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.exception.BusinessException;
 import com.honeyboard.api.exception.ErrorCode;
 import com.honeyboard.api.schedule.mapper.ScheduleMapper;
@@ -26,7 +25,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	// 일정 추가
 	@Override
-	public CreateResponse addSchedule(SceduleRequest schedule, int userId) {
+	public void addSchedule(SceduleRequest schedule, int userId) {
 		log.info("일정 추가 시작 - 내용: {}", schedule.getContent());
 
 		if (schedule == null) {
@@ -50,15 +49,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 			throw new IllegalArgumentException("활성화된 기수 정보를 찾을 수 없습니다.");
 		}
 
-		CreateResponse createResponse = new CreateResponse();
-		int result = scheduleMapper.insertSchedule(schedule, userId, generationId, createResponse);
+		int result = scheduleMapper.insertSchedule(schedule, userId, generationId);
 
 		if (result != 1) {
 			throw new BusinessException(ErrorCode.SCHEDULE_CREATE_FAILED);
 		}
 
 		log.info("일정 추가 완료 - 일정 내용: {}", schedule.getContent());
-		return createResponse;
 	}
 
 	// 일정 조회
