@@ -97,11 +97,9 @@
     <!-- 웹 추천 삭제 -->
     <update id="deleteWebRecommend">
         UPDATE web_recommend
-        SET
-            is_deleted = true,
-            updated_at = NOW()
+        SET is_deleted = true,
+            url_deleted_at = CURRENT_TIMESTAMP
         WHERE id = #{recommendId}
-          AND is_deleted = false
     </update>
 
     <!-- 웹 추천 전체 개수 조회 -->
@@ -126,7 +124,10 @@
     </select>
 
     <!-- URl 중복체크 -->
-    <select id="existByUrl" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM web_recommend WHERE url = #{url}
+    <select id="existByUrl">
+        SELECT COUNT(*) > 0
+        FROM web_recommend
+        WHERE url = #{url}
+          AND url_deleted_at IS NULL
     </select>
 </mapper>

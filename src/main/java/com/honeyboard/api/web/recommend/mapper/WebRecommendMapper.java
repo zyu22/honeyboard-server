@@ -36,6 +36,6 @@ public interface WebRecommendMapper {
     int countSearchWebRecommend(@Param("title") String title, @Param("generationId") int generationId);
 
     // Url 중복검사
-    int existByUrl(String url);
+    boolean existByUrl(String url);
 
 }
