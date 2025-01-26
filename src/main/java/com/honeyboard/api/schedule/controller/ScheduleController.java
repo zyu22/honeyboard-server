@@ -1,6 +1,5 @@
 package com.honeyboard.api.schedule.controller;
 
-import com.honeyboard.api.common.model.CreateResponse;
 import com.honeyboard.api.schedule.model.request.SceduleRequest;
 import com.honeyboard.api.schedule.model.response.ScheduleList;
 import com.honeyboard.api.schedule.service.ScheduleService;
@@ -28,10 +27,10 @@ public class ScheduleController {
         log.info("일정 등록 요청 - 내용: {}", schedule.getContent());
 
         int userId = user.getUserId();
-        CreateResponse createResponse = scheduleService.addSchedule(schedule, userId);
+        scheduleService.addSchedule(schedule, userId);
 
         log.info("일정 등록 완료 - 내용: {}", schedule.getContent());
-        return ResponseEntity.status(HttpStatus.CREATED).body(createResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     //일정 조회 year, month

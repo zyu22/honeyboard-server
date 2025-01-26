@@ -32,7 +32,7 @@
                title AS  content,
                created_at as startDate,
                created_at as endDate,
-               'Track' as scheduleType
+               'TRACK' as scheduleType
 		FROM track_project
 		WHERE YEAR(created_at) = #{year}
 		  AND MONTH(created_at) = #{month}
@@ -42,7 +42,7 @@
 	</select>
 
 	<!-- 일정 등록 -->
-	<insert id="insertSchedule" useGeneratedKeys="true" keyProperty="createResponse.id">
+	<insert id="insertSchedule" parameterType="com.honeyboard.api.schedule.model.request.SceduleRequest">
 		INSERT INTO schedule (
 			content,
 	        start_date,
@@ -53,8 +53,8 @@
 	        generation_id
     	)
     	VALUES (#{schedule.content},
-               #{schedule.startDate},
-               #{schedule.endDate},
+                #{schedule.startDate},
+                #{schedule.endDate},
                 #{schedule.scheduleType},
 				#{schedule.publicAccess},
                 #{userId},
