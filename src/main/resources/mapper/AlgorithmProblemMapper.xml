@@ -99,6 +99,15 @@
           AND (user_id = #{userId} OR #{role} = 'ADMIN')
     </update>
 
+    <!-- url 중복 조회 - 문제 수정 -->
+    <select id="existsByUpdatedUrl" resultType="int">
+        SELECT EXISTS (SELECT 1
+                       FROM algorithm_problem
+                       WHERE url = #{url}
+                         AND id != #{id}
+                         AND is_deleted = false)
+    </select>
+
 
     <!--  Algorithm Problem 삭제  -->
     <update id="deleteAlgorithmProblem">
