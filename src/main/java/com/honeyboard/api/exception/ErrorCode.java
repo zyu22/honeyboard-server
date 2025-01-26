@@ -77,6 +77,12 @@ public enum ErrorCode {
     BOOKMARK_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 북마크입니다."),
     BOOKMARK_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "북마크 삭제에 실패했습니다."),
 
+    // 일정 관련 에러
+    SCHEDULE_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일정 추가에 실패하였습니다."),
+    SCHEDULE_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "일정을 찾을 수 없습니다."),
+    SCHEDULE_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일정 수정에 실패하였습니다."),
+    SCHEDULE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일정 삭제에 실패하였습니다."),
+
     // 태그 관련 에러
     TAG_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "태그 업데이트에 실패하였습니다.");
 
