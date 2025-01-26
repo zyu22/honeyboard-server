@@ -145,7 +145,7 @@
         DELETE FROM track_excluded_member
         WHERE project_id = #{trackProjectId}
         AND user_id IN
-        <foreach collection="memberIds" item="memberId" open="(" separator="," close=")">
+        <foreach collection="excludedMemberId" item="memberId" open="(" separator="," close=")">
             #{memberId}
         </foreach>
     </delete>
