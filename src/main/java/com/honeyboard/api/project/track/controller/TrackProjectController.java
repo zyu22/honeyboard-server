@@ -8,6 +8,7 @@ import com.honeyboard.api.project.track.model.response.TrackProjectList;
 import com.honeyboard.api.project.track.service.TrackProjectService;
 import com.honeyboard.api.user.model.CurrentUser;
 import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.user.model.UserName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class TrackProjectController {
             @RequestParam(required = false, defaultValue = "0") int generationId) {
         log.info("관통 프로젝트 전체 조회 요청 - 기수: {}", generationId);
         List<TrackProjectList> projects = trackProjectService.getAllTrackProjects(generationId);
-        if(projects.isEmpty() || projects == null || projects.size() == 0) {
+        if (projects.isEmpty() || projects == null || projects.size() == 0) {
             log.info("관통 프로젝트 전체 조회 완료, 조회 없음 - 기수: {}", generationId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -43,7 +44,7 @@ public class TrackProjectController {
     public ResponseEntity<TrackProjectDetail> getTrackProject(@PathVariable int trackProjectId) {
         log.info("관통 프로젝트 상세 조회 요청 - ID: {}", trackProjectId);
         TrackProjectDetail project = trackProjectService.getTrackProjectById(trackProjectId);
-        if(project == null) {
+        if (project == null) {
             log.info("관통 프로젝트 상세 조회 완료, 게시글 없음 - ID: {}", trackProjectId);
             return ResponseEntity.noContent().build();
         }
@@ -91,5 +92,16 @@ public class TrackProjectController {
         trackProjectService.deleteTrackProject(trackProjectId);
         log.info("관통 프로젝트 삭제 완료 - ID: {}", trackProjectId);
         return ResponseEntity.ok().build();
+    }
+
+    // 관통프로젝트 제외 인원 조회
+    @GetMapping("/{trackProjectId}/exclude-members")
+    public ResponseEntity<?> getExcludeUsers(
+            @PathVariable("trackProjectId") int trackProjectId) {
+        log.info("관통 프로젝트 제외 인원 조회 요청 - 프로젝트 ID: {}", trackProjectId);
+        List<UserName> excludeMembers = trackProjectService.getExcludeMembers(trackProjectId);
+        log.info("관통 프로젝트 제외 인원 조회 완료 - 프로젝트 ID: {}", trackProjectId);
+        return excludeMembers.isEmpty() ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(excludeMembers);
     }
 }
