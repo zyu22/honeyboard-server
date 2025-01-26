@@ -146,7 +146,7 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
             throw new BusinessException(ErrorCode.PROJECT_NOT_FOUND);
         }
 
-        if (!finaleTeamMapper.checkBoardTeamMember(finaleProjectId, finaleProjectBoardId, currentUser.getUserId())) {
+        if (!(finaleTeamMapper.checkBoardTeamMember(finaleProjectId, finaleProjectBoardId, currentUser.getUserId()) || currentUser.getRole().equals("ADMIN"))) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED_BOARD_UPDATE);
         }
 
