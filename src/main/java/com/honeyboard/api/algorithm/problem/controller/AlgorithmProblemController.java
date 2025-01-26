@@ -64,19 +64,25 @@ public class AlgorithmProblemController {
     // AlgorithmProblem 문제 수정
     @PutMapping("/{problemId}")
     public ResponseEntity<?> updateAlgorithmProblem(@PathVariable int problemId,
-                                                    @RequestBody AlgorithmProblemRequest request) {
+                                                    @RequestBody AlgorithmProblemRequest request,
+                                                    @CurrentUser User user) {
         log.info("알고리즘 문제 수정 요청 - ID: {}", problemId);
 
-        as.updateProblem(problemId, request);
+        int userId = user.getUserId();
+        String role = user.getRole();
+        as.updateProblem(problemId, request, userId, role);
         return ResponseEntity.ok().build();
     }
 
     // AlgorithmProblem 문제 삭제
     @DeleteMapping("/{problemId}")
-    public ResponseEntity<?> deleteAlgorithmProblem(@PathVariable int problemId) {
+    public ResponseEntity<?> deleteAlgorithmProblem(@PathVariable int problemId,
+                                                    @CurrentUser User user) {
         log.info("알고리즘 문제 삭제 요청 - ID: {}", problemId);
 
-        as.softDeleteProblem(problemId);
+        int userId = user.getUserId();
+        String role = user.getRole();
+        as.softDeleteProblem(problemId, userId, role);
         return ResponseEntity.ok().build();
     }
 }

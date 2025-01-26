@@ -6,16 +6,16 @@
 <mapper namespace="com.honeyboard.api.algorithm.solution.mapper.AlgorithmSolutionMapper">
 
 	<resultMap id="algorithmSolutionDetailMap" type="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
-		<id property="id" column="id"/>
+		<result property="id" column="id"/>
 		<result property="title" column="title"/>
 		<result property="summary" column="summary"/>
 		<result property="content" column="content"/>
-		<result property="authorId" column="user_id"/>
+		<result property="authorId" column="authorId"/>
 		<result property="name" column="name"/>
 		<result property="runtime" column="runtime"/>
 		<result property="memory" column="memory"/>
 		<result property="languageId" column="language_id"/>
-		<result property="languageName" column="language_name"/>
+		<result property="languageName" column="languageName"/>
 		<result property="createdAt" column="created_at"/>
 		<association property="bookmarked" javaType="com.honeyboard.api.bookmark.model.BookmarkResponse">
 			<result property="bookmarked" column="bookmarked"/>
@@ -61,6 +61,34 @@
 		LIMIT #{pageSize} OFFSET #{offset}
 	</select>
 	
+<!--	&lt;!&ndash; 알고리즘 풀이 상세 조회	 &ndash;&gt;-->
+<!--	<select id="selectAlgorithmSolution" resultMap="algorithmSolutionDetailMap">-->
+<!--		SELECT-->
+<!--			s.id,-->
+<!--			s.title,-->
+<!--			s.summary,-->
+<!--			s.content,-->
+<!--			s.user_id AS authorId,-->
+<!--			u.name,-->
+<!--			s.runtime,-->
+<!--			s.memory,-->
+<!--			s.language_id,-->
+<!--			p.name AS languageName,-->
+<!--			s.created_at,-->
+<!--			CASE-->
+<!--            	WHEN b.id IS NOT NULL THEN true-->
+<!--            	ELSE false-->
+<!--        	END as bookmarked-->
+<!--        FROM algorithm_problem_solution s-->
+<!--		INNER JOIN user u ON s.user_id = u.id-->
+<!--		INNER JOIN programming_language p ON s.language_id = p.id-->
+<!--		LEFT JOIN bookmark b ON b.content_id = s.id-->
+<!--			AND b.content_type = 'ALGO_SOLUTION'-->
+<!--        	AND b.user_id = #{userId}-->
+<!--        WHERE s.id = #{solutionId}-->
+<!--        	AND s.is_deleted = false-->
+<!--	</select>-->
+
 	<!-- 알고리즘 풀이 상세 조회	 -->
 	<select id="selectAlgorithmSolution" resultType="com.honeyboard.api.algorithm.solution.model.response.AlgorithmSolutionDetail">
 		SELECT
@@ -76,16 +104,17 @@
 			p.name AS languageName,
 			s.created_at,
 			CASE
-            	WHEN b.id IS NOT NULL THEN true 
-            	ELSE false 
-        	END as bookmarked
-        FROM algorithm_problem_solution s
-		INNER JOIN user u ON s.user_id = u.id
-		INNER JOIN programming_language p ON s.language_id = p.id
-		LEFT JOIN bookmark b ON b.content_id = s.id
+				WHEN b.id IS NOT NULL THEN true
+				ELSE false
+				END as bookmarked
+		FROM algorithm_problem_solution s
+				 INNER JOIN user u ON s.user_id = u.id
+				 INNER JOIN programming_language p ON s.language_id = p.id
+				 LEFT JOIN bookmark b ON b.content_id = s.id
 			AND b.content_type = 'ALGO_SOLUTION'
-        WHERE s.id = #{id}
-        	AND s.is_deleted = false
+			AND b.user_id = #{userId}
+		WHERE s.id = #{solutionId}
+		  AND s.is_deleted = false
 	</select>
 	
 	<!-- 알고리즘 풀이 작성 -->
@@ -133,6 +162,7 @@
 			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{solutionId}
         	AND is_deleted = false
+			AND (user_id = #{userId} OR #{role} = 'ADMIN')
 	</update>
 	
 	<!-- 알고리즘 풀이 삭제 -->
@@ -143,6 +173,7 @@
         	updated_at = NOW()
     	WHERE id = #{solutionId}
         	AND is_deleted = false
+		  	AND (user_id = #{userId} OR #{role} = 'ADMIN')
 	</update>
 	
 	

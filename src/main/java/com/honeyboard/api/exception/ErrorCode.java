@@ -2,7 +2,6 @@ package com.honeyboard.api.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 
 @Getter
@@ -20,6 +19,7 @@ public enum ErrorCode {
     DUPLICATE_VIDEO(HttpStatus.CONFLICT, "이미 등록된 영상입니다."),
     DUPLICATE_TEAM_LEADER_ID(HttpStatus.CONFLICT, "팀장이 이미 다른 팀에 속해있습니다."),
     DUPLICATE_TEAM_MEMBER_ID(HttpStatus.CONFLICT, "팀원이 이미 다른 팀에 속해있습니다."),
+    DUPLICATE_PROBLEM_ID(HttpStatus.CONFLICT, "이미 등록된 문제입니다."),
 
     // 인증코드 관련 에러
     VERIFICATION_CODE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 인증 코드입니다."),
@@ -33,6 +33,8 @@ public enum ErrorCode {
     INVALID_PROJECT_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 프로젝트 ID입니다."),
     INVALID_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 타입입니다."),
     INVALID_CONTENT_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 컨텐츠 ID입니다."),
+    INVALID_RPOBLEM_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 문제 ID입니다."),
+    INVALID_SOLUTION_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 풀이 ID입니다."),
     GENERATION_DELETE_RESTRICTED(HttpStatus.CONFLICT, "해당 기수에 소속된 사용자가 있어 삭제할 수 없습니다."),
 
 
@@ -71,10 +73,18 @@ public enum ErrorCode {
     TEAM_STATUS_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 제출현황 변경에 실패하였습니다."),
 	
 	// 북마크 관련 에러
-
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),
     BOOKMARK_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 북마크입니다."),
-    BOOKMARK_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "북마크 삭제에 실패했습니다.");
+    BOOKMARK_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "북마크 삭제에 실패했습니다."),
+
+    // 일정 관련 에러
+    SCHEDULE_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일정 추가에 실패하였습니다."),
+    SCHEDULE_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "일정을 찾을 수 없습니다."),
+    SCHEDULE_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일정 수정에 실패하였습니다."),
+    SCHEDULE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "일정 삭제에 실패하였습니다."),
+
+    // 태그 관련 에러
+    TAG_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "태그 업데이트에 실패하였습니다.");
 
     private final HttpStatus status;
     private final String message;
