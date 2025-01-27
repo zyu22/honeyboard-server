@@ -6,6 +6,8 @@ import com.honeyboard.api.project.finale.model.request.FinaleProjectUpdate;
 import com.honeyboard.api.project.finale.model.response.FinaleProjectDetail;
 import com.honeyboard.api.project.finale.model.response.FinaleProjectResponse;
 import com.honeyboard.api.project.finale.service.FinaleProjectService;
+import com.honeyboard.api.user.model.CurrentUser;
+import com.honeyboard.api.user.model.User;
 import com.honeyboard.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,10 +51,12 @@ public class FinaleProjectController {
 
     // 피날레 팀 + 프로젝트 생성
     @PostMapping
-    public ResponseEntity<?> createFinaleProject(@RequestBody FinaleProjectCreate req) {
+    public ResponseEntity<?> createFinaleProject(
+            @RequestBody FinaleProjectCreate req,
+            @CurrentUser User user) {
         log.info("피날레 팀 + 프로젝트 생성 시작");
         CreateResponse res = new CreateResponse();
-        res.setId(finaleProjectService.createFinaleProject(req));
+        res.setId(finaleProjectService.createFinaleProject(req, user.getGenerationId(), user.getUserId()));
         log.info("피날레 팀 + 프로젝트 생성 성공");
         return ResponseEntity.ok().body(res);
     }

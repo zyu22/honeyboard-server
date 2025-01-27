@@ -9,7 +9,7 @@ public interface FinaleProjectService {
 
     FinaleProjectResponse getFinaleResponse(int generationId);
 
-    int createFinaleProject(FinaleProjectCreate request);
+    int createFinaleProject(FinaleProjectCreate request, int generationId, int userId);
 
     boolean updateFinaleProject(int finaleProjectId, FinaleProjectUpdate request);
 
