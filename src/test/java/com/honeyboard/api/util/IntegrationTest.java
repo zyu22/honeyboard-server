@@ -4,6 +4,7 @@ import com.honeyboard.api.config.TestConfig;
 import com.honeyboard.api.config.TestRedisConfig;
 import com.honeyboard.api.config.TestSecurityConfig;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -21,7 +22,7 @@ import java.lang.annotation.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Testcontainers
-@AutoConfigureMockMvc
+@AutoConfigureWebTestClient
 @Sql(scripts = "classpath:sql/test-clean.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "classpath:sql/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
