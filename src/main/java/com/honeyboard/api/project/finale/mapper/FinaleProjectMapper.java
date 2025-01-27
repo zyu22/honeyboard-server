@@ -14,7 +14,16 @@ interface FinaleProjectMapper {
     List<FinaleProjectList> selectFinaleProjectList(@Param("generationId") int generationId);
 
     // 프로젝트 생성
-    int insertFinaleProject(@Param("finaleProjectCreate")FinaleProjectCreate project);
+    int insertProject(@Param("finaleProjectCreate") FinaleProjectCreate project, @Param("userId") int userId);
+
+    // 팀 생성
+    int insertTeam(@Param("generationId") int generationId);
+
+    // 팀 리더 생성
+    int insertTeamLeader(@Param("teamId") int teamId, @Param("leaderId") int leaderId);
+
+    // 팀 멤버 생성
+    int insertTeamMember(@Param("teamId") int teamId, @Param("memberId") int memberId);
 
     // 프로젝트 수정
     int updateFinaleProject(@Param("finaleProjectId") int finaleProjectId,

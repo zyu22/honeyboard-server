@@ -14,6 +14,7 @@ class FinaleProjectCreate {
     String title;
     String description;
     String url;
+    private Integer teamId;
     TeamRequest teams;
 
 }

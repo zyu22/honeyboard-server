@@ -142,7 +142,8 @@ class FinaleProjectControllerTest3 {
     void createFinaleProject_Success() throws Exception {
         // given
         FinaleProjectCreate request = new FinaleProjectCreate();
-        given(finaleProjectService.createFinaleProject(any())).willReturn(1);
+        User user = new User();
+        given(finaleProjectService.createFinaleProject(any(), user.getGenerationId(), user.getUserId())).willReturn(1);
 
         // when & then
         mockMvc.perform(post("/api/v1/project/finale")
