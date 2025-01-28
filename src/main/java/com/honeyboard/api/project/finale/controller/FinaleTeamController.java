@@ -3,6 +3,7 @@ package com.honeyboard.api.project.finale.controller;
 import com.honeyboard.api.project.finale.model.request.FinaleProjectTeamUpdate;
 import com.honeyboard.api.project.finale.service.FinaleTeamService;
 import com.honeyboard.api.project.model.ProjectUserInfo;
+import com.honeyboard.api.project.model.TeamRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +21,11 @@ public class FinaleTeamController {
 	private final FinaleTeamService finaleTeamService;
 
     // 피날레 프로젝트 팀 수정
-    @PutMapping("/{finaleProjectId}/team/{finaleTeamId}")
+    @PutMapping("/team/{finaleTeamId}")
     public ResponseEntity<Void> updateFinaleProjectTeam(
-            @PathVariable int finaleProjectId,
-            @PathVariable int finaleTeamId,
-            @RequestBody FinaleProjectTeamUpdate request) {
-        log.info("피날레 프로젝트 팀 수정 요청 - finaleProjectId: {}, finaleTeamId: {}, request: {}",
-                finaleProjectId, finaleTeamId, request);
-        finaleTeamService.updateFinaleProjectTeam(finaleProjectId, finaleTeamId, request);
+            @RequestBody TeamRequest request) {
+        log.info("피날레 프로젝트 팀 수정 요청 - request: {}", request.toString());
+        finaleTeamService.updateFinaleProjectTeam(request);
         log.info("피날레 프로젝트 팀 수정 성공");
         return ResponseEntity.ok().build();
     }
