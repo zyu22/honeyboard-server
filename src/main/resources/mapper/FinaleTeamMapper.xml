@@ -132,14 +132,31 @@
     </select>
 
     <!-- 팀 프로젝트 수정 -->
-    <update id="updateFinaleProjectTeam">
-        UPDATE finale_project
-        SET
-            title = #{request.title},
-            description = #{request.description},
-            url = #{request.url}
-        WHERE id = #{finaleProjectId}
-          AND team_id = #{finaleTeamId}
-          AND is_deleted = 0
+    <update id="updateTeamLeader">
+        UPDATE finale_team_member
+        SET user_id = #{leaderId}
+        WHERE finale_team_id = #{id}
+          AND role = 'LEADER'
     </update>
+
+    <delete id="deleteTeamMembers">
+        DELETE FROM finale_team_member
+        WHERE finale_team_id = #{id}
+          AND role = 'MEMBER'
+    </delete>
+
+    <insert id="insertTeamMember">
+        INSERT INTO finale_team_member (
+        finale_team_id,
+        user_id,
+        role
+        ) VALUES
+        <foreach collection="memberIds" item="memberId" separator=",">
+            (
+            #{id},
+            #{memberId},
+            'MEMBER'
+            )
+        </foreach>
+    </insert>
 </mapper>
