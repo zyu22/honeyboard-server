@@ -47,10 +47,12 @@ public class AlgorithmSolutionController {
 	@GetMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> getAlgorithmSolution(
 			@PathVariable int problemId,
-			@PathVariable int solutionId) {
-		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}", solutionId);
+			@PathVariable int solutionId,
+			@CurrentUser User user) {
+		log.info("알고리즘 풀이 상세 조회 요청 - 솔루션 ID: {}, 검색자: {}", solutionId);
 
-		AlgorithmSolutionDetail solution = algorithmSolutionService.getAlgorithmSolution(solutionId);
+		int userId = user.getUserId();
+		AlgorithmSolutionDetail solution = algorithmSolutionService.getAlgorithmSolution(solutionId, userId);
 
 		log.info("알고리즘 풀이 상세 조회 완료");
 		return ResponseEntity.ok(solution);
@@ -78,10 +80,13 @@ public class AlgorithmSolutionController {
 	public ResponseEntity<?> updateAlgorithmSolution(
 			@PathVariable int problemId,
 			@PathVariable int solutionId,
-			@RequestBody AlgorithmSolutionRequest algorithmSolution) {
+			@RequestBody AlgorithmSolutionRequest algorithmSolution,
+			@CurrentUser User user) {
 		log.info("알고리즘 풀이 수정 요청 - 솔루션 ID: {}", solutionId);
 
-		algorithmSolutionService.updateAlgorithmSolution(solutionId, algorithmSolution);
+		int userId = user.getUserId();
+		String role = user.getRole();
+		algorithmSolutionService.updateAlgorithmSolution(solutionId, algorithmSolution, userId, role);
 
 		log.info("알고리즘 풀이 수정 완료");
 		return ResponseEntity.ok().build();
@@ -90,10 +95,13 @@ public class AlgorithmSolutionController {
 	//알고리즘 풀이 삭제 DELETE /api/v1/algorithm/problem/{problemId}/solution/{solutionId}
 	@DeleteMapping("/{problemId}/solution/{solutionId}")
 	public ResponseEntity<?> deleteAlgorithmSolution(
-			@PathVariable int solutionId) {
+			@PathVariable int solutionId,
+			@CurrentUser User user) {
 		log.info("알고리즘 풀이 삭제 요청 - 솔루션 ID: {}", solutionId);
 
-		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId);
+		int userId = user.getUserId();
+		String role = user.getRole();
+		algorithmSolutionService.softDeleteAlgorithmSolution(solutionId, userId, role);
 
 		log.info("알고리즘 풀이 삭제 완료");
 		return ResponseEntity.ok().build();

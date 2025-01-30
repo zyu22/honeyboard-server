@@ -17,6 +17,7 @@ public class AlgorithmProblemDetail {
     private int id;
     private String title;
     private String url;
+    private int authorId;
     private String createdAt;
     private List<TagResponse> tags;
 }

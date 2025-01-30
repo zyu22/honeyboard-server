@@ -67,6 +67,7 @@
         SELECT id,
                title,
                url,
+               user_id AS authorId,
                created_at
         FROM algorithm_problem
         WHERE id = #{problemId}
@@ -78,10 +79,11 @@
         VALUES (#{request.title}, #{request.url}, #{userId}, CURRENT_TIMESTAMP)
     </insert>
 
+    <!-- url 중복 조회 -->
     <select id="existsByUrl" resultType="int">
         SELECT EXISTS (SELECT 1
                        FROM algorithm_problem
-                       WHERE url = #{request.url}
+                       WHERE url = #{url}
                          AND is_deleted = false)
     </select>
 
@@ -94,16 +96,28 @@
             updated_at = CURRENT_TIMESTAMP
         WHERE id = #{id}
           AND is_deleted = false
+          AND (user_id = #{userId} OR #{role} = 'ADMIN')
     </update>
+
+    <!-- url 중복 조회 - 문제 수정 -->
+    <select id="existsByUpdatedUrl" resultType="int">
+        SELECT EXISTS (SELECT 1
+                       FROM algorithm_problem
+                       WHERE url = #{url}
+                         AND id != #{id}
+                         AND is_deleted = false)
+    </select>
 
 
     <!--  Algorithm Problem 삭제  -->
     <update id="deleteAlgorithmProblem">
         UPDATE algorithm_problem
         SET is_deleted = true,
-            updated_at = CURRENT_TIMESTAMP
+            updated_at = CURRENT_TIMESTAMP,
+            url_deleted_at = CURRENT_TIMESTAMP
         WHERE id = #{problemId}
           AND is_deleted = false
+          AND (user_id = #{userId} OR #{role} = 'ADMIN')
     </update>
 
 

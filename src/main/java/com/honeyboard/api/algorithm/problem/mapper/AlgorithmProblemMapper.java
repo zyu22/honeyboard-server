@@ -28,13 +28,19 @@ public interface AlgorithmProblemMapper {
     int insertAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,
                                @Param("userId") int userId,
                                @Param("createResponse") CreateResponse response);
-    int existsByUrl(@Param("request") AlgorithmProblemRequest request);
+    int existsByUrl(@Param("url") String url);
 
     // AlgorithmProblem 수정
     int updateAlgorithmProblem(@Param("request") AlgorithmProblemRequest request,
-                               @Param("id") int problemId);
+                               @Param("id") int problemId,
+                               @Param("userId") int userId,
+                               @Param("role") String role);
+    int existsByUpdatedUrl(@Param("url") String url,
+                           @Param("id") int problemId);
 
     // AlgorithmProblem 삭제
-    int deleteAlgorithmProblem(@Param("problemId") int problemId);
+    int deleteAlgorithmProblem(@Param("problemId") int problemId,
+                               @Param("userId") int userId,
+                               @Param("role") String role);
 
 }

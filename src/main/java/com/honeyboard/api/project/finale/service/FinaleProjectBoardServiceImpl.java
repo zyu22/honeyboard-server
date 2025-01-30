@@ -70,12 +70,12 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
         log.info("게시글 수정 시작 - finaleProjectId: {}, boardId: {}, userId: {}",
                 finaleProjectId, finaleProjectBoardId, currentUser.getUserId());
 
-        validateBoardUpdate(finaleProjectId, finaleProjectBoardId, request, currentUser);
+        if(currentUser.getRole().equals("USER")) validateBoardUpdate(finaleProjectId, finaleProjectBoardId, request, currentUser);
 
         int result = finaleProjectBoardMapper.updateFinaleProjectBoard(finaleProjectId, finaleProjectBoardId, request);
 
         if (result <= 0) {
-            throw new IllegalArgumentException("요청 정보가 잘못되었습니다.");
+            throw new BusinessException(ErrorCode.PROJECT_TEAM_UPDATE_FAILED, "요청 정보가 잘못되었습니다.");
         }
 
         log.info("게시글 수정 완료 - finaleProjectId: {}, boardId: {}", finaleProjectId, finaleProjectBoardId);
@@ -87,20 +87,22 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
     public boolean deleteFinaleProjectBoard(int finaleProjectId, int finaleProjectBoardId, User currentUser) {
         log.info("게시글 삭제 시작 - finaleProjectId: {}, boardId: {}", finaleProjectId, finaleProjectBoardId);
 
-        Integer finaleTeamId = finaleTeamMapper.selectFinaleTeamId(finaleProjectId);
-        if (finaleTeamId == null) {
-            throw new IllegalArgumentException("해당 프로젝트의 팀 정보를 찾을 수 없습니다.");
-        }
+        if(currentUser.getRole().equals("USER")) {
+            Integer finaleTeamId = finaleTeamMapper.selectFinaleTeamId(finaleProjectId);
+            if (finaleTeamId == null) {
+                throw new BusinessException(ErrorCode.INVALID_TEAM_ID, "해당 프로젝트의 팀 정보를 찾을 수 없습니다.");
+            }
 
-        boolean isTeamMember = finaleTeamMapper.checkTeamMember(finaleTeamId, currentUser.getUserId());
-        if (!isTeamMember) {
-            throw new IllegalArgumentException("해당 팀의 멤버만 게시글을 삭제할 수 있습니다.");
+            boolean isTeamMember = finaleTeamMapper.checkTeamMember(finaleTeamId, currentUser.getUserId()) || currentUser.getRole().equals("ADMIN");
+            if (!isTeamMember) {
+                throw new BusinessException(ErrorCode.PROJECT_DELETE_FAILED, "해당 팀의 멤버만 게시글을 삭제할 수 있습니다.");
+            }
         }
 
         int result = finaleProjectBoardMapper.deleteFinaleProjectBoard(finaleProjectId, finaleProjectBoardId);
 
         if(result <= 0) {
-            throw new IllegalArgumentException("요청 정보가 잘못되었습니다.");
+            throw new BusinessException(ErrorCode.PROJECT_DELETE_FAILED, "요청 정보가 잘못되었습니다.");
         }
 
         log.info("게시글 삭제 완료 - finaleProjectId: {}, boardId: {}", finaleProjectId, finaleProjectBoardId);
@@ -146,7 +148,7 @@ public class FinaleProjectBoardServiceImpl implements FinaleProjectBoardService 
             throw new BusinessException(ErrorCode.PROJECT_NOT_FOUND);
         }
 
-        if (!finaleTeamMapper.checkBoardTeamMember(finaleProjectId, finaleProjectBoardId, currentUser.getUserId())) {
+        if (!(finaleTeamMapper.checkBoardTeamMember(finaleProjectId, finaleProjectBoardId, currentUser.getUserId()) || currentUser.getRole().equals("ADMIN"))) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED_BOARD_UPDATE);
         }
 

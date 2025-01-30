@@ -45,17 +45,25 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
     }
 
     @Override
-    @Transactional
-    public int createFinaleProject(FinaleProjectCreate request) {
-        log.info("프로젝트 생성 시작");
-        validateProjectCreate(request);
-        int result = finaleProjectMapper.insertFinaleProject(request);
-        if (result <= 0) {
-            log.error("프로젝트 생성 실패");
-            throw new RuntimeException("프로젝트 생성에 실패했습니다.");
+    public int createFinaleProject(FinaleProjectCreate request, int generationId, int userId) {
+        // 팀 생성
+        finaleProjectMapper.insertTeam(generationId);
+        int teamId = finaleProjectMapper.selectLastInsertedId();
+        request.setTeamId(teamId);
+
+        // 프로젝트 생성
+        finaleProjectMapper.insertProject(request, userId);
+        int projectId = finaleProjectMapper.selectLastInsertedId();
+
+        // 팀 리더 생성
+        finaleProjectMapper.insertTeamLeader(teamId, request.getTeams().getLeaderId());
+
+        // 팀 멤버들 생성
+        for (Integer memberId : request.getTeams().getMemberIds()) {
+            finaleProjectMapper.insertTeamMember(teamId, memberId);
         }
-        log.info("프로젝트 생성 완료");
-        return finaleProjectMapper.selectLastInsertedId();
+
+        return projectId;
     }
 
     @Override

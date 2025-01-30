@@ -100,10 +100,11 @@
           AND is_deleted = false
     </update>
 
+
     <!-- 게시글 생성 후 팀 제출 변경 -->
     <update id="updateTeamCompleted">
         UPDATE track_team
-        SET is_completed = TRUE
+        SET is_completed = NOT is_completed
         WHERE id = #{trackTeamId}
     </update>
 </mapper>

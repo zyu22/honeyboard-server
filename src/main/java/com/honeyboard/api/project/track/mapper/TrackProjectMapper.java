@@ -7,7 +7,7 @@ import com.honeyboard.api.project.track.model.response.TrackProjectBoardList;
 import com.honeyboard.api.project.track.model.response.TrackProjectDetail;
 import com.honeyboard.api.project.track.model.response.TrackProjectList;
 import com.honeyboard.api.project.track.model.response.TrackTeamList;
-import com.honeyboard.api.user.model.User;
+import com.honeyboard.api.user.model.UserName;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,7 +36,7 @@ public interface TrackProjectMapper {
 
     // 관통 프로젝트 생성
     int insertTrackProject(@Param("trackProject") TrackProjectRequest trackProject, @Param("userId") int userId,
-                           @Param("createResponse")CreateResponse createResponse);
+                           @Param("createResponse") CreateResponse createResponse);
 
     // 제외 멤버 등록
     int insertExcludedMembers(@Param("trackProjectId") int trackProjectId,
@@ -48,6 +48,8 @@ public interface TrackProjectMapper {
 
     // 제외 인원 조회
     List<Integer> selectExcludedMembers(@Param("trackProjectId") int trackProjectId);
+
+    List<UserName> selectExcludedMembersName(@Param("trackProjectId") int trackProjectId);
 
     // 프로젝트 수정
     int updateTrackProject(@Param("trackProjectId") int trackProjectId,

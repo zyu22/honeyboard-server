@@ -92,7 +92,6 @@
            thumbnail  = #{webGuideRequest.thumbnail},
            updated_at = NOW()
        WHERE id = #{guideId}
-       	 AND user_id = #{userId}
          AND is_deleted = false
    </update>
 

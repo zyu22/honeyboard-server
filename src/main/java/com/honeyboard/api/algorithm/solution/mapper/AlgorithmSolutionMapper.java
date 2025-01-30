@@ -21,7 +21,8 @@ public interface AlgorithmSolutionMapper {
                                                        @Param("pageSize") int pageSize);
 
 	// AlgorithmSolution 상세조회
-	AlgorithmSolutionDetail selectAlgorithmSolution(int solutionId);
+	AlgorithmSolutionDetail selectAlgorithmSolution(@Param("solutionId") int solutionId,
+													@Param("userId") int userId);
 	// AlgorithmSolution 작성
 	int insertAlgorithmSolution(@Param("problemId") int problemId,
 								@Param("algorithmSolution") AlgorithmSolutionRequest algorithmSolution,
@@ -29,8 +30,12 @@ public interface AlgorithmSolutionMapper {
 								@Param("generationId") int generationId,
 								@Param("createResponse") CreateResponse response);
 	int updateAlgorithmSolution(@Param("solutionId") int solutionId,
-								@Param("algorithmSolution") AlgorithmSolutionRequest algorithmSolution);
-	int deleteAlgorithmSolution(int solutionId);
+								@Param("algorithmSolution") AlgorithmSolutionRequest algorithmSolution,
+								@Param("userId") int userId,
+								@Param("role") String role);
+	int deleteAlgorithmSolution(@Param("solutionId") int solutionId,
+								@Param("userId") int userId,
+								@Param("role") String role);
 
 	//페이지네이션
 	int countAlgorithmSolutions(@Param("problemId") int problemId,

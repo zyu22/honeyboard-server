@@ -77,20 +77,55 @@
 		SELECT LAST_INSERT_ID()
 	</select>
 
-	<!-- 프로젝트 생성 -->
-	<insert id="insertFinaleProject" parameterType="FinaleProjectCreate">
+	<insert id="insertProject">
 		INSERT INTO finale_project (
-			title,
+			team_id,
+		    title,
 			description,
 			url,
+			user_id,
 			created_at,
 			is_deleted
 		) VALUES (
+		          	 #{finaleProjectCreate.teamId},
 					 #{finaleProjectCreate.title},
 					 #{finaleProjectCreate.description},
 					 #{finaleProjectCreate.url},
+		          	 #{userId},
 					 NOW(),
 					 0
+				 )
+	</insert>
+
+	<insert id="insertTeam">
+		INSERT INTO finale_team (
+			generation_id
+		) VALUES (
+					 #{generationId}
+				 )
+	</insert>
+
+	<insert id="insertTeamLeader">
+		INSERT INTO finale_team_member (
+			finale_team_id,
+			user_id,
+			role
+		) VALUES (
+					 #{teamId},
+					 #{leaderId},
+					 'LEADER'
+				 )
+	</insert>
+
+	<insert id="insertTeamMember">
+		INSERT INTO finale_team_member (
+			finale_team_id,
+			user_id,
+			role
+		) VALUES (
+					 #{teamId},
+					 #{memberId},
+					 'MEMBER'
 				 )
 	</insert>
 

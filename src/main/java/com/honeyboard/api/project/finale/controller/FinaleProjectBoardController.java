@@ -60,6 +60,7 @@ public class FinaleProjectBoardController {
         return ResponseEntity.ok().build();
     }
 
+
     @DeleteMapping("/{finaleProjectId}/board/{finaleProjectBoardId}")
     public ResponseEntity<Void> deleteFinaleProjectBoard(
             @PathVariable int finaleProjectId,

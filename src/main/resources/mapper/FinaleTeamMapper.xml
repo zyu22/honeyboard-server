@@ -38,6 +38,25 @@
             WHERE fp.id = #{finaleProjectId}
               AND fp.is_deleted = 0
         )
+          AND u.role = 'USER'
+    </select>
+
+    <!-- finaleProjectId 없이 활성화된 기수에서 인원 조회-->
+    <select id="selectNoTeamFinaleTeamUsers" resultType="ProjectUserInfo">
+        SELECT DISTINCT
+            u.id,
+            u.name
+        FROM user u
+        WHERE u.generation_id = (
+            SELECT id
+            FROM generation
+            WHERE is_active = true
+        )
+          AND u.id NOT IN (
+            SELECT ftm.user_id
+            FROM finale_team_member ftm
+        )
+          AND u.role = 'USER'
     </select>
 
     <!-- 팀 리스트 조회 -->
@@ -113,14 +132,31 @@
     </select>
 
     <!-- 팀 프로젝트 수정 -->
-    <update id="updateFinaleProjectTeam">
-        UPDATE finale_project
-        SET
-            title = #{request.title},
-            description = #{request.description},
-            url = #{request.url}
-        WHERE id = #{finaleProjectId}
-          AND team_id = #{finaleTeamId}
-          AND is_deleted = 0
+    <update id="updateTeamLeader">
+        UPDATE finale_team_member
+        SET user_id = #{leaderId}
+        WHERE finale_team_id = #{id}
+          AND role = 'LEADER'
     </update>
+
+    <delete id="deleteTeamMembers">
+        DELETE FROM finale_team_member
+        WHERE finale_team_id = #{id}
+          AND role = 'MEMBER'
+    </delete>
+
+    <insert id="insertTeamMember">
+        INSERT INTO finale_team_member (
+        finale_team_id,
+        user_id,
+        role
+        ) VALUES
+        <foreach collection="memberIds" item="memberId" separator=",">
+            (
+            #{id},
+            #{memberId},
+            'MEMBER'
+            )
+        </foreach>
+    </insert>
 </mapper>

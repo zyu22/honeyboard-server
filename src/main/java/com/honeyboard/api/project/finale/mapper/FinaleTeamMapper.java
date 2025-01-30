@@ -6,12 +6,16 @@ import com.honeyboard.api.project.finale.model.request.FinaleProjectTeamUpdate;
 import com.honeyboard.api.project.finale.model.response.FinaleTeamList;
 import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.model.TeamMemberInfo;
+import com.honeyboard.api.project.model.TeamRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface FinaleTeamMapper {
 
     // 팀이 없는 유저 조회
     List<ProjectUserInfo> selectNoFinaleTeamUsers(int finaleProjectId);
+
+    // 팀 없는 사람
+    List<ProjectUserInfo> selectNoTeamFinaleTeamUsers();
 
     // 팀 리스트 조회
     List<FinaleTeamList> selectFinaleTeamList(int finaleProjectId);
@@ -21,9 +25,9 @@ public interface FinaleTeamMapper {
 
     int selectFinaleTeamId(int finaleProjectId);
 
-    int updateFinaleProjectTeam(@Param("finaleProjectId") int finaleProjectId,
-                                @Param("finaleTeamId") int finaleTeamId,
-                                @Param("request") FinaleProjectTeamUpdate request);
+    int updateTeamLeader(TeamRequest request);
+    int deleteTeamMembers(TeamRequest request);
+    int insertTeamMember(TeamRequest request);
 
     boolean checkTeamMember(@Param("teamId") int teamId,
                             @Param("userId") int userId);

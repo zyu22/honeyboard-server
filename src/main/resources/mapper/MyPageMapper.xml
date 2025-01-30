@@ -41,6 +41,8 @@
                 JOIN track_project_board tpb ON tt.id = tpb.track_team_id
         WHERE
             ttm.user_id = #{userId}
+            AND tpb.is_deleted = false
+            AND tp.is_deleted = false
         ORDER BY
             tp.created_at DESC;
     </select>
@@ -64,14 +66,19 @@
             parameterType="int"
             resultType="MyFinaleProjectList">
         SELECT
-            fpb.id        AS finaleProjectBoardId,
-            fpb.title     AS title,
-            fpb.created_at AS createdAt
+            fpb.id AS boardId,
+            fpb.finale_project_id AS finaleProjectId,
+            fpb.thumbnail,
+            fpb.title,
+            fpb.created_at
         FROM finale_team_member ftm
                  JOIN finale_project_board fpb
                       ON ftm.finale_team_id = fpb.finale_team_id
+                 JOIN finale_project fp
+                      ON fpb.finale_project_id = fp.id
         WHERE ftm.user_id = #{userId}
           AND fpb.is_deleted = FALSE
+          AND fp.is_deleted = FALSE
         ORDER BY fpb.created_at DESC
     </select>
 
@@ -80,15 +87,17 @@
             parameterType="int"
             resultType="MyAlgorithmSolutionList">
         SELECT
-            s.title       AS solutionTitle,
-            s.id  AS solutionId,
-            s.runtime     AS runtime,
-            s.memory      AS memory,
-            s.language_id AS languageId,
-            p.title       AS problemTitle
-
+            s.id,
+            s.title,
+            s.runtime,
+            s.memory,
+            s.language_id,
+            l.name AS languageName,
+            p.title AS problemTitle,
+            p.id AS problemId
         FROM algorithm_problem_solution s
                  JOIN algorithm_problem p ON s.problem_id = p.id
+                 JOIN programming_language l ON l.id = s.language_id
         WHERE s.user_id = #{userId}
           AND s.is_deleted = FALSE
           AND p.is_deleted = FALSE

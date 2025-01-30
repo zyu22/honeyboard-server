@@ -103,9 +103,7 @@ VALUES (2, 1, true),
 /* Track Team Member 데이터 */
 INSERT INTO track_team_member (track_team_id, user_id, role)
 VALUES (1, 1, 'leader'),
-       (1, 2, 'member'),
-       (2, 2, 'leader'),
-       (2, 3, 'member');
+       (1, 2, 'member');
 
 /* Track Project Board 데이터 */
 INSERT INTO track_project_board (
