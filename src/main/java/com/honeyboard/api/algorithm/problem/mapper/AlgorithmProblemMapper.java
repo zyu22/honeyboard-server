@@ -35,6 +35,8 @@ public interface AlgorithmProblemMapper {
                                @Param("id") int problemId,
                                @Param("userId") int userId,
                                @Param("role") String role);
+    int existsByUpdatedUrl(@Param("url") String url,
+                           @Param("id") int problemId);
 
     // AlgorithmProblem 삭제
     int deleteAlgorithmProblem(@Param("problemId") int problemId,
