@@ -151,7 +151,7 @@ class TrackProjectIntegrationTest extends BaseIntegrationTest {
                             assertThat(response.getCreatedAt()).isNotNull();
                             assertThat(response.getNoTeamUsers()).isNotNull();
                             assertThat(response.getTeams()).isNotNull();
-                            assertThat(response.getTrackProjectBoardList()).isNotNull();
+                            assertThat(response.getBoards().isEmpty());
                         });
             }
         }
