@@ -104,6 +104,14 @@ public class AuthController {
                 : ResponseEntity.ok().build();
     }
 
+    @PostMapping("/email/check")
+    public ResponseEntity<?> checkEmail(@RequestBody EmailVerification req) {
+        String email = req.getEmail();
+        log.debug("이메일 존재여부 확인 시작 - 이메일: {}", email);
+        boolean exists = userService.existsByEmail(email);
+        return exists ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/email/send")
     public ResponseEntity<?> sendVerificationEmail(@RequestBody EmailVerification req) {
         String email = req.getEmail();
