@@ -142,7 +142,7 @@
 
 	<!-- 프로젝트 삭제 -->
 	<update id="updateFinaleProjectDeleteStatus" parameterType="int">
-		Update finale_project
+		UPDATE finale_project
 		SET
 			is_deleted = 1
 		WHERE id = #{finaleProjectId}
