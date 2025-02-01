@@ -73,10 +73,11 @@ public class FinaleProjectController {
     }
 
     // 피날레 프로젝트 삭제
-    @DeleteMapping("/{finaleProjectId}")
-    public ResponseEntity<Void> deleteFinaleProject(@PathVariable int finaleProjectId) {
+    @DeleteMapping("/{finaleProjectId}/team/{finaleTeamId}")
+    public ResponseEntity<Void> deleteFinaleProject(@PathVariable int finaleProjectId,
+                                                    @PathVariable int finaleTeamId) {
         log.info("피날레 프로젝트 삭제 요청 - finaleProjectId: {}", finaleProjectId);
-        finaleProjectService.deleteFinaleProject(finaleProjectId);
+        finaleProjectService.deleteFinaleProject(finaleProjectId, finaleProjectId);
         log.info("피날레 프로젝트 삭제 성공");
         return ResponseEntity.ok().build();
     }

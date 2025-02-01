@@ -79,18 +79,27 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
 
     @Override
     @Transactional
-    public boolean deleteFinaleProject(int finaleProjectId) {
-        log.info("프로젝트 삭제 시작 - finaleProjectId: {}", finaleProjectId);
+    public boolean deleteFinaleProject(int finaleProjectId, int finaleTeamId) {
+        log.info("프로젝트 및 팀 삭제 시작 - finaleProjectId: {}, finaleTeamId: {}", finaleProjectId, finaleTeamId);
         if (!finaleProjectMapper.checkFinaleProject(finaleProjectId)) {
             throw new BusinessException(ErrorCode.PROJECT_NOT_FOUND,
                     String.format("프로젝트 ID %d를 찾을 수 없습니다.", finaleProjectId));
         }
-        int result = finaleProjectMapper.updateFinaleProjectDeleteStatus(finaleProjectId);
+
+        int result = finaleProjectMapper.deleteFinaleProject(finaleProjectId);
         if (result <= 0) {
             log.error("프로젝트 삭제 실패 - finaleProjectId: {}", finaleProjectId);
             throw new BusinessException(ErrorCode.PROJECT_DELETE_FAILED);
         }
-        log.info("프로젝트 삭제 완료 - finaleProjectId: {}", finaleProjectId);
+
+        result = finaleTeamMapper.deleteTeam(finaleProjectId);
+        if (result <= 0) {
+            log.error("팀 삭제 실패 - finaleTeamId: {}", finaleTeamId);
+            throw new BusinessException(ErrorCode.TEAM_DELETE_FAILED);
+        }
+
+
+        log.info("프로젝트 및 팀 삭제 완료 - finaleProjectId: {}", finaleProjectId);
         return result > 0;
     }
 

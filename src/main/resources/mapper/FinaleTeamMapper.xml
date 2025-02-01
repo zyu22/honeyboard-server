@@ -162,4 +162,9 @@
         </foreach>
     </insert>
 
+    <delete id="deleteTeam">
+        DELETE FROM finale_team
+        WHERE id = #{finaleTeamId}
+    </delete>
+
 </mapper>
