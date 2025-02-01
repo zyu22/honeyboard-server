@@ -94,7 +94,7 @@
                  LEFT JOIN user bu ON btm.user_id = bu.id
         WHERE pb.is_deleted = FALSE
           AND pb.track_project_id = #{trackProjectId}
-        ORDER BY pb.created_at DESC
+        ORDER BY pb.created_at DESC, btm.role
     </select>
 
     <!-- 관통 프로젝트 가능한 인원 조회 -->

@@ -95,6 +95,12 @@ public class WebRecommendServiceImpl implements WebRecommendService {
     public void updateWebRecommend(int recommendId, WebRecommendRequest webRecommend, int userId) {
         log.info("웹 추천 수정 시작 - ID: {}", recommendId);
 
+        // URL 중복 확인
+        if(webRecommendMapper.existByUrl(webRecommend.getUrl())) {
+            log.info("이미 존재하는 URL - {}", webRecommend.getUrl());
+            throw new BusinessException(ErrorCode.DUPLICATE_URL);
+        }
+        
         int result = webRecommendMapper.updateWebRecommend(recommendId, webRecommend, userId);
 
         if (result <= 0) {
