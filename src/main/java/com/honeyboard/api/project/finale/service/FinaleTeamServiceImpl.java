@@ -40,7 +40,7 @@ public class FinaleTeamServiceImpl implements FinaleTeamService {
     @Override
     public List<FinaleTeamList> getFinaleTeamList(int finaleProjectId) {
         log.info("팀 리스트 조회 시작 - finaleProjectId: {}", finaleProjectId);
-        return finaleTeamMapper.selectFinaleTeamList(finaleProjectId);
+        return finaleTeamMapper.selectFinaleTeamList();
     }
 
     @Override

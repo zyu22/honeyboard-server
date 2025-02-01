@@ -42,7 +42,7 @@
     </select>
 
     <!-- finaleProjectId 없이 활성화된 기수에서 인원 조회-->
-    <select id="selectNoTeamFinaleTeamUsers" resultType="ProjectUserInfo">
+    <select id="selectNoTeamFinaleTeamUsers" resultMap="projectUserInfoMap">
         SELECT DISTINCT
             u.id,
             u.name
@@ -60,7 +60,7 @@
     </select>
 
     <!-- 팀 리스트 조회 -->
-    <select id="selectFinaleTeamList" parameterType="int" resultMap="finaleTeamListMap">
+    <select id="selectFinaleTeamList" resultMap="finaleTeamListMap">
         SELECT
             ft.id as team_id,
             CASE
