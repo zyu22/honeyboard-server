@@ -61,28 +61,30 @@
 
     <!-- 팀 리스트 조회 -->
     <select id="selectFinaleTeamList" resultMap="finaleTeamListMap">
-        SELECT
+        SELECT DISTINCT
             ft.id as team_id,
             CASE
                 WHEN ft.submitted_at IS NOT NULL THEN true
                 ELSE false
                 END as submitted,
-            fp.id as projectBoardId,
-            u.id as member_id,
-            u.name as member_name,
-            ftm.role as member_role
+            (SELECT fp.id FROM finale_project fp
+             WHERE fp.team_id = ft.id AND fp.is_deleted = 0
+             ORDER BY fp.id DESC LIMIT 1) as projectBoardId,
+        u.id as member_id,
+        u.name as member_name,
+        ftm.role as member_role
         FROM finale_team ft
-                 JOIN finale_project fp ON ft.id = fp.team_id
-                 LEFT JOIN finale_team_member ftm ON ft.id = ftm.finale_team_id
-                 LEFT JOIN user u ON ftm.user_id = u.id
-        WHERE fp.is_deleted = 0
+            LEFT JOIN finale_project fp ON ft.id = fp.team_id
+            LEFT JOIN finale_team_member ftm ON ft.id = ftm.finale_team_id
+            LEFT JOIN user u ON ftm.user_id = u.id
         ORDER BY
             ft.id,
             CASE ftm.role
-                WHEN 'LEADER' THEN 1
-                WHEN 'MEMBER' THEN 2
-                END
+            WHEN 'LEADER' THEN 1
+            WHEN 'MEMBER' THEN 2
+        END
     </select>
+
 
     <!-- 프로젝트 상세 팀 인원 조회 -->
     <select id="selectFinaleProjectDetailMembers" parameterType="int" resultType="TeamMemberInfo">
@@ -159,4 +161,5 @@
             )
         </foreach>
     </insert>
+
 </mapper>
