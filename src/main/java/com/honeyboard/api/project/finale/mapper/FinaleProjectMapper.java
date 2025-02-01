@@ -33,7 +33,7 @@ interface FinaleProjectMapper {
     boolean checkFinaleProject(@Param("finaleProjectId") int finaleProjectId);
 
     // 프로젝트 삭제
-    int updateFinaleProjectDeleteStatus(int finaleProjectId);
+    int deleteFinaleProject(int finaleProjectId);
 
     // 프로젝트 상세 조회
     FinaleProjectDetail selectFinaleProjectDetail(int finaleProjectId);

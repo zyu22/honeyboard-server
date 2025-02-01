@@ -36,4 +36,5 @@ public interface FinaleTeamMapper {
                                  @Param("finaleProjectBoardId") int finaleProjectBoardId,
                                  @Param("userId") int userId);
 
+    int deleteTeam(int finaleTeamId);
 }

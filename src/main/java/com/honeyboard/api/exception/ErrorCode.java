@@ -68,6 +68,7 @@ public enum ErrorCode {
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다."),
     TEAM_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 생성에 실패하였습니다."),
     TEAM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 수정에 실패하였습니다."),
+    TEAM_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 삭제에 실패하였습니다."),
     TEAM_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 인원 변경에 실패하였습니다."),
     INVALID_TEAM_ID(HttpStatus.BAD_REQUEST, "잘못된 팀 아이디를 입력했습니다."),
     TEAM_STATUS_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "팀 제출현황 변경에 실패하였습니다."),
