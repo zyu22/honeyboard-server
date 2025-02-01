@@ -31,16 +31,14 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         log.info("FinaleResponse 가져오기 시작 generationId: {}", generationId);
         FinaleProjectResponse fpr = new FinaleProjectResponse();
         List<FinaleProjectList> projects = getFinaleProjectList(generationId);
-        if(projects == null || projects.isEmpty()) {
-            log.info("프로젝트가 없습니다.");
-            return null;
-        }
         log.info("FinaleResponse 가져오기 성공");
-        int finaleProjectId = projects.get(0).getId();
-        log.info("FinaleProjectId : {}", finaleProjectId);
+        if(!projects.isEmpty()) {
+            int finaleProjectId = projects.get(0).getId();
+            log.info("FinaleProjectId : {}", finaleProjectId);
+        }
         fpr.setProjects(projects);
-        fpr.setNoTeamUsers(getNoFinaleTeamUsers(finaleProjectId));
-        fpr.setTeams(finaleTeamMapper.selectFinaleTeamList(finaleProjectId));
+        fpr.setNoTeamUsers(getNoFinaleTeamUsers());
+        fpr.setTeams(finaleTeamMapper.selectFinaleTeamList());
         return fpr;
     }
 
@@ -115,12 +113,12 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         return finaleProjectMapper.selectFinaleProjectList(generationId);
     }
 
-    private List<ProjectUserInfo> getNoFinaleTeamUsers(int finaleProjectId) {
-        return finaleTeamMapper.selectNoFinaleTeamUsers(finaleProjectId);
+    private List<ProjectUserInfo> getNoFinaleTeamUsers() {
+        return finaleTeamMapper.selectNoTeamFinaleTeamUsers();
     }
 
-    private List<FinaleTeamList> getFinaleTeamList(int finaleProjectId) {
-        return finaleTeamMapper.selectFinaleTeamList(finaleProjectId);
+    private List<FinaleTeamList> getFinaleTeamList() {
+        return finaleTeamMapper.selectFinaleTeamList();
     }
 
     private void validateProjectCreate(FinaleProjectCreate request) {

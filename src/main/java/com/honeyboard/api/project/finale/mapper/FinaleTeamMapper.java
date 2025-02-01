@@ -18,7 +18,7 @@ public interface FinaleTeamMapper {
     List<ProjectUserInfo> selectNoTeamFinaleTeamUsers();
 
     // 팀 리스트 조회
-    List<FinaleTeamList> selectFinaleTeamList(int finaleProjectId);
+    List<FinaleTeamList> selectFinaleTeamList();
 
     // 프로젝트 상세 팀 인원 조회
     List<TeamMemberInfo> selectFinaleProjectDetailMembers(int finaleTeamId);
