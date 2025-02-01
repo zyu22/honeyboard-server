@@ -126,6 +126,20 @@
         SELECT COUNT(*) > 0
         FROM web_recommend
         WHERE url = #{url}
+          AND generation_id = #{generationId}
           AND url_deleted_at IS NULL
+    </select>
+
+    <!-- URL 중복체크 -->
+    <select id="existByUrlforUpdate">
+        SELECT COUNT(*) > 0
+        FROM web_recommend w1
+        WHERE w1.url = #{url}
+          AND w1.generation_id = (
+            SELECT w2.generation_id
+            FROM web_recommend w2
+            WHERE w2.id = #{recommendId}
+        )
+          AND w1.url_deleted_at IS NULL;
     </select>
 </mapper>
