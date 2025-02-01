@@ -92,7 +92,7 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
             throw new BusinessException(ErrorCode.PROJECT_DELETE_FAILED);
         }
 
-        result = finaleTeamMapper.deleteTeam(finaleProjectId);
+        result = finaleTeamMapper.deleteTeam(finaleTeamId);
         if (result <= 0) {
             log.error("팀 삭제 실패 - finaleTeamId: {}", finaleTeamId);
             throw new BusinessException(ErrorCode.TEAM_DELETE_FAILED);
