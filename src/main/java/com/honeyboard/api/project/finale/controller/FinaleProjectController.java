@@ -77,7 +77,7 @@ public class FinaleProjectController {
     public ResponseEntity<Void> deleteFinaleProject(@PathVariable int finaleProjectId,
                                                     @PathVariable int finaleTeamId) {
         log.info("피날레 프로젝트 삭제 요청 - finaleProjectId: {}", finaleProjectId);
-        finaleProjectService.deleteFinaleProject(finaleProjectId, finaleProjectId);
+        finaleProjectService.deleteFinaleProject(finaleProjectId, finaleTeamId);
         log.info("피날레 프로젝트 삭제 성공");
         return ResponseEntity.ok().build();
     }
