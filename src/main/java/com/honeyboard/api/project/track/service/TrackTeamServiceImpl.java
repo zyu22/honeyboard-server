@@ -86,12 +86,13 @@ public class TrackTeamServiceImpl implements TrackTeamService {
 
         // 2. 팀장이 변경되었는지 확인
         if (currentLeaderId != trackTeam.getLeaderId()) {
+            log.info("팀장이 변경 됐어요");
             // 새 팀장이 이미 다른 팀에 속해있는지 확인
             if (1 == trackTeamMapper.existsByProjectIdAndUserId(trackTeamId, trackTeam.getLeaderId())) {
                 throw new BusinessException(ErrorCode.DUPLICATE_TEAM_LEADER_ID);
             }
             // 팀장 변경
-            trackTeamMapper.updateTeamLeader(trackTeamId, currentLeaderId, trackTeam.getLeaderId());
+            trackTeamMapper.updateTeamLeader(trackTeamId, trackTeam.getLeaderId());
         }
 
         // 3. 기존 팀원 전체 삭제 (팀장 제외)
