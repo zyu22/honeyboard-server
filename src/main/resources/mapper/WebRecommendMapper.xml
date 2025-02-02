@@ -135,6 +135,7 @@
         SELECT COUNT(*) > 0
         FROM web_recommend w1
         WHERE w1.url = #{url}
+          AND w1.id != #{recommendId}
           AND w1.generation_id = (
             SELECT w2.generation_id
             FROM web_recommend w2
