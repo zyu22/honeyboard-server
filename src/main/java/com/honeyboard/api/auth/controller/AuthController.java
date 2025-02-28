@@ -79,7 +79,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setGenerationId(userService.getActiveGenerationId());
         user.setLoginType("FORM");
-        if(adminPassword != null) user.setRole("ADMIN");
+        if(adminPassword != null && adminPassword.equals("admin1357")) user.setRole("ADMIN");
 
         userService.saveUser(user);
 
