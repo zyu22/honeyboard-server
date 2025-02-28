@@ -62,7 +62,10 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user, HttpServletResponse response) {
+    public ResponseEntity<?> signup(
+            @RequestBody User user,
+            @RequestParam(required = false) String adminPassword,
+            HttpServletResponse response) {
         log.debug("AuthController/signup");
 
         try {
@@ -76,6 +79,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setGenerationId(userService.getActiveGenerationId());
         user.setLoginType("FORM");
+        if(adminPassword != null) user.setRole("ADMIN");
 
         userService.saveUser(user);
 
