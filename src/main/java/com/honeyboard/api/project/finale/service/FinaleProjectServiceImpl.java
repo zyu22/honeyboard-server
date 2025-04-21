@@ -31,16 +31,14 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         log.info("FinaleResponse 가져오기 시작 generationId: {}", generationId);
         FinaleProjectResponse fpr = new FinaleProjectResponse();
         List<FinaleProjectList> projects = getFinaleProjectList(generationId);
-        if(projects == null || projects.isEmpty()) {
-            log.info("프로젝트가 없습니다.");
-            return null;
-        }
         log.info("FinaleResponse 가져오기 성공");
-        int finaleProjectId = projects.get(0).getId();
-        log.info("FinaleProjectId : {}", finaleProjectId);
+        if (!projects.isEmpty()) {
+            int finaleProjectId = projects.get(0).getId();
+            log.info("FinaleProjectId : {}", finaleProjectId);
+        }
         fpr.setProjects(projects);
-        fpr.setNoTeamUsers(getNoFinaleTeamUsers(finaleProjectId));
-        fpr.setTeams(finaleTeamMapper.selectFinaleTeamList(finaleProjectId));
+        fpr.setNoTeamUsers(getNoFinaleTeamUsers(generationId));
+        fpr.setTeams(finaleTeamMapper.selectFinaleTeamList(generationId));
         return fpr;
     }
 
@@ -81,18 +79,26 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
 
     @Override
     @Transactional
-    public boolean deleteFinaleProject(int finaleProjectId) {
-        log.info("프로젝트 삭제 시작 - finaleProjectId: {}", finaleProjectId);
+    public boolean deleteFinaleProject(int finaleProjectId, int finaleTeamId) {
+        log.info("프로젝트 및 팀 삭제 시작 - finaleProjectId: {}, finaleTeamId: {}", finaleProjectId, finaleTeamId);
         if (!finaleProjectMapper.checkFinaleProject(finaleProjectId)) {
             throw new BusinessException(ErrorCode.PROJECT_NOT_FOUND,
                     String.format("프로젝트 ID %d를 찾을 수 없습니다.", finaleProjectId));
         }
-        int result = finaleProjectMapper.updateFinaleProjectDeleteStatus(finaleProjectId);
+
+        int result = finaleProjectMapper.deleteFinaleProject(finaleProjectId);
         if (result <= 0) {
             log.error("프로젝트 삭제 실패 - finaleProjectId: {}", finaleProjectId);
             throw new BusinessException(ErrorCode.PROJECT_DELETE_FAILED);
         }
-        log.info("프로젝트 삭제 완료 - finaleProjectId: {}", finaleProjectId);
+
+        result = finaleTeamMapper.deleteTeam(finaleTeamId);
+        if (result <= 0) {
+            log.error("팀 삭제 실패 - finaleTeamId: {}", finaleTeamId);
+            throw new BusinessException(ErrorCode.TEAM_DELETE_FAILED);
+        }
+
+        log.info("프로젝트 및 팀 삭제 완료 - finaleProjectId: {}", finaleProjectId);
         return result > 0;
     }
 
@@ -115,12 +121,12 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         return finaleProjectMapper.selectFinaleProjectList(generationId);
     }
 
-    private List<ProjectUserInfo> getNoFinaleTeamUsers(int finaleProjectId) {
-        return finaleTeamMapper.selectNoFinaleTeamUsers(finaleProjectId);
+    private List<ProjectUserInfo> getNoFinaleTeamUsers(int generationId) {
+        return finaleTeamMapper.selectNoFinaleTeamUsersByGeneration(generationId);
     }
 
-    private List<FinaleTeamList> getFinaleTeamList(int finaleProjectId) {
-        return finaleTeamMapper.selectFinaleTeamList(finaleProjectId);
+    private List<FinaleTeamList> getFinaleTeamList(int generationId) {
+        return finaleTeamMapper.selectFinaleTeamList(generationId);
     }
 
     private void validateProjectCreate(FinaleProjectCreate request) {

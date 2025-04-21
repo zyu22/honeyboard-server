@@ -35,7 +35,10 @@ public interface WebRecommendMapper {
     // 웹추천 검색 개수
     int countSearchWebRecommend(@Param("title") String title, @Param("generationId") int generationId);
 
-    // Url 중복검사
-    boolean existByUrl(String url);
+    // Url 중복검사 - 생성
+    boolean existByUrl(@Param("url") String url, @Param("generationId") int generationId);
+
+    // URL 중복검사 - 수정
+    boolean existByUrlforUpdate(@Param("url") String url, @Param("recommendId") int recommendId);
 
 }

@@ -13,7 +13,7 @@ public interface FinaleProjectService {
 
     boolean updateFinaleProject(int finaleProjectId, FinaleProjectUpdate request);
 
-    boolean deleteFinaleProject(int finaleProjectId);
+    boolean deleteFinaleProject(int finaleProjectId, int finaleTeamId);
 
     FinaleProjectDetail getFinaleProjectDetail(int finaleProjectId);
 

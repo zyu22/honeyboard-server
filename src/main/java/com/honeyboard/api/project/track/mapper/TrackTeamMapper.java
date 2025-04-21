@@ -23,7 +23,7 @@ public interface TrackTeamMapper {
 
     int deleteAllTeamMembers(@Param("teamId") int teamId);
 
-    int updateTeamLeader(@Param("teamId") int teamId, @Param("oldLeaderId") int oldLeaderId, @Param("newLeaderId") int newLeaderId);
+    int updateTeamLeader(@Param("teamId") int teamId, @Param("newLeaderId") int newLeaderId);
 
     int updateTeamCompleted(@Param("teamId") int teamId, @Param("isCompleted") boolean isCompleted);
 

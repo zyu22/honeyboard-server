@@ -80,7 +80,7 @@ public class AdminServiceimpl implements AdminService {
 
         // 유저 존재하는지 확인
         int count = adminMapper.selectUserByGenerationId(generationId);
-        if(count >= 0) {
+        if(count > 0) {
             log.info("해당 기수에 유저 존재");
             throw new BusinessException(ErrorCode.GENERATION_DELETE_RESTRICTED);
         }

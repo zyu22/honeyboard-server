@@ -141,11 +141,9 @@
 	</update>
 
 	<!-- 프로젝트 삭제 -->
-	<update id="updateFinaleProjectDeleteStatus" parameterType="int">
-		Update finale_project
-		SET
-			is_deleted = 1
+	<delete id="deleteFinaleProject" parameterType="int">
+		DELETE FROM finale_project
 		WHERE id = #{finaleProjectId}
-		  AND is_deleted = 0
-	</update>
+		ANd is_deleted = 0
+	</delete>
 </mapper>

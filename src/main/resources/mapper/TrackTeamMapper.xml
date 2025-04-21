@@ -108,14 +108,10 @@
     <!-- 팀장 변경 -->
     <update id="updateTeamLeader">
         UPDATE track_team_member
-        SET role =
-                CASE
-                    WHEN user_id = #{newLeaderId} THEN 'LEADER'
-                    WHEN role = 'LEADER' THEN 'MEMBER'
-                    END,
+        SET user_id = #{newLeaderId},
             created_at = NOW()
         WHERE track_team_id = #{teamId}
-          AND user_id IN (#{oldLeaderId}, #{newLeaderId})
+          AND role = 'LEADER'
     </update>
 
     <!-- 팀 완료 상태 변경 -->

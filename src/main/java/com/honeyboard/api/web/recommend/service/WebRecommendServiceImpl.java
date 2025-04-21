@@ -73,8 +73,8 @@ public class WebRecommendServiceImpl implements WebRecommendService {
         log.info("웹 추천 등록 시작 - 제목: {}", webRecommend.getTitle());
 
         // URL 중복 확인
-        if(webRecommendMapper.existByUrl(webRecommend.getUrl())) {
-            log.info("이미 존재하는 URL - {}", webRecommend.getUrl());
+        if(webRecommendMapper.existByUrl(webRecommend.getUrl(), generationId)) {
+            log.info("이미 존재하는 URL - {}, 기수 - {}", webRecommend.getUrl(), generationId);
             throw new BusinessException(ErrorCode.DUPLICATE_URL);
         }
 
@@ -94,6 +94,12 @@ public class WebRecommendServiceImpl implements WebRecommendService {
     @Override
     public void updateWebRecommend(int recommendId, WebRecommendRequest webRecommend, int userId) {
         log.info("웹 추천 수정 시작 - ID: {}", recommendId);
+
+        // URL 중복 확인
+        if(webRecommendMapper.existByUrlforUpdate(webRecommend.getUrl(), recommendId)) {
+            log.info("이미 존재하는 URL - {}", webRecommend.getUrl());
+            throw new BusinessException(ErrorCode.DUPLICATE_URL);
+        }
 
         int result = webRecommendMapper.updateWebRecommend(recommendId, webRecommend, userId);
 
