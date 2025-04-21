@@ -2,7 +2,6 @@ package com.honeyboard.api.project.finale.mapper;
 
 import java.util.List;
 
-import com.honeyboard.api.project.finale.model.request.FinaleProjectTeamUpdate;
 import com.honeyboard.api.project.finale.model.response.FinaleTeamList;
 import com.honeyboard.api.project.model.ProjectUserInfo;
 import com.honeyboard.api.project.model.TeamMemberInfo;
