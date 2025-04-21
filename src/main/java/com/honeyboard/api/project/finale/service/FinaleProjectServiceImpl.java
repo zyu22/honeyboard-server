@@ -32,13 +32,13 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         FinaleProjectResponse fpr = new FinaleProjectResponse();
         List<FinaleProjectList> projects = getFinaleProjectList(generationId);
         log.info("FinaleResponse 가져오기 성공");
-        if(!projects.isEmpty()) {
+        if (!projects.isEmpty()) {
             int finaleProjectId = projects.get(0).getId();
             log.info("FinaleProjectId : {}", finaleProjectId);
         }
         fpr.setProjects(projects);
-        fpr.setNoTeamUsers(getNoFinaleTeamUsers());
-        fpr.setTeams(finaleTeamMapper.selectFinaleTeamList());
+        fpr.setNoTeamUsers(getNoFinaleTeamUsers(generationId));
+        fpr.setTeams(finaleTeamMapper.selectFinaleTeamList(generationId));
         return fpr;
     }
 
@@ -98,7 +98,6 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
             throw new BusinessException(ErrorCode.TEAM_DELETE_FAILED);
         }
 
-
         log.info("프로젝트 및 팀 삭제 완료 - finaleProjectId: {}", finaleProjectId);
         return result > 0;
     }
@@ -122,12 +121,12 @@ public class FinaleProjectServiceImpl implements FinaleProjectService {
         return finaleProjectMapper.selectFinaleProjectList(generationId);
     }
 
-    private List<ProjectUserInfo> getNoFinaleTeamUsers() {
-        return finaleTeamMapper.selectNoTeamFinaleTeamUsers();
+    private List<ProjectUserInfo> getNoFinaleTeamUsers(int generationId) {
+        return finaleTeamMapper.selectNoFinaleTeamUsersByGeneration(generationId);
     }
 
-    private List<FinaleTeamList> getFinaleTeamList() {
-        return finaleTeamMapper.selectFinaleTeamList();
+    private List<FinaleTeamList> getFinaleTeamList(int generationId) {
+        return finaleTeamMapper.selectFinaleTeamList(generationId);
     }
 
     private void validateProjectCreate(FinaleProjectCreate request) {
