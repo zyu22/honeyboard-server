@@ -41,6 +41,22 @@
           AND u.role = 'USER'
     </select>
 
+    <!-- generationId로 팀이 없는 유저 조회 -->
+    <select id="selectNoFinaleTeamUsersByGeneration" parameterType="int" resultMap="projectUserInfoMap">
+        SELECT DISTINCT
+            u.id,
+            u.name
+        FROM user u
+        WHERE u.generation_id = #{generationId}
+          AND u.id NOT IN (
+            SELECT ftm.user_id
+            FROM finale_team_member ftm
+            JOIN finale_team ft ON ftm.finale_team_id = ft.id
+            WHERE ft.generation_id = #{generationId}
+        )
+          AND u.role = 'USER'
+    </select>
+
     <!-- finaleProjectId 없이 활성화된 기수에서 인원 조회-->
     <select id="selectNoTeamFinaleTeamUsers" resultMap="projectUserInfoMap">
         SELECT DISTINCT
@@ -60,7 +76,7 @@
     </select>
 
     <!-- 팀 리스트 조회 -->
-    <select id="selectFinaleTeamList" resultMap="finaleTeamListMap">
+    <select id="selectFinaleTeamList" parameterType="int" resultMap="finaleTeamListMap">
         SELECT DISTINCT
             ft.id as team_id,
             CASE
@@ -77,6 +93,7 @@
             LEFT JOIN finale_project fp ON ft.id = fp.team_id
             LEFT JOIN finale_team_member ftm ON ft.id = ftm.finale_team_id
             LEFT JOIN user u ON ftm.user_id = u.id
+        WHERE ft.generation_id = #{generationId}
         ORDER BY
             ft.id,
             CASE ftm.role
