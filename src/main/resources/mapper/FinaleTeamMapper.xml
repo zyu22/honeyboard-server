@@ -55,6 +55,7 @@
             WHERE ft.generation_id = #{generationId}
         )
           AND u.role = 'USER'
+          AND u.is_ssafy = 1
     </select>
 
     <!-- finaleProjectId 없이 활성화된 기수에서 인원 조회-->
@@ -73,6 +74,7 @@
             FROM finale_team_member ftm
         )
           AND u.role = 'USER'
+          AND u.is_ssafy = 1
     </select>
 
     <!-- 팀 리스트 조회 -->
